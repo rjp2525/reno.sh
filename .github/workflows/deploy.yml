@@ -29,7 +29,7 @@ jobs:
           npm i
       # Build the app
       - name: Build
-        run: npm run build
+        run: npm run generate
   # Pushes the files to the "gh-pages" branch, used for deploying
   deploy:
     name: Deploy
