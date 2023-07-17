@@ -32,6 +32,11 @@ jobs:
         run: |
           npm run build
           npm run generate
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-results
+          path: dist
   # Pushes the files to the "gh-pages" branch, used for deploying
   deploy:
     name: Deploy
@@ -41,6 +46,10 @@ jobs:
       matrix:
         os: [ubuntu-latest]
     steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build-results
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
