@@ -8,11 +8,7 @@ on:
 jobs:
   build:
     name: Build Nuxt app
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        node: [19]
+    runs-on: ubuntu-latest
     steps:
       # Check out master branch
       - name: Checkout repository
@@ -21,7 +17,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 19
       # Install dependencies
       - name: Install dependencies
         run: |
@@ -34,13 +30,10 @@ jobs:
   deploy:
     - name: Deploy
       needs: [build]
-      runs-on: ${{ matrix.os }}
-      strategy:
-        matrix:
-          os: [ubuntu-latest]
+      runs-on: ubuntu-latest
       steps:
         - name: Deploy to GitHub Pages
           uses: peaceiris/actions-gh-pages@v3
           with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: ./.output/public
+            publish_dir: ${{ github.workspace }}/.output/public
