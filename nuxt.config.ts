@@ -4,8 +4,16 @@ export default defineNuxtConfig({
     enabled: true,
   },
   modules: [
-    ['@nuxtjs/tailwindcss', {
-      cssPath: '~/assets/css/reno.css'
-    }]
-  ]
+    '@nuxtjs/google-fonts',
+    '@nuxtjs/tailwindcss'
+  ],
+  googleFonts: {
+    families: {
+      'Poppins': true,
+      'Cormorant Garamond': true
+    }
+  },
+  tailwindcss: {
+    cssPath: '~/src/styles/reno.css'
+  }
 });
