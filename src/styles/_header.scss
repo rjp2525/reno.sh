@@ -1,7 +1,3 @@
-.header .logo a:before {
-    // TODO: move this to Tailwind config
-	background: linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 100%);
-}
 .header .top-menu ul li a .link:before {
     @apply -mt-[5px] content-none absolute -left-[10px] top-1/2 border-transparent border-solid border-4 border-r-[#111111];
 }

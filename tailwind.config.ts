@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 export default <Partial<Config>>{
+  important: true,
   content: [
     './pages/**/*.{html,vue}',
     './src/**/*.{html,vue,js,ts}'
@@ -9,6 +10,12 @@ export default <Partial<Config>>{
     extend: {
       animation: {
         'load': 'loading 2s infinite ease-in-out'
+      },
+      backgroundImage: {
+        'nav-gradient': 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 100%)'
+      },
+      colors: {
+        accent: 'var(--accent-color)'
       },
       keyframes: {
         loading: {
