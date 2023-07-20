@@ -14,6 +14,6 @@ export default defineNuxtConfig({
     }
   },
   tailwindcss: {
-    cssPath: '~/src/styles/reno.css'
+    cssPath: '~/src/styles/reno.scss'
   }
 });
