@@ -1,1 +1,0 @@
-import{d as e,j as t,l as n,k as o}from"./entry.4f0086bd.js";const s=e({__name:"index",setup(a){return t({title:"Reno Philibert :: Software Engineer",meta:[]}),(r,i)=>(o(),n("div",null,"Something cool!"))}});export{s as default};
