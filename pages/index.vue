@@ -1,7 +1,6 @@
 <script setup lang="ts">
   useHead({
-    title: 'Reno Philibert :: Software Engineer',
-    meta: []
+    title: 'Reno Philibert :: Software Engineer & Photographer'
   });
 </script>
 
@@ -15,7 +14,7 @@
           <span class="md:pr-[15px] opacity-60">Reno</span> Philibert
         </h1>
         <div class="my-2 md:m-0 text-[20px] md:leading-[20px] text-white/80 font-extralight z-[114]">
-          A marvelous <strong class="text-white font-semibold">software engineer</strong> and <strong class="text-white font-semibold">photographer</strong>
+          An innovative <strong class="text-white font-semibold">software engineer</strong> and <strong class="text-white font-semibold">photographer</strong>
         </div>
         <div class="mt-2 md:my-4 z-[114] text-md text-white/70 font-extralight flex items-center">
           based in Denver, Colorado
