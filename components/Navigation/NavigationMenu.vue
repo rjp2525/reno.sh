@@ -5,6 +5,7 @@
   import SoftwareIcon from '@/images/icons/software.svg?component';
   import PhotographyIcon from '@/images/icons/photography.svg?component';
   import ContactIcon from '@/images/icons/contact.svg?component';
+  import GitHubIcon from '@/images/icons/github.svg?component';
 </script>
 
 <template>
@@ -59,5 +60,12 @@
         </a>
       </li>
     </ul>
+  </div>
+  <div class="absolute left-0 w-full bottom-3">
+    <a href="https://github.com/rjp2525" class="my-2 mx-0 flex items-center justify-center text-base text-[#a9a9a9] hover:text-accent transition-all duration-300" target="_blank">
+      <span class="m-0 block h-6 leading-6">
+        <GitHubIcon width="24" />
+      </span>
+    </a>
   </div>
 </template>
