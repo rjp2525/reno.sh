@@ -21,7 +21,7 @@ export default <Partial<Config>>{
       },
       backgroundImage: {
         'nav-gradient': 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 100%)',
-        'home-bg': "url('./img/bg-tetons.jpg')"
+        'home-bg': "url('@/images/bg-tetons.jpg')"
       },
       colors: {
         accent: 'var(--accent-color)'
