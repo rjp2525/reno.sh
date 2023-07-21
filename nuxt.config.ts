@@ -1,7 +1,7 @@
 export default defineNuxtConfig({
   app: {
     baseURL: '',
-    buildAssetsDir: '_nuxt/',
+    buildAssetsDir: './_nuxt/',
     head: {
       // This is not needed now that baseURL fixed the asset loading
       link: [{ rel: 'icon', type: 'image/x-icon', href: './favicon.ico'}]
