@@ -24,7 +24,8 @@ export default <Partial<Config>>{
         'home-bg': "url('@/images/bg-tetons.jpg')"
       },
       colors: {
-        accent: 'var(--accent-color)'
+        'accent': '#f24900',
+        'accent-light': '#ff7940'
       },
       keyframes: {
         loading: {
