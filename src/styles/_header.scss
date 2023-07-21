@@ -1,10 +1,10 @@
 .header {
     &::before {
-        @apply absolute -right-1 top-0 h-full w-1 bg-white/5 content-none;
+        @apply absolute -right-[1px] top-0 h-full w-[1px] bg-white/5 content-[''];
     }
 
     .logo a::before {
-        @apply absolute left-0 top-0 h-full w-full content-none;
+        @apply absolute left-0 top-0 h-full w-full content-[''];
     }
 
     .top-menu {
@@ -22,10 +22,6 @@
             }
         }
     }
-
-    .top-menu ul li a .link:before {
-        @apply -mt-[5px] content-none absolute -left-[10px] top-1/2 border-transparent border-solid border-4 border-r-[#111111];
-    }
 }
 
 .top-menu {
@@ -36,6 +32,10 @@
 
         a {
             @apply m-0;
+        }
+
+        .link::before {
+            @apply -mt-[5px] content-[''] absolute -left-[10px] top-1/2 border-transparent border-solid border-[5px] border-r-[#111111];
         }
     }
 }
