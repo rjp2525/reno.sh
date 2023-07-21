@@ -1,1 +1,0 @@
-import{_ as e,c as t,o as c}from"./entry.f822878f.js";const s={},o={class:"flex items-center justify-center h-screen w-full"};function n(r,a){return c(),t("div",o,"this is the about page")}const f=e(s,[["render",n]]);export{f as default};
