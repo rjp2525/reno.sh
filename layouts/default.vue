@@ -5,26 +5,24 @@
 </template>
 
 <style>
-.page-left-enter-active,
-.page-right-enter-active,
-.page-left-leave-active,
-.page-right-leave-active {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  transition: all 150ms linear;
+.page-enter-active,
+.page-leave-active {
+  @apply transition-all duration-500 ease-in-out;
 }
 
-.page-left-enter-from, .page-right-leave-to {
-  transform: translateX(100%);
+.page-enter-from {
+  @apply opacity-0 scale-0;
 }
 
-.page-left-leave-to, .page-right-enter-from {
-  transform: translateX(-100%);
+.page-enter-to {
+  @apply opacity-100 scale-100;
 }
 
-.page-left-enter-to, .page-right-enter-to {
-  transform: translateX(0);
+.page-leave-from {
+  @apply scale-100 opacity-100;
+}
+
+.page-leave-to {
+  @apply scale-0 opacity-0;
 }
 </style>

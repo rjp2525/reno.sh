@@ -1,7 +1,7 @@
 <template>
   <Preloader />
   <Header />
-  <div class="container">
+  <div class="contain">
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

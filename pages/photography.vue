@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <div>this is the photography page</div>
+  <div class="flex items-center justify-center h-screen w-full">this is the photography page</div>
 </template>

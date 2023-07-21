@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <div>this is the blog index page</div>
+  <div class="flex items-center justify-center h-screen w-full">this is the blog index page</div>
 </template>

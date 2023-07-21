@@ -6,7 +6,7 @@
 </script>
 
 <template>
-    <div class="card active card-home">
+    <div class="card card-home">
       <div class="slide absolute overflow-hidden left-0 top-0 w-full h-full bg-[#262628] bg-no-repeat bg-cover bg-home-bg bg-center">
         <div class="w-full h-full flex justify-center items-center backdrop-blur-sm bg-[#181818]/80"></div>
       </div>
