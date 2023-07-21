@@ -21,9 +21,9 @@
           based in Denver, Colorado
         </div>
         <div class="z-[114]">
-          <a href="#about" class="relative inline-block py-3 px-5 text-accent-light text-base uppercase overflow-hidden duration-500 mt-6 tracking-wide hover:bg-accent-light hover:text-white hover:rounded-md hover:shadow-special-button border-2 border-solid border-accent-light/30">
+          <nuxt-link to="/about" class="relative inline-block py-3 px-5 text-accent-light text-base uppercase overflow-hidden duration-500 mt-6 tracking-wide hover:bg-accent-light hover:text-white hover:rounded-md hover:shadow-special-button border-2 border-solid border-accent-light/30">
             About me
-          </a>
+          </nuxt-link>
         </div>
       </div>
     </div>
