@@ -1,6 +1,8 @@
 export default defineNuxtConfig({
   app: {
+    baseURL: './',
     head: {
+      // This is not needed now that baseURL fixed the asset loading
       link: [{ rel: 'icon', type: 'image/x-icon', href: './favicon.ico'}]
     }
   },
@@ -8,17 +10,21 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true,
   },
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    },
+  },
   modules: [
     '@nuxtjs/google-fonts',
-    '@nuxtjs/tailwindcss'
+    //'@nuxtjs/tailwindcss'
   ],
   googleFonts: {
     families: {
-      'Poppins': true,
+      'Poppins': [200, 400, 600],
       'Cormorant Garamond': true
     }
   },
-  tailwindcss: {
-    cssPath: '~/src/styles/reno.scss'
-  }
+  css: ['@/src/styles/reno.scss']
 });

@@ -1,9 +1,9 @@
 <template>
   <!--<Preloader />-->
-
   <Header />
-
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
+  <div class="container">
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+  </div>
 </template>

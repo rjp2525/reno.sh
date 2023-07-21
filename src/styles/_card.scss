@@ -1,0 +1,17 @@
+.card {
+    @apply pl-11 absolute overflow-hidden left-0 top-0 w-full h-full z-[110] invisible opacity-0;
+
+    &.active {
+        @apply visible opacity-100 z-[111];
+    }
+
+    &.card-home {
+        @apply text-center;
+
+        .slide {
+            &::after {
+                @apply content-none absolute top-0 left-0 w-full h-full bg-[#181818] opacity-60 z-[112];
+            }
+        }
+    }
+}

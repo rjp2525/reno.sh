@@ -3,7 +3,15 @@ import type { Config } from "tailwindcss";
 export default <Partial<Config>>{
   important: true,
   content: [
-    './pages/**/*.{html,vue}',
+    './*.{vue,js,ts}',
+    './app.vue',
+    './assets/**/*.css',
+    './components/*.{vue,js}',
+    './components/**/*.{vue,js}',
+    './nuxt.config.{js,ts}',
+    './pages/*.vue',
+    './pages/**/*.vue',
+    './plugins/**/*.{js,ts}',
     './src/**/*.{html,vue,js,ts}'
   ],
   theme: {
@@ -12,7 +20,8 @@ export default <Partial<Config>>{
         'load': 'loading 2s infinite ease-in-out'
       },
       backgroundImage: {
-        'nav-gradient': 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 100%)'
+        'nav-gradient': 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 100%)',
+        'home-bg': "url('./img/bg-tetons.jpg')"
       },
       colors: {
         accent: 'var(--accent-color)'

@@ -13,7 +13,9 @@
     "@nuxtjs/google-fonts": "^3.0.1",
     "@nuxtjs/tailwindcss": "^6.8.0",
     "@types/node": "^18.16.19",
+    "autoprefixer": "^10.4.14",
     "nuxt": "^3.6.3",
+    "postcss": "^8.4.26",
     "sass": "^1.63.6",
     "sass-loader": "^13.3.2"
   }
