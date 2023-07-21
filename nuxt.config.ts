@@ -1,3 +1,5 @@
+import svgLoader from 'vite-svg-loader'
+
 export default defineNuxtConfig({
   app: {
     head: {
@@ -24,5 +26,8 @@ export default defineNuxtConfig({
       'Cormorant Garamond': true
     }
   },
-  css: ['@/src/styles/reno.scss']
+  css: ['@/src/styles/reno.scss'],
+  vite: {
+    plugins: [svgLoader()]
+  }
 });
