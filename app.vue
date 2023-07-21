@@ -1,5 +1,5 @@
 <template>
-  <!--<Preloader />-->
+  <Preloader />
   <Header />
   <div class="container">
     <NuxtLayout>

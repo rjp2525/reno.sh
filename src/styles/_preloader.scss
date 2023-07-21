@@ -1,5 +1,5 @@
 .preloader {
-    @apply fixed top-0 left-0 right-0 bottom-0 text-center bg-[#181818] z-50;
+    @apply fixed top-0 left-0 right-0 bottom-0 text-center bg-[#181818] z-[500];
 
     .spinner {
         @apply absolute left-1/2 top-0 w-[1px] h-full;
