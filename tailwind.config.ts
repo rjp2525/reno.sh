@@ -23,6 +23,9 @@ export default <Partial<Config>>{
         'nav-gradient': 'linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 100%)',
         'home-bg': "url('@/images/bg-tetons.jpg')"
       },
+      boxShadow: {
+        'special-button': '0 0 5px #ff7940, 0 0 25px #ff7940, 0 0 50px #ff7940, 0 0 100px #ff7940'
+      },
       colors: {
         'accent': '#f24900',
         'accent-light': '#ff7940'

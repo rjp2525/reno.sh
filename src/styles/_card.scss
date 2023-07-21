@@ -1,5 +1,5 @@
 .card {
-    @apply pl-11 absolute overflow-hidden left-0 top-0 w-full h-full z-[110] invisible opacity-0;
+    @apply absolute overflow-hidden left-0 top-0 w-full h-full z-[110] invisible opacity-0;
 
     &.active {
         @apply visible opacity-100 z-[111];
