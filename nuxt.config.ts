@@ -3,12 +3,15 @@ import svgLoader from 'vite-svg-loader'
 export default defineNuxtConfig({
   app: {
     head: {
+      htmlAttrs: {
+        lang: 'en'
+      },
       link: [{ rel: 'icon', type: 'image/x-icon', href: './favicon.ico' }],
       meta: [
         { hid: 'description', name: 'description', 'content': 'Denver-based software engineer & photographer fusing passion with creativity to deliver intuitive web solutions and captivating images. Elevate your digital experience.' },
-        { hid: 'og:title', name: 'og:title', content: 'Reno Philibert :: Software Engineer & Photographer' },
-        { hid: 'og:description', name: 'og:description', content: 'Denver-based engineer & photographer creating digital solutions & captivating images.' },
-        { hid: 'og:image', name: 'og:image', content: './images/og-share-card.jpg' }
+        { hid: 'og:title', name: 'og:title', content: 'Reno Philibert' },
+        { hid: 'og:description', name: 'og:description', content: 'Denver-based software engineer & photographer creating innovative digital solutions & captivating images.' },
+        { hid: 'og:image', name: 'og:image', content: 'https://reno.sh/reno.sh/images/og-share-card.jpg' }
       ]
     }
   },
