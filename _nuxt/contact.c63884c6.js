@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as c}from"./entry.19bbd0c8.js";const s={},n={class:"flex items-center justify-center h-screen w-full"};function o(r,a){return c(),t("div",n,"this is the contact page")}const f=e(s,[["render",o]]);export{f as default};
