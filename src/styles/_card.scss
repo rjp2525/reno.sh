@@ -1,8 +1,8 @@
 .card {
-    @apply absolute overflow-hidden left-0 top-0 w-full h-full z-[110];
+    @apply overflow-hidden left-0 top-0 w-full h-full z-[110];
 
     &.card-home {
-        @apply text-center;
+        @apply absolute text-center;
 
         .slide {
             &::after {
