@@ -1,66 +1,45 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Personal Portfolio (Reno Philibert)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Welcome to my personal portfolio, a showcase of my work and skills as a Full Stack Software Engineer. This project is built with a modern tech stack, including Laravel 11, Vue 3, Inertia, and Tailwind to deliver a sleek, fast and responsive user experience. Here you'll find examples of my expertise in full-stack development including real-world applications, innovative UI/UX designs and custom solutions that highlight my passion for writing clean code and problem-solving. Dive in here and explore how I create beautiful web applications!
 
-## About Laravel
+## Installation
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+To get this up and running locally, follow the steps below. The project is built using Laravel for the backend, Vue and Inertia for the frontend, then Tailwind CSS for styling. You'll need to have Docker Desktop, PHP 8.2+, Composer, Node.js and NPM installed on your machine to properly set up the environment. Once you've cloned the repository, you'll need to install the necessary dependencies and configure environment variables.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. Clone the repository
+  ```
+  git clone git@github.com:rjp2525/reno.sh.git && cd reno.sh
+  ```
+2. Install PHP/JS dependencies
+  ```
+  composer install && npm i
+  ```
+3. Copy the `.env.example` sample environment variable file to `.env` and set necessary keys
+  ```
+  cp .env.example .env
+  php artisan key:generate
+  nano .env
+  ```
+  ```env
+  # TODO: add env variables that require changing
+  ```
+4. Start the Docker container and run migrations
+  ```
+  ./vendor/bin/sail up -d
+  ./vendor/bin/sail artisan migrate --seed
+  ```
+5. Start Vite for compiling frontend assets
+  ```
+  npm run dev
+  ```
+6. You should now be able to visit [localhost](http://localhost) in your browser.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Built with
 
-## Learning Laravel
+This project is built with the following technologies and packages:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- [Laravel](https://laravel.com/) - A powerful PHP framework that simplifies backend development with elegant syntax and robust features.
+- [Vue.js](https://vuejs.org/) - A progressive JavaScript framework used to build interactive user interfaces with reactive components.
+- [Inertia.js](https://inertiajs.com/) - A routing library that allows building single-page applications without the need for a separate API, seamlessly connecting Laravel and Vue.
+- [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework that provides a highly customizable styling system for rapid UI development.
+- [Filament](https://filamentphp.com/) - A lightweight and elegant admin panel for Laravel, used to quickly build back-end interfaces for managing content and data with ease.

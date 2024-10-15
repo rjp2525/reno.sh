@@ -1,8 +1,7 @@
 {
-    "name": "laravel/laravel",
+    "name": "rjp2525/reno.sh",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "Personal portfolio website of Reno Philibert",
     "license": "MIT",
     "require": {
         "php": "^8.2",
