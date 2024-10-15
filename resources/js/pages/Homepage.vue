@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-
 defineProps<{
     canLogin?: boolean;
     canRegister?: boolean;
@@ -17,7 +15,7 @@ function handleImageError() {
 </script>
 
 <template>
-    <Head title="Welcome" />
+    <Head title="Full Stack Software Engineer" />
     <div class="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
         <img
             id="background"
