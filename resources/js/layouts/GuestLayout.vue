@@ -47,7 +47,7 @@ provide('isMobile', isMobile);
         class="flex h-full w-full flex-col justify-between rounded-md border border-navy"
     >
         <AppHeader />
-        <div data-aos="fade-in" :key="$page.component">
+        <div data-aos="fade-in" :key="$page.component" class="h-full">
             <slot />
         </div>
         <AppFooter />

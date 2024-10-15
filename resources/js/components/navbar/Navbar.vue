@@ -10,8 +10,16 @@ import { GitHubOctoCat, NavbarLink, NavbarLogo } from '.';
             <GitHubOctoCat url="https://github.com/rjp2525" />
             <div class="flex">
                 <NavbarLogo />
-                <NavbarLink url="#" label="_hello" :active="true" />
-                <NavbarLink url="#" label="_about" :active="false" />
+                <NavbarLink
+                    :url="route('home')"
+                    label="_hello"
+                    :active="route().current() === 'home'"
+                />
+                <NavbarLink
+                    :url="route('about')"
+                    label="_about"
+                    :active="route().current() === 'about'"
+                />
                 <NavbarLink url="#" label="_projects" :active="false" />
                 <NavbarLink url="#" label="_photography" :active="false" />
                 <NavbarLink url="#" label="_blog" :active="false" />

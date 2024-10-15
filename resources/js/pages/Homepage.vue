@@ -24,7 +24,7 @@ const isMobile = inject('isMobile', ref(false));
             <section class="m-0 flex w-full flex-col justify-center">
                 <div class="pb-12">
                     <span class="text-lg leading-none">Hi all, I'm</span>
-                    <h1 class="py-4 text-6xl leading-none text-menu">
+                    <h1 class="py-4 text-6xl leading-none text-white">
                         Reno Philibert
                     </h1>
                     <span class="diple flex text-3xl leading-none text-purple">

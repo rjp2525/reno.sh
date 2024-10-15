@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AboutController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -7,6 +8,8 @@ use Inertia\Inertia;
 
 Route::get('/', HomepageController::class)
     ->name('home');
+Route::get('/about', AboutController::class)
+    ->name('about');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
