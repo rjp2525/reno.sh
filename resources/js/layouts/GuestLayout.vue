@@ -2,9 +2,14 @@
 import { AppFooter, AppHeader } from '@/components';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { onMounted } from 'vue';
+import { onBeforeUnmount, onMounted, provide, ref } from 'vue';
+
+const isMobile = ref(false);
 
 onMounted(() => {
+    if (window.innerWidth <= 1024) isMobile.value = true;
+    window.addEventListener('resize', handleResize);
+
     AOS.init({
         disable: false,
         startEvent: 'DOMContentLoaded',
@@ -23,12 +28,28 @@ onMounted(() => {
         anchorPlacement: 'top-bottom',
     });
 });
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', handleResize);
+});
+
+const handleResize = () => {
+    window.innerWidth <= 1024
+        ? (isMobile.value = true)
+        : (isMobile.value = false);
+};
+
+provide('isMobile', isMobile);
 </script>
 
 <template>
-    <AppHeader />
-    <div data-aos="fade-in" :key="$page.component">
-        <slot />
+    <div
+        class="flex h-full w-full flex-col justify-between rounded-md border border-navy"
+    >
+        <AppHeader />
+        <div data-aos="fade-in" :key="$page.component">
+            <slot />
+        </div>
+        <AppFooter />
     </div>
-    <AppFooter />
 </template>

@@ -5,6 +5,7 @@ export { default as Checkbox } from './Checkbox.vue';
 export { default as DangerButton } from './DangerButton.vue';
 export { default as Dropdown } from './Dropdown.vue';
 export { default as DropdownLink } from './DropdownLink.vue';
+export { default as Icon } from './Icon.vue';
 export { default as InputError } from './InputError.vue';
 export { default as InputLabel } from './InputLabel.vue';
 export { default as Modal } from './Modal.vue';

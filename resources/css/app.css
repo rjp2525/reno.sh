@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    html {
+        @apply bg-background m-8 text-menu;
+    }
+
+    html, body {
+        height: -webkit-fill-available;
+        height: stretch;
+        width: -webkit-fill-available;
+        width: stretch;
+    }
+
+    #app {
+        @apply h-full w-full;
+    }
+}
