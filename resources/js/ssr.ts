@@ -5,7 +5,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createSSRApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Reno Philibert';
 
 createServer((page) =>
     createInertiaApp({
@@ -14,8 +14,8 @@ createServer((page) =>
         title: (title) => `${title} - ${appName}`,
         resolve: (name) =>
             resolvePageComponent(
-                `./Pages/${name}.vue`,
-                import.meta.glob<DefineComponent>('./Pages/**/*.vue'),
+                `./pages/${name}.vue`,
+                import.meta.glob<DefineComponent>('./pages/**/*.vue'),
             ),
         setup({ App, props, plugin }) {
             return createSSRApp({ render: () => h(App, props) })
