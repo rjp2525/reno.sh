@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AboutPage;
 use App\Models\Experience;
 use App\Models\Skill;
 use Illuminate\Http\Request;
@@ -21,9 +22,12 @@ class AboutController extends Controller
                 'skills' => $skills,
             ])->values();
 
+        $pages = AboutPage::all();
+
         return Inertia::render('About', [
             'experience' => $experience,
             'skills' => $skills,
+            'pages' => $pages,
         ]);
     }
 }

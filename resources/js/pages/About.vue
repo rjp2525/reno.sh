@@ -2,14 +2,42 @@
 import { MobilePageHeader, PageMenu } from '@/components/page';
 import { GuestLayout } from '@/layouts';
 import type { ExperienceItem, SkillCategory } from '@/types/about';
-import { inject, ref } from 'vue';
-import { Experience, Skills } from './partials';
+import { inject, markRaw, ref } from 'vue';
+import {
+    Biography,
+    Experience,
+    Hiking,
+    Maya,
+    Overlanding,
+    Photography,
+    Skills,
+    Snowboarding,
+    Software,
+} from './partials';
 
 const isMobile = inject('isMobile', ref(false));
+
+interface PageBuilderContent {
+    type: string;
+    data: {
+        content: string;
+    };
+}
+
+interface AboutPageSection {
+    id: number;
+    title: string;
+    slug: string;
+    section: string;
+    content: PageBuilderContent[];
+    created_at: string;
+    updated_at: string;
+}
 
 const props = defineProps<{
     experience: ExperienceItem[];
     skills: SkillCategory[];
+    pages: AboutPageSection[];
 }>();
 
 const sections = [
@@ -19,12 +47,12 @@ const sections = [
         info: [
             {
                 name: 'experience',
-                component: Experience,
+                component: markRaw(Experience),
                 content: props.experience,
             },
             {
                 name: 'skills',
-                component: Skills,
+                component: markRaw(Skills),
                 content: props.skills,
             },
         ],
@@ -35,15 +63,15 @@ const sections = [
         info: [
             {
                 name: 'bio',
-                content: 'personal: bio',
-            },
-            {
-                name: 'education',
-                content: 'personal: education',
+                component: markRaw(Biography),
+                content: props.pages.find((page) => page.slug === 'bio')
+                    ?.content,
             },
             {
                 name: 'maya',
-                content: 'personal: maya',
+                component: markRaw(Maya),
+                content: props.pages.find((page) => page.slug === 'maya')
+                    ?.content,
             },
         ],
     },
@@ -53,23 +81,34 @@ const sections = [
         info: [
             {
                 name: 'overlanding',
-                content: 'hobby: overlanding',
+                component: markRaw(Overlanding),
+                content: props.pages.find((page) => page.slug === 'overlanding')
+                    ?.content,
             },
             {
                 name: 'photography',
-                content: 'hobby: photography',
+                component: markRaw(Photography),
+                content: props.pages.find((page) => page.slug === 'photography')
+                    ?.content,
             },
             {
                 name: 'snowboarding',
-                content: 'hobby: snowboarding',
+                component: markRaw(Snowboarding),
+                content: props.pages.find(
+                    (page) => page.slug === 'snowboarding',
+                )?.content,
             },
             {
                 name: 'hiking',
-                content: 'hobby: hiking',
+                component: markRaw(Hiking),
+                content: props.pages.find((page) => page.slug === 'hiking')
+                    ?.content,
             },
             {
                 name: 'software',
-                content: 'hobby: software',
+                component: markRaw(Software),
+                content: props.pages.find((page) => page.slug === 'software')
+                    ?.content,
             },
         ],
     },

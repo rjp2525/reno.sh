@@ -26,7 +26,7 @@ const isOpen = ref(props.defaultOpen ?? false);
 <template>
     <Collapsible v-model:open="isOpen">
         <CollapsibleTrigger
-            class="flex w-full items-center justify-between"
+            class="flex w-full items-center justify-between transition-colors duration-100 hover:text-white"
             :class="{ 'font-medium text-white': isOpen }"
         >
             <span
@@ -58,7 +58,10 @@ const isOpen = ref(props.defaultOpen ?? false);
         </CollapsibleTrigger>
         <CollapsibleContent>
             <div class="mt-2 flex w-full flex-col">
-                <div v-if="experience.location" class="mb-2 ml-2">
+                <div
+                    v-if="experience.location"
+                    class="mb-2 ml-2 text-github-text"
+                >
                     {{ experience.location }}
                 </div>
                 <ul class="ml-6 list-disc" v-if="experience.responsibilities">

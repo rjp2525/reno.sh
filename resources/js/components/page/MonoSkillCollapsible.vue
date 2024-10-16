@@ -19,7 +19,7 @@ const isOpen = ref(props.defaultOpen ?? false);
 <template>
     <Collapsible v-model:open="isOpen">
         <CollapsibleTrigger
-            class="flex w-full items-center justify-between"
+            class="flex w-full items-center justify-between transition-colors duration-100 hover:text-white"
             :class="{ 'font-medium text-white': isOpen }"
         >
             <span>{{ category.title }}</span>
