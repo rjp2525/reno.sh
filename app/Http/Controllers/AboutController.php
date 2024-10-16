@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Experience;
+use App\Models\Skill;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -10,6 +12,18 @@ class AboutController extends Controller
 {
     public function __invoke(Request $request): Response
     {
-        return Inertia::render('About');
+        $experience = Experience::all();
+
+        $skills = Skill::all()
+            ->groupBy('category')
+            ->map(fn ($skills, $category) => [
+                'title' => $category,
+                'skills' => $skills,
+            ])->values();
+
+        return Inertia::render('About', [
+            'experience' => $experience,
+            'skills' => $skills,
+        ]);
     }
 }

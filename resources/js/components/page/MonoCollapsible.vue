@@ -12,6 +12,9 @@ const props = defineProps<{
         title: string;
         company: string;
         tenure: string;
+        start: string;
+        end: string | null;
+        location: string | null;
         responsibilities?: string[];
     };
     defaultOpen?: boolean;
@@ -28,8 +31,9 @@ const isOpen = ref(props.defaultOpen ?? false);
         >
             <span
                 >{{ experience.title }} at {{ experience.company }} ({{
-                    experience.tenure
-                }})</span
+                    experience.start
+                }}
+                - {{ experience.end ?? 'Present' }})</span
             >
             <div class="relative">
                 <Icon
@@ -53,7 +57,10 @@ const isOpen = ref(props.defaultOpen ?? false);
             </div>
         </CollapsibleTrigger>
         <CollapsibleContent>
-            <div class="mt-2 w-full">
+            <div class="mt-2 flex w-full flex-col">
+                <div v-if="experience.location" class="mb-2 ml-2">
+                    {{ experience.location }}
+                </div>
                 <ul class="ml-6 list-disc" v-if="experience.responsibilities">
                     <li
                         v-for="responsibility in experience.responsibilities"

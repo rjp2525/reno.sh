@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import { MobilePageHeader, PageMenu } from '@/components/page';
 import { GuestLayout } from '@/layouts';
+import type { ExperienceItem, SkillCategory } from '@/types/about';
 import { inject, ref } from 'vue';
 import { Experience, Skills } from './partials';
 
 const isMobile = inject('isMobile', ref(false));
+
+const props = defineProps<{
+    experience: ExperienceItem[];
+    skills: SkillCategory[];
+}>();
 
 const sections = [
     {
@@ -14,12 +20,12 @@ const sections = [
             {
                 name: 'experience',
                 component: Experience,
-                content: 'professional: experience',
+                content: props.experience,
             },
             {
                 name: 'skills',
                 component: Skills,
-                content: 'professional: skills',
+                content: props.skills,
             },
         ],
     },

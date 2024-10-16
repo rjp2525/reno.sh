@@ -1,111 +1,18 @@
 <script lang="ts" setup>
 import { MonoSkillCollapsible } from '@/components/page';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { SkillCategory } from '@/types/about';
 import VCodeBlock from '@wdns/vue-code-block';
-import { ref } from 'vue';
+import { computed } from 'vue';
 
-const categories = [
-    {
-        title: 'Backend',
-        skills: [
-            {
-                name: 'TypeScript',
-                proficiency: 'Expert',
-                experience: '6 years',
-            },
-            {
-                name: 'Node.js',
-                proficiency: 'Advanced',
-                experience: '7 years',
-            },
-            {
-                name: 'Express',
-                proficiency: 'Advanced',
-                experience: '6 years',
-            },
-            {
-                name: 'MySQL',
-                proficiency: 'Intermediate',
-                experience: '5 years',
-            },
-        ],
-    },
-    {
-        title: 'Frontend',
-        skills: [
-            {
-                name: 'JavaScript',
-                proficiency: 'Expert',
-                experience: '8 years',
-            },
-            {
-                name: 'Vue.js',
-                proficiency: 'Advanced',
-                experience: '6 years',
-            },
-            {
-                name: 'React',
-                proficiency: 'Intermediate',
-                experience: '3 years',
-            },
-            {
-                name: 'Tailwind CSS',
-                proficiency: 'Advanced',
-                experience: '5 years',
-            },
-        ],
-    },
-    {
-        title: 'Tools & DevOps',
-        skills: [
-            {
-                name: 'Git',
-                proficiency: 'Expert',
-                experience: '10 years',
-            },
-            {
-                name: 'Docker',
-                proficiency: 'Intermediate',
-                experience: '4 years',
-            },
-            {
-                name: 'CI/CD',
-                proficiency: 'Intermediate',
-                experience: '4 years',
-            },
-            {
-                name: 'Kubernetes',
-                proficiency: 'Beginner',
-                experience: '2 years',
-            },
-        ],
-    },
-    {
-        title: 'Other',
-        skills: [
-            {
-                name: 'Agile Methodology',
-                proficiency: 'Advanced',
-                experience: '6 years',
-            },
-            {
-                name: 'Leadership',
-                proficiency: 'Advanced',
-                experience: '4 years',
-            },
-            {
-                name: 'Project Management',
-                proficiency: 'Intermediate',
-                experience: '3 years',
-            },
-        ],
-    },
-];
+const props = defineProps<{
+    content: SkillCategory[];
+}>();
 
-const code = ref(`
-interface Skill {
+const generateCodeBlock = (categories: SkillCategory[]) => {
+    let codeString = `interface Skill {
   name: string;
-  proficiency: string;
+  level: string;
   experience: string;
 }
 
@@ -118,91 +25,32 @@ class Skills {
   public categories: Category[];
 
   constructor() {
-    this.categories = [
-    {
-      title: "Backend",
-        skills: [{
-          name: "TypeScript",
-          proficiency: "Expert",
-          experience: "6 years"
-        }, {
-          name: "Node.js",
-          proficiency: "Advanced",
-          experience: "7 years"
-        }, {
-          name: "Express",
-          proficiency: "Advanced",
-          experience: "6 years"
-        }, {
-          name: "MySQL",
-          proficiency: "Intermediate",
-          experience: "5 years"
-        }]
-      },
-      {
-        title: "Frontend",
-        skills: [{
-          name: "JavaScript",
-          proficiency: "Expert",
-          experience: "8 years"
-        }, {
-          name: "Vue.js",
-          proficiency: "Advanced",
-          experience: "6 years"
-        }, {
-          name: "React",
-          proficiency: "Intermediate",
-          experience: "3 years"
-        }, {
-          name: "Tailwind CSS",
-          proficiency: "Advanced",
-          experience: "5 years"
-        }]
-      },
-      {
-        title: "Tools & DevOps",
-        skills: [{
-          name: "Git",
-          proficiency: "Expert",
-          experience: "10 years"
-        }, {
-          name: "Docker",
-          proficiency: "Intermediate",
-          experience: "4 years"
-        }, {
-          name: "CI/CD",
-          proficiency: "Intermediate",
-          experience: "4 years"
-        }, {
-          name: "Kubernetes",
-          proficiency: "Beginner",
-          experience: "2 years"
-        }]
-      },
-      {
-        title: "Other",
-        skills: [{
-          name: "Agile Methodology",
-          proficiency: "Advanced",
-          experience: "6 years"
-        }, {
-          name: "Leadership",
-          proficiency: "Advanced",
-          experience: "4 years"
-        }, {
-          name: "Project Management",
-          proficiency: "Intermediate",
-          experience: "3 years"
-        }]
-      }
-    ];
+    this.categories = [`;
+
+    let count = categories.length;
+    categories.forEach((category, index) => {
+        codeString += `${index === 0 ? '' : '    '}{
+      title: "${category.title}",
+      skills: [`;
+        category.skills.forEach((skill, index) => {
+            codeString += `${index === 0 ? '' : '      '}{
+        name: "${skill.name}",
+        proficiency: "${skill.level}",
+        experience: "${skill.experience}"
+      },\n`;
+        });
+
+        codeString += `    ]}${count === index + 1 ? '];' : ',\n'}`;
+    });
+
+    codeString += `
   }
 
   displaySkills(): void {
     this.categories.forEach((category) => {
       console.log(\`\\n\${category.title}\`);
       category.skills.forEach((skill) => {
-        console.log(\`- \${skill.name} (\${skill.proficiency}, \${skill.experience})\`);
+        console.log(\`- \${skill.name} (\${skill.experience})\`);
       });
     });
   }
@@ -210,7 +58,12 @@ class Skills {
 
 const skills = new Skills();
 skills.displaySkills();
-`);
+`;
+
+    return codeString;
+};
+
+const code = computed(() => generateCodeBlock(props.content));
 </script>
 
 <template>
@@ -232,7 +85,7 @@ skills.displaySkills();
             <ScrollArea class="h-[calc(100vh-220px)] w-full p-8 pt-0">
                 <div class="flex flex-col space-y-3">
                     <MonoSkillCollapsible
-                        v-for="(category, key) in categories"
+                        v-for="(category, key) in content"
                         :key="category.title"
                         :category="category"
                         :default-open="key === 0"

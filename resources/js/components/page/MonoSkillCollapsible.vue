@@ -4,22 +4,12 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { SkillCategory } from '@/types/about';
 import { ref } from 'vue';
 import { Icon } from '..';
 
-interface Skill {
-    name: string;
-    proficiency: string;
-    experience: string;
-}
-
-interface Category {
-    title: string;
-    skills: Skill[];
-}
-
 const props = defineProps<{
-    category: Category;
+    category: SkillCategory;
     defaultOpen?: boolean;
 }>();
 
@@ -58,7 +48,7 @@ const isOpen = ref(props.defaultOpen ?? false);
             <div class="mt-2 w-full">
                 <ul class="ml-6 list-disc">
                     <li v-for="skill in category.skills" :key="skill.name">
-                        {{ skill.name }} ({{ skill.proficiency }} -
+                        {{ skill.name }} ({{ skill.level }} -
                         {{ skill.experience }})
                     </li>
                 </ul>
