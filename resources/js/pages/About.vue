@@ -2,6 +2,7 @@
 import { MobilePageHeader, PageMenu } from '@/components/page';
 import { GuestLayout } from '@/layouts';
 import { inject, ref } from 'vue';
+import { Experience, Skills } from './partials';
 
 const isMobile = inject('isMobile', ref(false));
 
@@ -12,10 +13,12 @@ const sections = [
         info: [
             {
                 name: 'experience',
+                component: Experience,
                 content: 'professional: experience',
             },
             {
                 name: 'skills',
+                component: Skills,
                 content: 'professional: skills',
             },
         ],

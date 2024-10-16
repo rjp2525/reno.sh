@@ -80,12 +80,13 @@ const isOpen = (f: string) => {
             </div>
         </div>
     </div>
-    <div class="flex h-full w-full flex-col lg:grid lg:grid-cols-2">
+    <div class="flex h-full w-full">
         <div
-            v-html="folder.content"
             :key="folder.name"
-            class="p-8"
             data-aos="fade-left"
-        ></div>
+            class="relative flex h-full w-full flex-col"
+        >
+            <component :is="folder.component" />
+        </div>
     </div>
 </template>

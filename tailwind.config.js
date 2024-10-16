@@ -1,5 +1,6 @@
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
+import animate from 'tailwindcss-animate';
 import defaultTheme from 'tailwindcss/defaultTheme';
 
 /** @type {import('tailwindcss').Config} */
@@ -8,10 +9,17 @@ export default {
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
-        './resources/js/**/*.vue',
+        './resources/js/**/*.{ts,tsx,vue}',
     ],
 
     theme: {
+        container: {
+            center: true,
+            padding: '2rem',
+            screens: {
+                '2xl': '1400px',
+            },
+        },
         extend: {
             fontFamily: {
                 sans: ['Geist Mono', ...defaultTheme.fontFamily.sans],
@@ -33,6 +41,10 @@ export default {
                 'octocat-wave': 'octocat-wave 560ms ease-in-out',
                 typewriter:
                     'typewriter 3.5s steps(40) 1s 1 normal both, blink-text-cursor 800ms steps(40) infinite normal',
+                'accordion-down': 'accordion-down 0.2s ease-out',
+                'accordion-up': 'accordion-up 0.2s ease-out',
+                'collapsible-down': 'collapsible-down 0.2s ease-in-out',
+                'collapsible-up': 'collapsible-up 0.2s ease-in-out',
             },
             keyframes: {
                 'octocat-wave': {
@@ -48,9 +60,25 @@ export default {
                     from: { 'border-right-color': 'rgba(255,255,255,.75)' },
                     to: { 'border-right-color': 'transparent' },
                 },
+                'accordion-down': {
+                    from: { height: 0 },
+                    to: { height: 'var(--radix-accordion-content-height)' },
+                },
+                'accordion-up': {
+                    from: { height: 'var(--radix-accordion-content-height)' },
+                    to: { height: 0 },
+                },
+                'collapsible-down': {
+                    from: { height: 0 },
+                    to: { height: 'var(--radix-collapsible-content-height)' },
+                },
+                'collapsible-up': {
+                    from: { height: 'var(--radix-collapsible-content-height)' },
+                    to: { height: 0 },
+                },
             },
         },
     },
 
-    plugins: [forms, typography],
+    plugins: [forms, typography, animate],
 };
