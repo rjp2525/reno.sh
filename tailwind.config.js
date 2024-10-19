@@ -11,7 +11,7 @@ export default {
         './resources/views/**/*.blade.php',
         './resources/js/**/*.{ts,tsx,vue}',
     ],
-
+    safelist: [{ pattern: /col-span-.+/, variants: ['lg'] }],
     theme: {
         container: {
             center: true,

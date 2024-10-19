@@ -6,6 +6,7 @@ use App\Enums\AboutPageSection;
 use App\Filament\Resources\AboutPageResource\Pages;
 use App\Models\AboutPage;
 use Filament\Forms\Components\Builder as BuilderComponent;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -43,9 +44,25 @@ class AboutPageResource extends Resource
                     ->blocks([
                         BuilderComponent\Block::make('richtext')
                             ->schema([
+                                TextInput::make('column_span')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->maxValue(12)
+                                    ->step(1),
                                 RichEditor::make('content')
                                     ->label('Rich Text')
                                     ->required(),
+                            ]),
+                        BuilderComponent\Block::make('image')
+                            ->schema([
+                                TextInput::make('column_span')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->maxValue(12)
+                                    ->step(1),
+                                FileUpload::make('content')
+                                    ->image()
+                                    ->label('Image'),
                             ]),
                     ])->columnSpanFull(),
             ]);

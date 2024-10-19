@@ -65,9 +65,9 @@ const isMobile = inject('isMobile', ref(false));
                 v-if="!isMobile"
             >
                 <div
-                    class="bg-intro relative flex h-[475px] w-[530px] items-center justify-between rounded-xl border border-black p-7"
+                    class="relative flex h-[475px] w-[530px] items-center justify-between p-7"
                 >
-                    <img src="@img/home-intro-self.jpg" class="rounded" />
+                    <img src="@img/home-intro-self.png" class="rounded" />
                 </div>
             </section>
         </main>
