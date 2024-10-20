@@ -1,30 +1,31 @@
 <script lang="ts" setup>
+import type { SectionInfo, SectionType } from '@/types/about';
 import { ref } from 'vue';
 import { Icon } from '..';
 
 const props = defineProps<{
     // TODO: Typedef this thing
-    sections: object[];
+    sections: SectionType[];
 }>();
 
-const folder = ref(props.sections[0]?.info[0] ?? null);
-const currentSection = ref(props.sections[0] ?? null);
+const folder = ref<SectionInfo | null>(props.sections[0]?.info[0] ?? null);
+const currentSection = ref<SectionType | null>(props.sections[0] ?? null);
 
 const isSectionActive = (name: string) => {
-    return currentSection.value.name === name;
+    return currentSection.value?.name === name;
 };
 
-const focusCurrentSection = (section: object) => {
+const focusCurrentSection = (section: SectionType) => {
     currentSection.value = section;
     folder.value = section.info[0];
 };
 
-const focusCurrentFolder = (f: object) => {
+const focusCurrentFolder = (f: SectionInfo) => {
     folder.value = f;
 };
 
 const isOpen = (f: string) => {
-    return folder.value.name === f;
+    return folder.value?.name === f;
 };
 </script>
 
@@ -55,7 +56,7 @@ const isOpen = (f: string) => {
             </div>
             <div>
                 <div
-                    v-for="(folder, key, index) in currentSection.info"
+                    v-for="(folder, key) in currentSection?.info"
                     :key="key"
                     class="text-menu-text mx-4 my-2 grid grid-cols-2 items-center"
                     @click="focusCurrentFolder(folder)"
@@ -82,11 +83,11 @@ const isOpen = (f: string) => {
     </div>
     <div class="flex h-full w-full">
         <div
-            :key="folder.name"
+            :key="folder?.name"
             data-aos="fade-left"
             class="relative flex h-full w-full flex-col"
         >
-            <component :is="folder.component" :content="folder.content" />
+            <component :is="folder?.component" :content="folder?.content" />
         </div>
     </div>
 </template>

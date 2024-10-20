@@ -13,7 +13,7 @@ const props = defineProps({
         required: true,
     },
     class: {
-        type: String as PropType<string>,
+        type: [String, Object] as PropType<string | Record<string, boolean>>,
         required: false,
     },
 });

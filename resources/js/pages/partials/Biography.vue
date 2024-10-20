@@ -5,6 +5,7 @@ import { ref } from 'vue';
 interface PageBuilderContent {
     type: string;
     data: {
+        column_span?: number | string;
         content: string;
     };
 }

@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { MobilePageHeader, PageMenu } from '@/components/page';
 import { GuestLayout } from '@/layouts';
-import type { ExperienceItem, SkillCategory } from '@/types/about';
+import type {
+    ExperienceItem,
+    SectionContentType,
+    SectionType,
+    SkillCategory,
+} from '@/types/about';
 import { inject, markRaw, ref } from 'vue';
 import {
     Biography,
@@ -17,30 +22,13 @@ import {
 
 const isMobile = inject('isMobile', ref(false));
 
-interface PageBuilderContent {
-    type: string;
-    data: {
-        content: string;
-    };
-}
-
-interface AboutPageSection {
-    id: number;
-    title: string;
-    slug: string;
-    section: string;
-    content: PageBuilderContent[];
-    created_at: string;
-    updated_at: string;
-}
-
 const props = defineProps<{
     experience: ExperienceItem[];
     skills: SkillCategory[];
-    pages: AboutPageSection[];
+    pages: SectionContentType[];
 }>();
 
-const sections = [
+const sections: SectionType[] = [
     {
         name: 'professional',
         icon: 'code-browser',
@@ -64,8 +52,9 @@ const sections = [
             {
                 name: 'bio',
                 component: markRaw(Biography),
-                content: props.pages.find((page) => page.slug === 'bio')
-                    ?.content,
+                content: props.pages.find(
+                    (page: SectionContentType) => page.slug === 'bio',
+                )?.content,
             },
             {
                 name: 'maya',
