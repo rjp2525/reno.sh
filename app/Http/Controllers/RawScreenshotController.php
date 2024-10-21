@@ -12,7 +12,7 @@ class RawScreenshotController extends Controller
     {
         $stream = Storage::disk('s3')->readStream($screenshot->stored_path);
 
-        return response()->make(
+        return response()->stream(
             fn () => fpassthru($stream),
             200, [
                 'Content-Type' => $screenshot->mime_type,
