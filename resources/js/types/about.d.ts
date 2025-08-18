@@ -30,6 +30,22 @@ interface PageBuilderContent {
     };
 }
 
+interface PageContent {
+    id?: number;
+    title: string;
+    slug: string;
+    content: PageBuilderContent[] | ExperienceItem[] | SkillCategory[] | null;
+    type?: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
+interface Section {
+    name: string;
+    icon: string;
+    pages: PageContent[];
+}
+
 interface SectionContentType {
     id: number;
     title: string;
@@ -50,6 +66,7 @@ interface SectionInfo {
         | PageBuilderContent[]
         | null
         | undefined;
+    type?: string;
 }
 
 interface SectionType {

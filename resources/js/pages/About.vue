@@ -1,107 +1,26 @@
 <script setup lang="ts">
 import { MobilePageHeader, PageMenu } from '@/components/page';
 import { GuestLayout } from '@/layouts';
-import type {
-    ExperienceItem,
-    SectionContentType,
-    SectionType,
-    SkillCategory,
-} from '@/types/about';
+import type { Section } from '@/types/about';
 import { inject, markRaw, ref } from 'vue';
-import {
-    Biography,
-    Experience,
-    Hiking,
-    Maya,
-    Overlanding,
-    Photography,
-    Skills,
-    Snowboarding,
-    Software,
-} from './partials';
+import { DynamicContent } from './partials';
 
 const isMobile = inject('isMobile', ref(false));
 
 const props = defineProps<{
-    experience: ExperienceItem[];
-    skills: SkillCategory[];
-    pages: SectionContentType[];
+    sections: Section[];
 }>();
 
-const sections: SectionType[] = [
-    {
-        name: 'professional',
-        icon: 'code-browser',
-        info: [
-            {
-                name: 'experience',
-                component: markRaw(Experience),
-                content: props.experience,
-            },
-            {
-                name: 'skills',
-                component: markRaw(Skills),
-                content: props.skills,
-            },
-        ],
-    },
-    {
-        name: 'personal',
-        icon: 'person',
-        info: [
-            {
-                name: 'bio',
-                component: markRaw(Biography),
-                content: props.pages.find(
-                    (page: SectionContentType) => page.slug === 'bio',
-                )?.content,
-            },
-            {
-                name: 'maya',
-                component: markRaw(Maya),
-                content: props.pages.find((page) => page.slug === 'maya')
-                    ?.content,
-            },
-        ],
-    },
-    {
-        name: 'hobbies',
-        icon: 'hobbies',
-        info: [
-            {
-                name: 'overlanding',
-                component: markRaw(Overlanding),
-                content: props.pages.find((page) => page.slug === 'overlanding')
-                    ?.content,
-            },
-            {
-                name: 'photography',
-                component: markRaw(Photography),
-                content: props.pages.find((page) => page.slug === 'photography')
-                    ?.content,
-            },
-            {
-                name: 'snowboarding',
-                component: markRaw(Snowboarding),
-                content: props.pages.find(
-                    (page) => page.slug === 'snowboarding',
-                )?.content,
-            },
-            {
-                name: 'hiking',
-                component: markRaw(Hiking),
-                content: props.pages.find((page) => page.slug === 'hiking')
-                    ?.content,
-            },
-            {
-                name: 'software',
-                component: markRaw(Software),
-                content: props.pages.find((page) => page.slug === 'software')
-                    ?.content,
-            },
-        ],
-    },
-];
+const transformedSections = props.sections.map((section) => ({
+    name: section.name,
+    icon: section.icon,
+    info: section.pages.map((page) => ({
+        name: page.slug,
+        component: markRaw(DynamicContent),
+        content: page.content,
+        type: page.type,
+    })),
+}));
 </script>
 
 <template>
@@ -110,7 +29,7 @@ const sections: SectionType[] = [
 
         <main class="flex h-full w-full flex-auto overflow-hidden">
             <MobilePageHeader> _about </MobilePageHeader>
-            <PageMenu :sections="sections" />
+            <PageMenu :sections="transformedSections" />
         </main>
     </GuestLayout>
 </template>

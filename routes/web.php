@@ -3,6 +3,8 @@
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProjectsController;
+use App\Http\Controllers\ProjectShowController;
 use App\Http\Controllers\RawScreenshotController;
 use App\Http\Controllers\ScreenshotController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +24,10 @@ Route::get('/', HomepageController::class)
     ->name('home');
 Route::get('/about', AboutController::class)
     ->name('about');
+Route::get('/projects', ProjectsController::class)
+    ->name('projects');
+Route::get('/projects/{project:slug}', ProjectShowController::class)
+    ->name('projects.show');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

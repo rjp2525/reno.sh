@@ -1,17 +1,20 @@
-import forms from '@tailwindcss/forms';
-import typography from '@tailwindcss/typography';
-import animate from 'tailwindcss-animate';
-import defaultTheme from 'tailwindcss/defaultTheme';
+const forms = require('@tailwindcss/forms');
+const typography = require('@tailwindcss/typography');
+const animate = require('tailwindcss-animate');
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
     content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
         './resources/js/**/*.{ts,tsx,vue}',
     ],
-    safelist: [{ pattern: /col-span-.+/, variants: ['lg'] }],
+    safelist: [
+        { pattern: /col-span-.+/, variants: ['lg'] },
+        { pattern: /prose.*/, variants: ['dark'] },
+    ],
     theme: {
         container: {
             center: true,

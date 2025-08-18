@@ -20,7 +20,14 @@ import { GitHubOctoCat, NavbarLink, NavbarLogo } from '.';
                     label="_about"
                     :active="route().current() === 'about'"
                 />
-                <NavbarLink url="#" label="_projects" :active="false" />
+                <NavbarLink
+                    :url="route('projects')"
+                    label="_projects"
+                    :active="
+                        route().current() === 'projects' ||
+                        route().current() === 'projects.show'
+                    "
+                />
                 <NavbarLink url="#" label="_photography" :active="false" />
                 <NavbarLink url="#" label="_blog" :active="false" />
             </div>

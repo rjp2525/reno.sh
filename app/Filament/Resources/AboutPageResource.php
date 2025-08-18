@@ -40,6 +40,10 @@ class AboutPageResource extends Resource
                         $item->value => $item->getLabel(),
                     ]))
                     ->required(),
+                TextInput::make('order')
+                    ->numeric()
+                    ->default(0)
+                    ->helperText('Lower numbers appear first'),
                 BuilderComponent::make('content')
                     ->blocks([
                         BuilderComponent\Block::make('richtext')
@@ -73,7 +77,12 @@ class AboutPageResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title'),
+                TextColumn::make('section')
+                    ->formatStateUsing(fn ($state) => $state->getLabel()),
+                TextColumn::make('order')
+                    ->sortable(),
             ])
+            ->defaultSort('order')
             ->filters([
                 //
             ])

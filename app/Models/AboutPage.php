@@ -14,11 +14,20 @@ class AboutPage extends Model
         'title',
         'slug',
         'section',
+        'order',
         'content',
     ];
 
     protected $casts = [
         'section' => AboutPageSection::class,
         'content' => 'array',
+        'order' => 'integer',
     ];
+
+    protected static function booted()
+    {
+        static::addGlobalScope('ordered', function ($builder) {
+            $builder->orderBy('order');
+        });
+    }
 }

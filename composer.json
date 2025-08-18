@@ -13,6 +13,7 @@
         "laravel/tinker": "^2.9",
         "league/flysystem-aws-s3-v3": "^3.0",
         "php-ffmpeg/php-ffmpeg": "^1.2",
+        "spatie/laravel-tags": "^4.10",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {

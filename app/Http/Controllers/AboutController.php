@@ -22,12 +22,52 @@ class AboutController extends Controller
                 'skills' => $skills,
             ])->values();
 
-        $pages = AboutPage::all();
+        $sections = AboutPage::orderBy('order')->get()
+            ->groupBy('section')
+            ->map(function ($pages, $sectionName) use ($experience, $skills) {
+                $sectionData = [
+                    'name' => $sectionName,
+                    'icon' => $this->getSectionIcon($sectionName),
+                    'pages' => $pages->sortBy('order')->map(function ($page) {
+                        return [
+                            'id' => $page->id,
+                            'title' => $page->title,
+                            'slug' => $page->slug,
+                            'content' => $page->content,
+                        ];
+                    })->values()->toArray(),
+                ];
+
+                if ($sectionName === 'professional') {
+                    $sectionData['pages'][] = [
+                        'slug' => 'experience',
+                        'title' => 'Experience',
+                        'content' => $experience,
+                        'type' => 'experience',
+                    ];
+                    $sectionData['pages'][] = [
+                        'slug' => 'skills',
+                        'title' => 'Skills',
+                        'content' => $skills,
+                        'type' => 'skills',
+                    ];
+                }
+
+                return $sectionData;
+            })->values();
 
         return Inertia::render('About', [
-            'experience' => $experience,
-            'skills' => $skills,
-            'pages' => $pages,
+            'sections' => $sections,
         ]);
+    }
+
+    private function getSectionIcon(string $section): string
+    {
+        return match ($section) {
+            'professional' => 'code-browser',
+            'personal' => 'person',
+            'hobbies' => 'hobbies',
+            default => 'folder'
+        };
     }
 }

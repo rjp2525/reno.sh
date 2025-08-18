@@ -87,7 +87,11 @@ const isOpen = (f: string) => {
             data-aos="fade-left"
             class="relative flex h-full w-full flex-col"
         >
-            <component :is="folder?.component" :content="folder?.content" />
+            <component
+                :is="folder?.component"
+                :content="folder?.content"
+                :type="folder?.type"
+            />
         </div>
     </div>
 </template>
