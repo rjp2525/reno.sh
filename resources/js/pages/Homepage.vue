@@ -23,21 +23,23 @@ const isMobile = inject('isMobile', ref(false));
             <div class="custom-gradient-green"></div>
             <section class="m-0 flex w-full flex-col justify-center">
                 <div class="pb-12">
-                    <span class="text-lg leading-none">Hi all, I'm</span>
+                    <span class="text-lg leading-none">Howdy there, I'm</span>
                     <h1 class="py-4 text-6xl leading-none text-white">
                         Reno Philibert
                     </h1>
-                    <span class="diple flex text-3xl leading-none text-purple">
-                        >&nbsp;
+                    <span
+                        class="diple text-purple flex gap-2 text-3xl leading-none"
+                    >
+                        >
                         <h2
-                            class="w-fit max-w-fit animate-typewriter overflow-hidden whitespace-nowrap border-r-[3px] border-r-white/75 pr-[2px]"
+                            class="animate-typewriter w-fit max-w-fit overflow-hidden border-r-[3px] border-r-white/75 pr-[2px] whitespace-nowrap"
                         >
                             Full Stack Engineer
                         </h2>
                     </span>
                 </div>
                 <div
-                    class="flex flex-col space-y-3 text-sm leading-none text-menu"
+                    class="text-menu flex flex-col space-y-3 text-sm leading-none"
                 >
                     <span :class="{ hide: isMobile }">
                         // building awesome things for the web since 2011
@@ -76,7 +78,7 @@ const isMobile = inject('isMobile', ref(false));
 
 <style lang="scss" scoped>
 .custom-gradient-blue {
-    @apply fixed bottom-1/4 right-[5%] z-10 h-[300px] w-[300px] opacity-50;
+    @apply fixed right-[5%] bottom-1/4 z-10 h-[300px] w-[300px] opacity-50;
     border-radius: 0% 0% 50% 50%;
     filter: blur(70px);
     background: radial-gradient(
@@ -87,7 +89,7 @@ const isMobile = inject('isMobile', ref(false));
 }
 
 .custom-gradient-green {
-    @apply absolute right-[30%] top-[20%] z-10 h-[300px] w-[300px] opacity-50;
+    @apply absolute top-[20%] right-[30%] z-10 h-[300px] w-[300px] opacity-50;
     border-radius: 0% 50% 0% 50%;
     filter: blur(70px);
     background: radial-gradient(

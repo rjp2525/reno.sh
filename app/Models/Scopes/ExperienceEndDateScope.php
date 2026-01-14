@@ -10,7 +10,6 @@ class ExperienceEndDateScope implements Scope
 {
     public function apply(Builder $builder, Model $model): void
     {
-        $builder->orderByRaw('end IS NULL DESC')
-            ->orderBy('end', 'DESC');
+        $builder->orderByRaw('"end" IS NULL DESC, "end" DESC');
     }
 }

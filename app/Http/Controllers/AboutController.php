@@ -24,8 +24,8 @@ class AboutController extends Controller
 
         $sections = AboutPage::orderBy('order')->get()
             ->groupBy('section')
-            ->map(function ($pages, $sectionName) use ($experience, $skills) {
-                $sectionData = [
+            ->map(function ($pages, $sectionName) {
+                return [
                     'name' => $sectionName,
                     'icon' => $this->getSectionIcon($sectionName),
                     'pages' => $pages->sortBy('order')->map(function ($page) {
@@ -37,27 +37,27 @@ class AboutController extends Controller
                         ];
                     })->values()->toArray(),
                 ];
+            });
 
-                if ($sectionName === 'professional') {
-                    $sectionData['pages'][] = [
-                        'slug' => 'experience',
-                        'title' => 'Experience',
-                        'content' => $experience,
-                        'type' => 'experience',
-                    ];
-                    $sectionData['pages'][] = [
-                        'slug' => 'skills',
-                        'title' => 'Skills',
-                        'content' => $skills,
-                        'type' => 'skills',
-                    ];
-                }
-
-                return $sectionData;
-            })->values();
+        $sections->prepend([
+            'name' => 'professional',
+            'icon' => 'code-browser',
+            'pages' => [
+                [
+                    'slug' => 'experience',
+                    'title' => 'Experience',
+                    'content' => $experience,
+                ],
+                [
+                    'slug' => 'skills',
+                    'title' => 'Skills',
+                    'content' => $skills,
+                ],
+            ],
+        ]);
 
         return Inertia::render('About', [
-            'sections' => $sections,
+            'sections' => $sections->values(),
         ]);
     }
 
