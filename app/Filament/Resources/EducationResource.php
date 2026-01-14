@@ -1,14 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
+use App\Enums\NavigationGroup;
 use App\Filament\Resources\EducationResource\Pages;
 use App\Models\Education;
+use BackedEnum;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -16,14 +20,20 @@ class EducationResource extends Resource
 {
     protected static ?string $model = Education::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    public static function getNavigationIcon(): string|BackedEnum|null
+    {
+        return 'heroicon-o-academic-cap';
+    }
 
-    protected static ?string $navigationGroup = 'About';
+    public static function getNavigationGroup(): ?string
+    {
+        return NavigationGroup::ABOUT->getLabel();
+    }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $form): Schema
     {
         return $form
-            ->schema([
+            ->components([
                 TextInput::make('school_name')
                     ->required(),
                 TextInput::make('location'),

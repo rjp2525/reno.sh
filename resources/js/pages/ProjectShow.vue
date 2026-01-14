@@ -2,6 +2,8 @@
 import { MobilePageHeader } from '@/components/page';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { GuestLayout } from '@/layouts';
+import { projects as projectsRoute } from '@/routes';
+import { show as projectShow } from '@/routes/projects';
 import { Head, Link } from '@inertiajs/vue3';
 import { inject, ref } from 'vue';
 
@@ -96,7 +98,7 @@ const otherTechnologies = props.project.technologies.filter(
             <ScrollArea class="h-[calc(100vh-150px)] w-full p-6">
                 <MobilePageHeader>
                     <Link
-                        :href="route('projects')"
+                        :href="projectsRoute.url()"
                         class="text-blue-600 hover:underline dark:text-blue-400"
                     >
                         _projects
@@ -135,7 +137,7 @@ const otherTechnologies = props.project.technologies.filter(
                                 >
                                     <nav class="text-sm">
                                         <Link
-                                            :href="route('projects')"
+                                            :href="projectsRoute.url()"
                                             class="text-blue-600 hover:underline dark:text-blue-400"
                                         >
                                             Projects
@@ -270,7 +272,7 @@ const otherTechnologies = props.project.technologies.filter(
                                             class="prose prose-gray dark:prose-invert max-w-none"
                                         >
                                             <p
-                                                class="whitespace-pre-wrap leading-relaxed text-gray-600 dark:text-gray-400"
+                                                class="leading-relaxed whitespace-pre-wrap text-gray-600 dark:text-gray-400"
                                             >
                                                 {{ project.description }}
                                             </p>
@@ -404,7 +406,7 @@ const otherTechnologies = props.project.technologies.filter(
                                                     Type
                                                 </dt>
                                                 <dd
-                                                    class="text-sm capitalize text-gray-900 dark:text-white"
+                                                    class="text-sm text-gray-900 capitalize dark:text-white"
                                                 >
                                                     {{
                                                         project.type.replace(
@@ -422,7 +424,7 @@ const otherTechnologies = props.project.technologies.filter(
                                                     Status
                                                 </dt>
                                                 <dd
-                                                    class="text-sm capitalize text-gray-900 dark:text-white"
+                                                    class="text-sm text-gray-900 capitalize dark:text-white"
                                                 >
                                                     {{
                                                         project.status.replace(
@@ -595,8 +597,7 @@ const otherTechnologies = props.project.technologies.filter(
                                         </p>
                                         <Link
                                             :href="
-                                                route(
-                                                    'projects.show',
+                                                projectShow.url(
                                                     relatedProject.slug,
                                                 )
                                             "
@@ -612,7 +613,7 @@ const otherTechnologies = props.project.technologies.filter(
 
                     <div class="px-6 py-8 text-center">
                         <Link
-                            :href="route('projects')"
+                            :href="projectsRoute.url()"
                             class="inline-flex items-center rounded-lg bg-gray-100 px-4 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                         >
                             <svg

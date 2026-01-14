@@ -4,7 +4,7 @@ export interface ExperienceItem {
     company: string;
     location: string | null;
     start: string;
-    end: string;
+    end: string | null;
     responsibilities: string[];
     tenure: string;
 }
@@ -22,54 +22,75 @@ export interface SkillCategory {
     skills: Skill[];
 }
 
-interface PageBuilderContent {
-    type: string;
-    data: {
-        column_span?: number | string;
-        content: string;
-    };
-}
-
-interface PageContent {
-    id?: number;
-    title: string;
-    slug: string;
-    content: PageBuilderContent[] | ExperienceItem[] | SkillCategory[] | null;
-    type?: string;
-    created_at?: string;
-    updated_at?: string;
-}
-
-interface Section {
-    name: string;
-    icon: string;
-    pages: PageContent[];
-}
-
-interface SectionContentType {
+export interface EducationItem {
     id: number;
-    title: string;
-    slug: string;
-    section: string;
-    content: PageBuilderContent[] | null;
-    created_at: string;
-    updated_at: string;
+    school_name: string;
+    location: string | null;
+    degree: string;
+    minor: string | null;
+    started: string;
+    graduated: string | null;
+    description: string | null;
+    achievements: string[] | null;
+    projects: string[] | null;
+    extracurriculars: string[] | null;
 }
 
-interface SectionInfo {
+export interface ContentPage {
+    slug: string;
+    title: string;
+    icon: string | null;
+    content: TiptapContent | string | null;
+}
+
+export interface TiptapContent {
+    type: string;
+    content?: TiptapContent[];
+    text?: string;
+    attrs?: Record<string, unknown>;
+    marks?: Array<{ type: string; attrs?: Record<string, unknown> }>;
+}
+
+// Props interfaces for pages
+export interface ProfessionalPageProps {
+    activeTab: string;
+    tabs: Record<string, string>;
+    experience: ExperienceItem[];
+    skills: SkillCategory[];
+    education: EducationItem[];
+}
+
+export interface PersonalPageProps {
+    activeTab: string;
+    tabs: Record<string, string>;
+    content: TiptapContent | string | null;
+    pages: ContentPage[];
+}
+
+export interface HobbiesPageProps {
+    activeTab: string;
+    tabs: Record<string, string>;
+    content: TiptapContent | string | null;
+    pages: ContentPage[];
+}
+
+// Legacy types for backward compatibility with PageMenu component
+import type { Component } from 'vue';
+
+export interface SectionInfo {
     name: string;
     component: Component;
     content:
-        | SectionContentType[]
         | ExperienceItem[]
         | SkillCategory[]
-        | PageBuilderContent[]
+        | TiptapContent
+        | string
         | null
         | undefined;
     type?: string;
 }
 
-interface SectionType {
+export interface SectionType {
     name: string;
     icon: string;
     info: SectionInfo[];

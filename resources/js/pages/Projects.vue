@@ -2,6 +2,8 @@
 import { MobilePageHeader } from '@/components/page';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { GuestLayout } from '@/layouts';
+import { projects as projectsRoute } from '@/routes';
+import { show as projectShow } from '@/routes/projects';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { AppWindowMac } from 'lucide-vue-next';
 import { computed, inject, ref, watch } from 'vue';
@@ -58,7 +60,7 @@ const applyFilters = () => {
         params.technologies = selectedTechnologies.value;
     if (showFeaturedOnly.value) params.featured = true;
 
-    router.get(route('projects'), params, {
+    router.get(projectsRoute.url(), params, {
         preserveState: true,
         preserveScroll: true,
     });
@@ -70,7 +72,7 @@ const clearFilters = () => {
     selectedTags.value = [];
     selectedTechnologies.value = [];
     showFeaturedOnly.value = false;
-    router.get(route('projects'));
+    router.get(projectsRoute.url());
 };
 
 const toggleTag = (tagSlug: string) => {
@@ -442,9 +444,7 @@ const hasActiveFilters = computed(() => {
                                     class="flex items-center justify-between border-t border-gray-100 pt-4 dark:border-gray-700"
                                 >
                                     <Link
-                                        :href="
-                                            route('projects.show', project.slug)
-                                        "
+                                        :href="projectShow.url(project.slug)"
                                         class="text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                                     >
                                         View Details →

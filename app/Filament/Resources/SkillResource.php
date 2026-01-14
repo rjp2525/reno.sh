@@ -1,15 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
+use App\Enums\NavigationGroup;
 use App\Enums\SkillProficiency;
 use App\Filament\Resources\SkillResource\Pages;
 use App\Models\Skill;
+use BackedEnum;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Arr;
@@ -18,14 +22,20 @@ class SkillResource extends Resource
 {
     protected static ?string $model = Skill::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    public static function getNavigationIcon(): string|BackedEnum|null
+    {
+        return 'heroicon-o-sparkles';
+    }
 
-    protected static ?string $navigationGroup = 'About';
+    public static function getNavigationGroup(): ?string
+    {
+        return NavigationGroup::ABOUT->getLabel();
+    }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $form): Schema
     {
         return $form
-            ->schema([
+            ->components([
                 TextInput::make('category')
                     ->required(),
                 TextInput::make('name')

@@ -1,5 +1,19 @@
 <script lang="ts" setup>
+import { home, projects } from '@/routes';
+import { professional } from '@/routes/about';
+import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import { GitHubOctoCat, MobileNav, NavbarLink, NavbarLogo } from '.';
+
+const page = usePage();
+const currentUrl = computed(() => page.url);
+
+const isActive = (path: string, exact = false) => {
+    if (exact) {
+        return currentUrl.value === path;
+    }
+    return currentUrl.value.startsWith(path);
+};
 </script>
 
 <template>
@@ -13,22 +27,19 @@ import { GitHubOctoCat, MobileNav, NavbarLink, NavbarLogo } from '.';
             <div class="flex">
                 <NavbarLogo />
                 <NavbarLink
-                    :url="route('home')"
+                    :url="home.url()"
                     label="_hello"
-                    :active="route().current() === 'home'"
+                    :active="isActive('/', true)"
                 />
                 <NavbarLink
-                    :url="route('about')"
+                    :url="professional.url()"
                     label="_about"
-                    :active="route().current() === 'about'"
+                    :active="isActive('/about')"
                 />
                 <NavbarLink
-                    :url="route('projects')"
+                    :url="projects.url()"
                     label="_projects"
-                    :active="
-                        route().current() === 'projects' ||
-                        route().current() === 'projects.show'
-                    "
+                    :active="isActive('/projects')"
                 />
                 <NavbarLink url="#" label="_photography" :active="false" />
                 <NavbarLink url="#" label="_blog" :active="false" />

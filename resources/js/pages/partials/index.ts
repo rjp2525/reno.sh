@@ -1,6 +1,5 @@
+// these should be removed once all content is migrated to ContentPages
 export { default as Biography } from './Biography.vue';
-export { default as DynamicContent } from './DynamicContent.vue';
-export { default as Experience } from './Experience.vue';
 export { default as Hiking } from './Hiking.vue';
 export { default as Maya } from './Maya.vue';
 export { default as Overlanding } from './Overlanding.vue';

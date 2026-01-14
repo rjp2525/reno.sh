@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
+use App\Enums\NavigationGroup;
 use App\Enums\ProjectType;
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource\RelationManagers\TagsRelationManager;
 use App\Models\Project;
+use BackedEnum;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
@@ -16,8 +20,8 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -32,12 +36,20 @@ class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    public static function getNavigationIcon(): string|BackedEnum|null
+    {
+        return 'heroicon-o-code-bracket-square';
+    }
 
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
+    {
+        return NavigationGroup::CONTENT->getLabel();
+    }
+
+    public static function form(Schema $form): Schema
     {
         return $form
-            ->schema([
+            ->components([
                 Grid::make(3)
                     ->schema([
                         Section::make('Basic Information')

@@ -1,6 +1,8 @@
 <?php
 
-use App\Http\Controllers\AboutController;
+use App\Http\Controllers\About\HobbiesController;
+use App\Http\Controllers\About\PersonalController;
+use App\Http\Controllers\About\ProfessionalController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectsController;
@@ -22,8 +24,14 @@ Route::group($domainData, function () {
 
 Route::get('/', HomepageController::class)
     ->name('home');
-Route::get('/about', AboutController::class)
-    ->name('about');
+
+// About pages with URL-trackable tabs
+Route::prefix('about')->name('about.')->group(function () {
+    Route::get('/', fn () => redirect()->route('about.professional'));
+    Route::get('/professional/{tab?}', ProfessionalController::class)->name('professional');
+    Route::get('/personal/{tab?}', PersonalController::class)->name('personal');
+    Route::get('/hobbies/{tab?}', HobbiesController::class)->name('hobbies');
+});
 Route::get('/projects', ProjectsController::class)
     ->name('projects');
 Route::get('/projects/{project:slug}', ProjectShowController::class)
