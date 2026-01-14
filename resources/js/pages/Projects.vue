@@ -3,6 +3,7 @@ import { MobilePageHeader } from '@/components/page';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { GuestLayout } from '@/layouts';
 import { Head, Link, router } from '@inertiajs/vue3';
+import { AppWindowMac } from 'lucide-vue-next';
 import { computed, inject, ref, watch } from 'vue';
 
 const isMobile = inject('isMobile', ref(false));
@@ -116,140 +117,144 @@ const hasActiveFilters = computed(() => {
         <main class="flex h-full w-full flex-auto flex-col overflow-hidden">
             <MobilePageHeader>_projects</MobilePageHeader>
 
-            <div class="flex justify-between p-6 pb-0">
-                <div class="mb-0 w-1/2">
+            <div class="grid grid-cols-1 gap-4 gap-6 p-6 pb-0 md:grid-cols-2">
+                <div class="mb-0">
                     <h1
-                        class="mb-3 text-3xl font-bold text-gray-900 dark:text-white"
+                        class="mb-1 text-3xl font-bold text-gray-900 dark:text-white"
                     >
                         Projects
                     </h1>
                     <p class="text-gray-400">
-                        Check out some of these cool personal and professional
-                        projects I've worked on!
+                        Check out some of the cool things I've built for fun and
+                        work.
                     </p>
                 </div>
 
-                <div
-                    class="mb-8 inline-flex w-1/2 items-center justify-end space-x-4"
-                >
-                    <div class="relative w-full">
-                        <input
-                            v-model="searchQuery"
-                            type="text"
-                            placeholder="Search projects..."
-                            class="w-full rounded-md border border-gray-700 bg-gray-800 px-4 py-1 pl-10 transition-all duration-200 focus:border-orange-400 focus:outline-0 focus:ring-0"
-                        />
-                        <svg
-                            class="absolute left-3 top-2 h-4 w-4 text-gray-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                            />
-                        </svg>
-                    </div>
-
-                    <div class="flex w-full gap-4">
-                        <select
-                            v-model="selectedType"
-                            class="rounded-md border border-gray-700 bg-gray-800 px-3 py-1.5 text-sm transition-all duration-200 focus:border-orange-400 focus:outline-0 focus:ring-0"
-                        >
-                            <option value="" class="text-sm">All Types</option>
-                            <option
-                                v-for="type in filterOptions.types"
-                                :key="type.value"
-                                :value="type.value"
-                                class="text-sm"
-                            >
-                                {{ type.label }}
-                            </option>
-                        </select>
-
-                        <label
-                            class="flex cursor-pointer items-center space-x-2"
-                        >
+                <div class="flex items-center justify-end">
+                    <div class="inline-flex items-center space-x-4">
+                        <div class="relative w-full">
                             <input
-                                v-model="showFeaturedOnly"
-                                type="checkbox"
-                                class="rounded border-gray-700 bg-gray-600 text-gray-300 transition-all duration-200 checked:bg-orange-400 hover:bg-gray-500 checked:hover:bg-orange-500 focus:border-orange-400 focus:outline-none focus:ring-0 focus:ring-offset-0 focus:checked:bg-orange-400 active:outline-none active:ring-0"
+                                v-model="searchQuery"
+                                type="text"
+                                placeholder="Search projects..."
+                                class="w-full rounded-md border border-gray-700 bg-gray-800 px-4 py-1 pl-10 transition-all duration-200 focus:border-orange-400 focus:ring-0 focus:outline-0"
                             />
-                            <span class="text-sm text-gray-300">Featured</span>
-                        </label>
-
-                        <button
-                            v-if="hasActiveFilters"
-                            @click="clearFilters"
-                            class="px-3 py-2 text-sm text-gray-600 underline hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
-                        >
-                            Clear filters
-                        </button>
-                    </div>
-
-                    <div
-                        v-if="filterOptions.tags.length"
-                        class="w-full space-y-2"
-                    >
-                        <h3
-                            class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                        >
-                            Filter by Tags:
-                        </h3>
-                        <div class="flex flex-wrap gap-2">
-                            <button
-                                v-for="tag in filterOptions.tags"
-                                :key="tag.id"
-                                @click="toggleTag(tag.slug)"
-                                :class="[
-                                    'rounded-full border px-3 py-1 text-xs transition-colors',
-                                    selectedTags.includes(tag.slug)
-                                        ? 'border-blue-300 bg-blue-100 text-blue-800 dark:border-blue-600 dark:bg-blue-900 dark:text-blue-200'
-                                        : 'border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600',
-                                ]"
+                            <svg
+                                class="absolute top-2 left-3 h-4 w-4 text-gray-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
                             >
-                                {{ tag.name }}
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                />
+                            </svg>
+                        </div>
+
+                        <div class="flex w-full gap-4">
+                            <select
+                                v-model="selectedType"
+                                class="rounded-md border border-gray-700 bg-gray-800 px-3 py-1.5 text-sm transition-all duration-200 focus:border-orange-400 focus:ring-0 focus:outline-0"
+                            >
+                                <option value="" class="text-sm">
+                                    All Types
+                                </option>
+                                <option
+                                    v-for="type in filterOptions.types"
+                                    :key="type.value"
+                                    :value="type.value"
+                                    class="text-sm"
+                                >
+                                    {{ type.label }}
+                                </option>
+                            </select>
+
+                            <label
+                                class="flex cursor-pointer items-center space-x-2"
+                            >
+                                <input
+                                    v-model="showFeaturedOnly"
+                                    type="checkbox"
+                                    class="rounded border-gray-700 bg-gray-600 text-gray-300 transition-all duration-200 checked:bg-orange-400 hover:bg-gray-500 checked:hover:bg-orange-500 focus:border-orange-400 focus:ring-0 focus:ring-offset-0 focus:outline-none focus:checked:bg-orange-400 active:ring-0 active:outline-none"
+                                />
+                                <span class="text-sm text-gray-300"
+                                    >Featured</span
+                                >
+                            </label>
+
+                            <button
+                                v-if="hasActiveFilters"
+                                @click="clearFilters"
+                                class="px-3 py-2 text-sm text-gray-600 underline hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
+                            >
+                                Clear filters
                             </button>
                         </div>
-                    </div>
 
-                    <div
-                        v-if="filterOptions.technologies.length"
-                        class="w-full space-y-2"
-                    >
-                        <h3
-                            class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                        <div
+                            v-if="filterOptions.tags.length"
+                            class="w-full space-y-2"
                         >
-                            Filter by Technologies:
-                        </h3>
-                        <div class="flex flex-wrap gap-2">
-                            <button
-                                v-for="tech in filterOptions.technologies"
-                                :key="tech.id"
-                                @click="toggleTechnology(tech.slug)"
-                                :class="[
-                                    'rounded-full border px-3 py-1 text-xs transition-colors',
-                                    selectedTechnologies.includes(tech.slug)
-                                        ? 'border-green-300 bg-green-100 text-green-800 dark:border-green-600 dark:bg-green-900 dark:text-green-200'
-                                        : 'border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600',
-                                ]"
-                                :style="
-                                    tech.color &&
-                                    selectedTechnologies.includes(tech.slug)
-                                        ? {
-                                              backgroundColor:
-                                                  tech.color + '20',
-                                              borderColor: tech.color,
-                                              color: tech.color,
-                                          }
-                                        : {}
-                                "
+                            <h3
+                                class="text-sm font-medium text-gray-700 dark:text-gray-300"
                             >
-                                {{ tech.name }}
-                            </button>
+                                Filter by Tags:
+                            </h3>
+                            <div class="flex flex-wrap gap-2">
+                                <button
+                                    v-for="tag in filterOptions.tags"
+                                    :key="tag.id"
+                                    @click="toggleTag(tag.slug)"
+                                    :class="[
+                                        'rounded-full border px-3 py-1 text-xs transition-colors',
+                                        selectedTags.includes(tag.slug)
+                                            ? 'border-blue-300 bg-blue-100 text-blue-800 dark:border-blue-600 dark:bg-blue-900 dark:text-blue-200'
+                                            : 'border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600',
+                                    ]"
+                                >
+                                    {{ tag.name }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div
+                            v-if="filterOptions.technologies.length"
+                            class="w-full space-y-2"
+                        >
+                            <h3
+                                class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                            >
+                                Filter by Technologies:
+                            </h3>
+                            <div class="flex flex-wrap gap-2">
+                                <button
+                                    v-for="tech in filterOptions.technologies"
+                                    :key="tech.id"
+                                    @click="toggleTechnology(tech.slug)"
+                                    :class="[
+                                        'rounded-full border px-3 py-1 text-xs transition-colors',
+                                        selectedTechnologies.includes(tech.slug)
+                                            ? 'border-green-300 bg-green-100 text-green-800 dark:border-green-600 dark:bg-green-900 dark:text-green-200'
+                                            : 'border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600',
+                                    ]"
+                                    :style="
+                                        tech.color &&
+                                        selectedTechnologies.includes(tech.slug)
+                                            ? {
+                                                  backgroundColor:
+                                                      tech.color + '20',
+                                                  borderColor: tech.color,
+                                                  color: tech.color,
+                                              }
+                                            : {}
+                                    "
+                                >
+                                    {{ tech.name }}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -270,7 +275,7 @@ const hasActiveFilters = computed(() => {
                         >
                             <div
                                 v-if="project.is_featured"
-                                class="absolute right-4 top-4 z-10"
+                                class="absolute top-4 right-4 z-10"
                             >
                                 <span
                                     class="rounded-full bg-yellow-900 px-2 py-1 text-xs font-medium text-yellow-300"
@@ -551,29 +556,17 @@ const hasActiveFilters = computed(() => {
                 </div>
 
                 <div v-else class="py-12 text-center">
-                    <svg
-                        class="mx-auto h-12 w-12 text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                        />
-                    </svg>
+                    <AppWindowMac class="mx-auto h-12 w-12 text-gray-400" />
                     <h3
                         class="mt-2 text-sm font-medium text-gray-900 dark:text-white"
                     >
-                        No projects found
+                        No projects added yet.
                     </h3>
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                         {{
                             hasActiveFilters
-                                ? 'Try adjusting your filters or search terms.'
-                                : 'Projects will appear here once they are added.'
+                                ? 'Try adjusting the filters or search terms.'
+                                : 'Someone should really add their projects here... soon.'
                         }}
                     </p>
                     <button
