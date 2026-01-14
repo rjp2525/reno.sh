@@ -1,11 +1,13 @@
 <script lang="ts" setup>
-import { GitHubOctoCat, NavbarLink, NavbarLogo } from '.';
+import { GitHubOctoCat, MobileNav, NavbarLink, NavbarLogo } from '.';
 </script>
 
 <template>
+    <MobileNav />
+
     <header class="hidden w-full flex-col lg:flex">
         <nav
-            class="flex h-11 w-full justify-between border-b border-b-navy text-sm"
+            class="border-b-navy flex h-11 w-full justify-between border-b text-sm"
         >
             <GitHubOctoCat url="https://github.com/rjp2525" />
             <div class="flex">
@@ -33,7 +35,7 @@ import { GitHubOctoCat, NavbarLink, NavbarLogo } from '.';
             </div>
             <NavbarLink
                 url="#"
-                class="border-l border-r-0 border-l-navy"
+                class="border-l-navy border-r-0 border-l"
                 label="_contact-me"
                 :active="false"
             />

@@ -44,10 +44,14 @@ provide('isMobile', isMobile);
 
 <template>
     <div
-        class="flex h-full w-full flex-col justify-between rounded-md border border-navy"
+        class="border-navy flex h-full w-full flex-col justify-between rounded-md border"
     >
         <AppHeader />
-        <div data-aos="fade-in" :key="$page.component" class="h-full">
+        <div
+            data-aos="fade-in"
+            :key="$page.component"
+            class="h-full min-h-0 flex-1 overflow-y-auto"
+        >
             <slot />
         </div>
         <AppFooter />

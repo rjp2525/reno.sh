@@ -4,19 +4,19 @@ import { Icon } from '.';
 
 <template>
     <footer
-        class="flex h-10 min-h-10 border-t border-t-navy text-sm text-menu md:justify-between"
+        class="border-t-navy text-menu flex h-10 min-h-10 border-t text-sm md:justify-between"
     >
         <div class="flex w-full justify-between md:justify-start">
             <span
-                class="flex h-full items-center justify-center border-r border-r-navy px-5"
+                class="md:border-r-navy flex h-full items-center justify-center border-r border-r-transparent px-5"
             >
-                find me on:
+                im on the internet:
             </span>
             <div class="flex">
                 <a
                     href="https://x.com/RenoPhilibert"
                     target="_blank"
-                    class="group flex h-full w-12 items-center justify-center border-r border-r-navy"
+                    class="group border-r-navy flex h-full w-12 items-center justify-center border-r"
                 >
                     <Icon
                         name="logo-x"
@@ -26,7 +26,7 @@ import { Icon } from '.';
                 <a
                     href="https://www.facebook.com/reno.philibert.77/"
                     target="_blank"
-                    class="group flex h-full w-12 items-center justify-center border-r border-r-navy"
+                    class="group border-r-navy flex h-full w-12 items-center justify-center border-r"
                 >
                     <Icon
                         name="logo-facebook"
@@ -36,7 +36,7 @@ import { Icon } from '.';
                 <a
                     href="https://instagram.com/renophilibert"
                     target="_blank"
-                    class="group flex h-full w-12 items-center justify-center border-r border-r-navy"
+                    class="group border-r-navy flex h-full w-12 items-center justify-center border-r"
                 >
                     <Icon
                         name="logo-instagram"
@@ -46,7 +46,7 @@ import { Icon } from '.';
                 <a
                     href="https://github.com/rjp2525"
                     target="_blank"
-                    class="group flex h-full w-12 items-center justify-center border-r border-r-navy md:hidden"
+                    class="group border-r-navy flex h-full w-12 items-center justify-center border-r md:hidden"
                 >
                     <Icon
                         name="logo-github"
@@ -59,7 +59,7 @@ import { Icon } from '.';
         <a
             href="https://github.com/rjp2525"
             target="_blank"
-            class="hidden items-center border-l border-l-navy border-opacity-100 px-5 opacity-60 transition-all duration-200 hover:opacity-100 md:flex"
+            class="border-l-navy border-opacity-100 hidden items-center border-l px-5 opacity-60 transition-all duration-200 hover:opacity-100 md:flex"
         >
             @rjp2525
             <Icon name="logo-github" class="ml-2 h-5 w-5" />
