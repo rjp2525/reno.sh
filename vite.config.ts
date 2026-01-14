@@ -4,6 +4,7 @@ import * as path from 'path';
 import Unfonts from 'unplugin-fonts/vite';
 import { defineConfig } from 'vite';
 import svgLoader from 'vite-svg-loader';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
     resolve: {
@@ -14,6 +15,7 @@ export default defineConfig({
         },
     },
     plugins: [
+        tailwindcss(),
         laravel({
             input: ['resources/js/app.ts', 'resources/css/screenshots.css'],
             ssr: 'resources/js/ssr.ts',
