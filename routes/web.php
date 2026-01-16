@@ -7,20 +7,8 @@ use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\ProjectShowController;
-use App\Http\Controllers\RawScreenshotController;
-use App\Http\Controllers\ScreenshotController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
-$domainData = when(app()->isProduction(), ['domain' => 'i.reno.sh'], ['prefix' => 'i']);
-Route::group($domainData, function () {
-    Route::get('/{screenshot:id}', ScreenshotController::class)
-        ->name('screenshot');
-    Route::get('/{screenshot:id}/raw', RawScreenshotController::class)
-        ->name('screenshot.raw');
-    Route::get('/{screenshot:id}/og', RawScreenshotController::class)
-        ->name('screenshot.opengraph');
-});
 
 Route::get('/', HomepageController::class)
     ->name('home');
