@@ -39,7 +39,7 @@ const ogImage = computed(() => {
     const img = props.post.og_image || props.post.featured_image;
     if (!img) return undefined;
     if (img.startsWith('http')) return img;
-    return `${appUrl.value}/storage/${img}`;
+    return `${appUrl.value}/img/${img}`;
 });
 
 const postUrl = computed(() => `${appUrl.value}${page.url}`);
@@ -228,7 +228,7 @@ const jsonLd = computed(() => {
                 <div v-if="post.featured_image" class="relative">
                     <div class="relative max-h-[350px] overflow-hidden">
                         <img
-                            :src="`/storage/${post.featured_image}`"
+                            :src="`/img/${post.featured_image}`"
                             :alt="post.title"
                             class="h-full w-full object-cover object-center"
                         />
@@ -480,7 +480,7 @@ const jsonLd = computed(() => {
                                 >
                                     <img
                                         v-if="related.featured_image"
-                                        :src="`/storage/${related.featured_image}`"
+                                        :src="`/img/${related.featured_image}`"
                                         :alt="related.title"
                                         class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
                                     />

@@ -1,7 +1,6 @@
 import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
 import * as path from 'path';
-import Unfonts from 'unplugin-fonts/vite';
 import { defineConfig } from 'vite';
 import svgLoader from 'vite-svg-loader';
 import tailwindcss from '@tailwindcss/vite';
@@ -44,16 +43,6 @@ export default defineConfig({
                     base: null,
                     includeAbsolute: false,
                 },
-            },
-        }),
-        Unfonts({
-            custom: {
-                families: [
-                    {
-                        name: 'Geist Mono',
-                        src: './resources/fonts/geist-mono/*.woff2',
-                    },
-                ],
             },
         }),
     ],

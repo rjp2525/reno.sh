@@ -38,7 +38,7 @@ const delay = ref(0);
                         class="flex h-full items-center justify-center"
                     >
                         <img
-                            :src="'/storage/' + section.data.content"
+                            :src="'/img/' + section.data.content"
                             class="h-96 w-96 rounded border border-navy object-cover"
                         />
                     </div>

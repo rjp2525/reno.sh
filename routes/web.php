@@ -9,11 +9,14 @@ use App\Http\Controllers\BlogSeriesController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomepageController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PhotoShowController;
 use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\ProjectShowController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/img/{path}', ImageController::class)->where('path', '.*')->name('image.serve');
 
 Route::get('/', HomepageController::class)
     ->name('home');

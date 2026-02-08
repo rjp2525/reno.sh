@@ -2,7 +2,6 @@
 import { BlogSidebar, SeoHead } from '@/components';
 import { MobilePageHeader } from '@/components/page';
 import { SearchInput } from '@/components/ui/form';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { GuestLayout } from '@/layouts';
 import {
     category as blogCategory,
@@ -126,7 +125,7 @@ const pageDescription = computed(
     <GuestLayout>
         <SeoHead :title="pageTitle" :description="pageDescription" />
 
-        <main class="flex h-full w-full flex-auto overflow-hidden">
+        <main class="flex h-full w-full flex-auto flex-col overflow-hidden lg:flex-row">
             <MobilePageHeader>_blog</MobilePageHeader>
 
             <BlogSidebar
@@ -141,17 +140,22 @@ const pageDescription = computed(
 
             <div class="flex h-full w-full flex-col overflow-hidden">
                 <div
-                    class="flex flex-wrap items-center gap-3 border-b border-[#1E2D3D] p-4 lg:hidden"
+                    class="flex items-center gap-2 border-b border-[#1E2D3D] px-4 py-2 lg:hidden"
                 >
+                    <SearchInput
+                        v-model="searchQuery"
+                        placeholder="Search posts..."
+                        class="min-w-0 flex-1"
+                    />
                     <select
-                        class="rounded-md border border-[#1E2D3D] bg-[#011221] px-3 py-1.5 text-sm text-white"
+                        class="shrink-0 rounded-md border border-[#1E2D3D] bg-[#011221] px-2 py-1.5 text-xs text-white"
                         @change="
                             selectCategory(
                                 ($event.target as HTMLSelectElement).value,
                             )
                         "
                     >
-                        <option value="">All Posts</option>
+                        <option value="">All</option>
                         <option
                             v-for="cat in filterOptions.categories"
                             :key="cat.id"
@@ -161,10 +165,17 @@ const pageDescription = computed(
                             {{ cat.name }}
                         </option>
                     </select>
+                    <button
+                        v-if="hasActiveFilters"
+                        @click="clearFilters"
+                        class="shrink-0 text-xs text-[#607B96] underline hover:text-white"
+                    >
+                        Clear
+                    </button>
                 </div>
 
-                <ScrollArea class="h-[calc(100vh-150px)] w-full">
-                    <div class="p-6 pb-0">
+                <div class="h-full overflow-y-auto">
+                    <div class="p-4 pb-0 lg:p-6 lg:pb-0">
                         <div class="mb-6 hidden lg:block">
                             <h1 class="mb-2 text-2xl font-semibold text-white">
                                 {{
@@ -179,7 +190,7 @@ const pageDescription = computed(
                         </div>
 
                         <div
-                            class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+                            class="mb-6 hidden gap-3 sm:flex-row sm:items-center sm:justify-between lg:flex"
                         >
                             <SearchInput
                                 v-model="searchQuery"
@@ -197,13 +208,71 @@ const pageDescription = computed(
                         </div>
                     </div>
 
-                    <div v-if="posts.data.length > 0" class="p-6 pt-0">
+                    <div v-if="posts.data.length > 0" class="p-4 pt-0 lg:p-6 lg:pt-0">
                         <div class="mb-4 text-sm text-[#607B96]">
                             Showing {{ posts.from }}-{{ posts.to }} of
                             {{ posts.total }} posts
                         </div>
 
-                        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        <!-- Mobile: compact horizontal list -->
+                        <div class="space-y-3 lg:hidden">
+                            <Link
+                                v-for="post in posts.data"
+                                :key="post.id"
+                                :href="getPostUrl(post)"
+                                class="group flex gap-3 overflow-hidden rounded-lg border border-[#1E2D3D] bg-[#011221] transition-all duration-200 hover:border-[#607B96]/50"
+                            >
+                                <div
+                                    class="relative h-24 w-24 shrink-0 overflow-hidden bg-[#0a1628]"
+                                >
+                                    <img
+                                        v-if="post.featured_image"
+                                        :src="`/img/${post.featured_image}`"
+                                        :alt="post.title"
+                                        class="h-full w-full object-cover"
+                                    />
+                                    <div
+                                        v-else
+                                        class="no-image-card flex h-full items-center justify-center"
+                                    >
+                                        <BookOpen class="h-5 w-5 text-[#1E2D3D]" />
+                                    </div>
+                                    <div
+                                        v-if="post.is_featured"
+                                        class="absolute top-1 right-1"
+                                    >
+                                        <Star class="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                    </div>
+                                </div>
+                                <div class="flex min-w-0 flex-1 flex-col justify-center gap-1 py-2 pr-3">
+                                    <h3 class="line-clamp-2 text-sm font-semibold text-white group-hover:text-[#FEA55F]">
+                                        {{ post.title }}
+                                    </h3>
+                                    <div class="flex items-center gap-2 text-xs text-[#607B96]">
+                                        <span class="flex items-center gap-1">
+                                            <Clock class="h-3 w-3" />
+                                            {{ post.reading_time }} min
+                                        </span>
+                                        <span v-if="post.published_at">
+                                            {{ formatDate(post.published_at) }}
+                                        </span>
+                                    </div>
+                                    <span
+                                        v-if="post.category"
+                                        class="w-fit rounded-full px-1.5 py-0.5 text-[10px] font-medium"
+                                        :style="{
+                                            backgroundColor: (post.category.color || '#607B96') + '30',
+                                            color: post.category.color || '#607B96',
+                                        }"
+                                    >
+                                        {{ post.category.name }}
+                                    </span>
+                                </div>
+                            </Link>
+                        </div>
+
+                        <!-- Desktop: card grid -->
+                        <div class="hidden gap-6 md:grid-cols-2 lg:grid lg:grid-cols-3">
                             <Link
                                 v-for="post in posts.data"
                                 :key="post.id"
@@ -215,7 +284,7 @@ const pageDescription = computed(
                                 >
                                     <img
                                         v-if="post.featured_image"
-                                        :src="`/storage/${post.featured_image}`"
+                                        :src="`/img/${post.featured_image}`"
                                         :alt="post.title"
                                         class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
                                     />
@@ -390,7 +459,7 @@ const pageDescription = computed(
                             Clear all filters
                         </button>
                     </div>
-                </ScrollArea>
+                </div>
             </div>
         </main>
     </GuestLayout>

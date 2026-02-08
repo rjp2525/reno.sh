@@ -43,7 +43,7 @@ const ogImage = computed(() => {
     const img = props.project.og_image || props.project.featured_image;
     if (!img) return undefined;
     if (img.startsWith('http')) return img;
-    return `${appUrl.value}/storage/${img}`;
+    return `${appUrl.value}/img/${img}`;
 });
 
 const primaryTechnologies = props.project.technologies.filter(
@@ -86,7 +86,7 @@ const otherTechnologies = props.project.technologies.filter(
                             class="relative aspect-[16/9] overflow-hidden lg:aspect-[21/9]"
                         >
                             <img
-                                :src="`/storage/${project.featured_image}`"
+                                :src="`/img/${project.featured_image}`"
                                 :alt="project.title"
                                 class="h-full w-full object-cover"
                             />
@@ -271,7 +271,7 @@ const otherTechnologies = props.project.technologies.filter(
                                                 class="aspect-video overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800"
                                             >
                                                 <img
-                                                    :src="`/storage/${image.image}`"
+                                                    :src="`/img/${image.image}`"
                                                     :alt="`${project.title} screenshot ${index + 1}`"
                                                     class="h-full w-full object-cover transition-transform duration-200 hover:scale-105"
                                                 />

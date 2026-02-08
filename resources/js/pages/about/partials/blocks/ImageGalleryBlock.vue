@@ -17,7 +17,7 @@ defineProps<{
             class="group overflow-hidden rounded-lg"
         >
             <img
-                :src="`/storage/${item.image}`"
+                :src="`/img/${item.image}`"
                 :alt="item.caption ?? ''"
                 loading="lazy"
                 class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"

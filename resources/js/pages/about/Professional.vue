@@ -63,7 +63,7 @@ const componentProps = computed(() => {
             description="Learn about Reno Philibert's professional experience, technical skills, and education in software engineering."
         />
 
-        <main class="flex h-full w-full flex-auto overflow-hidden">
+        <main class="flex h-full w-full flex-auto flex-col overflow-hidden lg:flex-row">
             <MobilePageHeader> _about / professional </MobilePageHeader>
             <AboutSidebar
                 current-section="professional"
@@ -71,7 +71,7 @@ const componentProps = computed(() => {
                 :tabs="tabs"
                 @tab-change="switchTab"
             />
-            <div class="flex h-full w-full">
+            <div class="flex h-full min-h-0 w-full flex-1">
                 <div
                     :key="currentTab"
                     data-aos="fade-left"

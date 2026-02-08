@@ -58,8 +58,8 @@ const hasContent = computed(() => {
 
 <template>
     <template v-if="isBlocksFormat">
-        <ScrollArea v-if="scrollable" class="h-[calc(100vh-150px)] w-full">
-            <div v-if="hasContent" class="space-y-6 p-8">
+        <ScrollArea v-if="scrollable" class="h-[calc(100vh-120px)] w-full lg:h-[calc(100vh-150px)]">
+            <div v-if="hasContent" class="space-y-6 p-4 lg:p-8">
                 <component
                     :is="blockComponents[block.type]"
                     v-for="(block, index) in blocks"

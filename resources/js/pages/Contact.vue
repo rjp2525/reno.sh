@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { SeoHead } from '@/components';
 import { MobilePageHeader } from '@/components/page';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { GuestLayout } from '@/layouts';
 import { send as contactSend } from '@/routes/contact';
 import { useForm, usePage } from '@inertiajs/vue3';
@@ -43,18 +42,20 @@ const submit = () => {
         <main class="flex h-full w-full flex-auto flex-col overflow-hidden">
             <MobilePageHeader>_contact-me</MobilePageHeader>
 
-            <ScrollArea class="h-full w-full">
+            <div class="h-full w-full overflow-y-auto">
                 <div class="grid h-full min-h-full grid-cols-1 lg:grid-cols-5">
                     <div
-                        class="border-b-navy lg:border-r-navy flex flex-col border-b p-6 lg:col-span-2 lg:border-r lg:border-b-0 lg:p-10"
+                        class="border-b-navy lg:border-r-navy hidden flex-col border-b lg:flex lg:col-span-2 lg:border-r lg:border-b-0 lg:p-10"
                     >
                         <div class="lg:sticky lg:top-10">
-                            <h1 class="mb-1 text-3xl font-bold text-white">
-                                _contact-me
-                            </h1>
-                            <p class="text-menu mb-8 text-sm lowercase">
-                                // fill out the form and i'll get back to you
-                            </p>
+                            <div>
+                                <h1 class="mb-1 text-3xl font-bold text-white">
+                                    _contact-me
+                                </h1>
+                                <p class="text-menu mb-8 text-sm lowercase">
+                                    // fill out the form and i'll get back to you
+                                </p>
+                            </div>
 
                             <div class="space-y-6">
                                 <div>
@@ -176,7 +177,7 @@ const submit = () => {
                         </div>
                     </div>
 
-                    <div class="flex flex-col p-6 lg:col-span-3 lg:p-10">
+                    <div class="flex flex-col p-4 lg:col-span-3 lg:p-10">
                         <Transition
                             enter-active-class="transition-all duration-300 ease-out"
                             enter-from-class="opacity-0 -translate-y-2"
@@ -335,7 +336,7 @@ const submit = () => {
                         </form>
                     </div>
                 </div>
-            </ScrollArea>
+            </div>
         </main>
     </GuestLayout>
 </template>

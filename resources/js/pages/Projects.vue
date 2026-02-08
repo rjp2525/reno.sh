@@ -124,8 +124,8 @@ const hasActiveFilters = computed(() => {
         <main class="flex h-full w-full flex-auto flex-col overflow-hidden">
             <MobilePageHeader>_projects</MobilePageHeader>
 
-            <div class="grid grid-cols-1 gap-4 gap-6 p-6 pb-0 md:grid-cols-2">
-                <div class="mb-0">
+            <div class="grid grid-cols-1 gap-4 p-4 pb-0 lg:gap-6 lg:p-6 lg:pb-0 md:grid-cols-2">
+                <div class="mb-0 hidden lg:block">
                     <h1
                         class="mb-1 text-3xl font-bold text-gray-900 dark:text-white"
                     >
@@ -235,7 +235,7 @@ const hasActiveFilters = computed(() => {
                 </div>
             </div>
 
-            <ScrollArea class="h-[calc(100vh-246px)] w-full p-6">
+            <ScrollArea class="h-[calc(100vh-140px)] w-full p-4 lg:h-[calc(100vh-246px)] lg:p-6">
                 <div v-if="projects.data.length > 0" class="space-y-8">
                     <div class="text-sm text-gray-600 dark:text-gray-400">
                         Showing {{ projects.from }}-{{ projects.to }} of
@@ -264,7 +264,7 @@ const hasActiveFilters = computed(() => {
                             >
                                 <img
                                     v-if="project.featured_image"
-                                    :src="`/storage/${project.featured_image}`"
+                                    :src="`/img/${project.featured_image}`"
                                     :alt="project.title"
                                     class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
                                 />
@@ -273,7 +273,7 @@ const hasActiveFilters = computed(() => {
                                         project.gallery &&
                                         project.gallery.length > 0
                                     "
-                                    :src="`/storage/${project.gallery[0].image}`"
+                                    :src="`/img/${project.gallery[0].image}`"
                                     :alt="project.title"
                                     class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
                                 />

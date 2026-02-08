@@ -71,7 +71,7 @@ class Photo extends Model
             return null;
         }
 
-        return Storage::disk('public')->url($this->web_path);
+        return url('/img/'.$this->web_path);
     }
 
     public function getThumbnailUrlAttribute(): ?string
@@ -80,7 +80,7 @@ class Photo extends Model
             return null;
         }
 
-        return Storage::disk('public')->url($this->thumbnail_path);
+        return url('/img/'.$this->thumbnail_path);
     }
 
     public function getOgImageUrlAttribute(): ?string
@@ -89,7 +89,7 @@ class Photo extends Model
             return null;
         }
 
-        return Storage::disk('public')->url($this->og_image_path);
+        return url('/img/'.$this->og_image_path);
     }
 
     public function getOriginalUrlAttribute(): ?string

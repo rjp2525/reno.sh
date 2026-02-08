@@ -42,7 +42,7 @@ const currentPageContent = computed(() => {
             description="Discover Reno Philibert's hobbies including photography, hiking, snowboarding, and overlanding."
         />
 
-        <main class="flex h-full w-full flex-auto overflow-hidden">
+        <main class="flex h-full w-full flex-auto flex-col overflow-hidden lg:flex-row">
             <MobilePageHeader> _about / hobbies </MobilePageHeader>
             <AboutSidebar
                 current-section="hobbies"
@@ -50,7 +50,7 @@ const currentPageContent = computed(() => {
                 :tabs="tabs"
                 @tab-change="switchTab"
             />
-            <div class="flex h-full w-full">
+            <div class="flex h-full min-h-0 w-full flex-1">
                 <div
                     :key="currentTab"
                     data-aos="fade-left"

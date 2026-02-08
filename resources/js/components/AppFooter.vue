@@ -8,9 +8,14 @@ import { Icon } from '.';
     >
         <div class="flex w-full justify-between md:justify-start">
             <span
-                class="md:border-r-navy flex h-full items-center justify-center border-r border-r-transparent px-5"
+                class="md:border-r-navy hidden h-full items-center justify-center border-r border-r-transparent px-5 md:flex"
             >
                 im on the internet:
+            </span>
+            <span
+                class="flex h-full items-center justify-center px-5 md:hidden"
+            >
+                find me on:
             </span>
             <div class="flex">
                 <a

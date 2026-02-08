@@ -19,7 +19,7 @@ defineProps<{
         ]"
     >
         <img
-            :src="`/storage/${data.image}`"
+            :src="`/img/${data.image}`"
             :alt="data.caption ?? ''"
             loading="lazy"
             :class="[

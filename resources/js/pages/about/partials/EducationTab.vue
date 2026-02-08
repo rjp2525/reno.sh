@@ -70,7 +70,7 @@ watch(codeBlock, async (newCode) => {
 
 <template>
     <div class="relative flex h-full w-full flex-col lg:grid lg:grid-cols-2">
-        <div>
+        <div class="hidden lg:block">
             <ScrollArea class="h-[calc(100vh-150px)] w-full p-6">
                 <div
                     v-if="isLoading"
@@ -80,14 +80,14 @@ watch(codeBlock, async (newCode) => {
                 </div>
                 <div
                     v-else
-                    class="shiki-container [&_code]:!bg-transparent [&_pre]:!bg-transparent"
+                    class="shiki-container overflow-x-auto [&_code]:!bg-transparent [&_pre]:!bg-transparent"
                     v-html="highlightedCode"
                 />
             </ScrollArea>
         </div>
-        <div class="border-l-navy space-y-4 border-l text-sm">
-            <h3 class="text-menu px-8 pt-8">// Education</h3>
-            <ScrollArea class="h-[calc(100vh-220px)] w-full p-8 pt-0">
+        <div class="space-y-4 text-sm lg:border-l lg:border-l-navy">
+            <h3 class="text-menu px-4 pt-4 lg:px-8 lg:pt-8">// Education</h3>
+            <ScrollArea class="h-[calc(100vh-180px)] w-full p-4 pt-0 lg:h-[calc(100vh-220px)] lg:p-8 lg:pt-0">
                 <div class="flex flex-col space-y-6">
                     <div
                         v-for="edu in education"

@@ -74,7 +74,7 @@ const getPostUrl = (post: BlogSeriesDetail['posts'][number]) => {
                         class="mb-6 overflow-hidden rounded-lg"
                     >
                         <img
-                            :src="`/storage/${series.featured_image}`"
+                            :src="`/img/${series.featured_image}`"
                             :alt="series.title"
                             class="h-auto w-full object-cover"
                         />

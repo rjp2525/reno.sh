@@ -42,7 +42,7 @@ const currentPageContent = computed(() => {
             description="Get to know Reno Philibert on a personal level - interests, stories, and what makes me tick."
         />
 
-        <main class="flex h-full w-full flex-auto overflow-hidden">
+        <main class="flex h-full w-full flex-auto flex-col overflow-hidden lg:flex-row">
             <MobilePageHeader> _about / personal </MobilePageHeader>
             <AboutSidebar
                 current-section="personal"
@@ -50,7 +50,7 @@ const currentPageContent = computed(() => {
                 :tabs="tabs"
                 @tab-change="switchTab"
             />
-            <div class="flex h-full w-full">
+            <div class="flex h-full min-h-0 w-full flex-1">
                 <div
                     :key="currentTab"
                     data-aos="fade-left"

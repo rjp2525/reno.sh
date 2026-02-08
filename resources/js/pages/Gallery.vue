@@ -167,7 +167,7 @@ const hasActiveFilters = computed(() => {
             description="A collection of the best moments captured through my lens, mainly shot on a Sony A7IV."
         />
 
-        <main class="flex h-full w-full flex-auto overflow-hidden">
+        <main class="flex h-full w-full flex-auto flex-col overflow-hidden lg:flex-row">
             <MobilePageHeader>_photography</MobilePageHeader>
 
             <GallerySidebar
@@ -182,14 +182,19 @@ const hasActiveFilters = computed(() => {
 
             <div class="flex h-full w-full flex-col overflow-hidden">
                 <div
-                    class="flex flex-wrap items-center gap-3 border-b border-[#1E2D3D] p-4 lg:hidden"
+                    class="flex items-center gap-2 border-b border-[#1E2D3D] px-4 py-2 lg:hidden"
                 >
+                    <SearchInput
+                        v-model="searchQuery"
+                        placeholder="Search photos..."
+                        class="min-w-0 flex-1"
+                    />
                     <select
                         v-model="selectedCategory"
-                        class="rounded-md border border-[#1E2D3D] bg-[#011221] px-3 py-1.5 text-sm text-white"
+                        class="shrink-0 rounded-md border border-[#1E2D3D] bg-[#011221] px-2 py-1.5 text-xs text-white"
                         @change="applyFilters"
                     >
-                        <option value="">All Photos</option>
+                        <option value="">All</option>
                         <option
                             v-for="category in filterOptions.categories"
                             :key="category.id"
@@ -198,6 +203,12 @@ const hasActiveFilters = computed(() => {
                             {{ category.name }}
                         </option>
                     </select>
+                    <SelectInput v-model="sortBy" class="shrink-0 text-xs">
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="title_asc">A-Z</option>
+                        <option value="title_desc">Z-A</option>
+                    </SelectInput>
                 </div>
 
                 <div
@@ -215,7 +226,7 @@ const hasActiveFilters = computed(() => {
                     </div>
 
                     <div
-                        class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+                        class="mb-6 hidden gap-3 sm:flex-row sm:items-center sm:justify-between lg:flex"
                     >
                         <SearchInput
                             v-model="searchQuery"

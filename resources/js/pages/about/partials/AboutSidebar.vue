@@ -50,8 +50,39 @@ function isSectionActive(name: string): boolean {
 
 <template>
     <div
-        class="flex w-full flex-col lg:max-w-[275px] lg:min-w-[275px] lg:flex-row 2xl:max-w-[310px] 2xl:min-w-[310px]"
+        class="flex shrink-0 flex-col lg:w-full lg:max-w-[275px] lg:min-w-[275px] lg:flex-row 2xl:max-w-[310px] 2xl:min-w-[310px]"
     >
+        <!-- Mobile section & tab navigation -->
+        <div class="border-b-navy space-y-2 border-b px-4 py-3 lg:hidden">
+            <div class="flex gap-1 overflow-x-auto">
+                <button
+                    v-for="section in sections"
+                    :key="section.name"
+                    @click="navigateToSection(section)"
+                    class="flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-colors"
+                    :class="isSectionActive(section.name)
+                        ? 'bg-[#1E2D3D] text-white'
+                        : 'text-menu hover:text-white'"
+                >
+                    {{ section.name }}
+                </button>
+            </div>
+            <div v-if="tabList.length > 1" class="flex gap-1 overflow-x-auto">
+                <button
+                    v-for="tab in tabList"
+                    :key="tab.slug"
+                    @click="selectTab(tab.slug)"
+                    class="flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1 text-xs transition-colors"
+                    :class="tab.isActive
+                        ? 'bg-[#1E2D3D]/60 text-white'
+                        : 'text-menu/70 hover:text-white'"
+                >
+                    {{ tab.title }}
+                </button>
+            </div>
+        </div>
+
+        <!-- Desktop sidebar -->
         <div class="border-r-navy hidden h-full w-20 border-r lg:block">
             <div
                 v-for="section in sections"
