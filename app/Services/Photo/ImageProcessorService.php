@@ -54,8 +54,6 @@ class ImageProcessorService
         $filename = Str::random(40).'.jpg';
         $webPath = 'photos/web/'.$filename;
 
-        Storage::disk($publicDisk)->makeDirectory('photos/web');
-
         $quality = PhotoSettings::getWebQuality();
         $encoded = $image->toJpeg($quality);
 
@@ -84,8 +82,6 @@ class ImageProcessorService
 
         $filename = Str::random(40).'.jpg';
         $thumbnailPath = 'photos/thumbnails/'.$filename;
-
-        Storage::disk($publicDisk)->makeDirectory('photos/thumbnails');
 
         $encoded = $image->toJpeg(80);
 
@@ -125,8 +121,6 @@ class ImageProcessorService
 
         $filename = Str::random(40).'.jpg';
         $ogPath = 'photos/og/'.$filename;
-
-        Storage::disk($publicDisk)->makeDirectory('photos/og');
 
         $encoded = $image->toJpeg(90);
 
