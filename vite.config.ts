@@ -51,7 +51,7 @@ export default defineConfig({
                 families: [
                     {
                         name: 'Geist Mono',
-                        src: './fonts/geist-mono/*.woff2',
+                        src: './resources/fonts/geist-mono/*.woff2',
                     },
                 ],
             },
