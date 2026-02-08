@@ -41,7 +41,7 @@ class ImageProcessorService
         }
 
         $image = $this->manager->read(
-            Storage::disk($originalsDisk)->path($originalPath)
+            Storage::disk($originalsDisk)->get($originalPath)
         );
 
         $maxWidth = PhotoSettings::getWebMaxWidth();
@@ -74,7 +74,7 @@ class ImageProcessorService
         }
 
         $image = $this->manager->read(
-            Storage::disk($originalsDisk)->path($originalPath)
+            Storage::disk($originalsDisk)->get($originalPath)
         );
 
         $width = PhotoSettings::getThumbnailWidth();
@@ -108,7 +108,7 @@ class ImageProcessorService
         }
 
         $image = $this->manager->read(
-            Storage::disk($originalsDisk)->path($originalPath)
+            Storage::disk($originalsDisk)->get($originalPath)
         );
 
         $ogWidth = 1200;

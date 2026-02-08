@@ -64,6 +64,10 @@ return [
         'photos_originals' => [
             'driver' => env('PHOTO_ORIGINALS_DRIVER', 'local'),
             'root' => storage_path('app/photos/originals'),
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
             'serve' => true,
             'throw' => false,
         ],
