@@ -80,151 +80,172 @@ const otherTechnologies = props.project.technologies.filter(
                 </MobilePageHeader>
 
                 <div class="flex-1 overflow-y-auto">
-                    <div class="relative">
-                        <div
-                            v-if="project.featured_image"
-                            class="relative aspect-[16/9] overflow-hidden lg:aspect-[21/9]"
-                        >
+                    <div v-if="project.featured_image" class="relative">
+                        <div class="relative aspect-[16/9] overflow-hidden lg:aspect-[21/9]">
                             <img
                                 :src="`/img/${project.featured_image}`"
                                 :alt="project.title"
                                 class="h-full w-full object-cover"
                             />
                             <div
-                                class="absolute inset-0 bg-gradient-to-t from-black to-transparent"
+                                class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"
                             />
-                        </div>
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <div class="flex items-end justify-between gap-6">
+                                    <div class="min-w-0 flex-1">
+                                        <div class="mb-3 flex items-center gap-2">
+                                            <span
+                                                v-if="project.is_featured"
+                                                class="rounded-full bg-yellow-900/80 px-3 py-1 text-xs font-medium text-yellow-300"
+                                            >
+                                                Featured
+                                            </span>
+                                            <span
+                                                v-if="project.type"
+                                                class="rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-gray-200"
+                                            >
+                                                {{ project.type.replace('_', ' ') }}
+                                            </span>
+                                        </div>
 
-                        <div
-                            class="relative px-6"
-                            :class="
-                                project.featured_image
-                                    ? 'lg:relative lg:z-10 lg:-mt-32'
-                                    : ''
-                            "
-                        >
-                            <div class="w-full">
-                                <div
-                                    class="mb-4 flex items-center justify-between"
-                                >
-                                    <nav class="text-sm">
-                                        <Link
-                                            :href="projectsRoute.url()"
-                                            class="text-blue-600 hover:underline dark:text-blue-400"
-                                        >
-                                            Projects
-                                        </Link>
-                                        <span class="mx-2 text-gray-400"
-                                            >/</span
-                                        >
-                                        <span
-                                            class="text-gray-600 dark:text-gray-400"
-                                            >{{ project.title }}</span
-                                        >
-                                    </nav>
+                                        <h1 class="mb-2 text-3xl font-bold text-white lg:text-5xl">
+                                            {{ project.title }}
+                                        </h1>
 
-                                    <div class="flex items-center space-x-2">
-                                        <span
-                                            v-if="project.is_featured"
-                                            class="rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+                                        <p
+                                            v-if="project.summary"
+                                            class="mb-2 max-w-3xl text-lg text-gray-100 lg:text-xl"
                                         >
-                                            Featured
-                                        </span>
-                                        <span
-                                            v-if="project.type"
-                                            class="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                                            {{ project.summary }}
+                                        </p>
+
+                                        <div
+                                            v-if="getDateRange(project)"
+                                            class="text-sm text-gray-300"
                                         >
-                                            {{ project.type.replace('_', ' ') }}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div
-                                    :class="
-                                        project.featured_image
-                                            ? 'text-white'
-                                            : ''
-                                    "
-                                >
-                                    <h1
-                                        class="mb-4 text-3xl font-bold lg:text-5xl"
-                                    >
-                                        {{ project.title }}
-                                    </h1>
-
-                                    <p
-                                        v-if="project.summary"
-                                        class="mb-6 max-w-5xl text-lg lg:text-xl"
-                                        :class="
-                                            project.featured_image
-                                                ? 'text-gray-100'
-                                                : 'text-gray-600 dark:text-gray-400'
-                                        "
-                                    >
-                                        {{ project.summary }}
-                                    </p>
-
-                                    <div
-                                        v-if="getDateRange(project)"
-                                        class="mb-6 text-sm"
-                                        :class="
-                                            project.featured_image
-                                                ? 'text-gray-200'
-                                                : 'text-gray-500 dark:text-gray-400'
-                                        "
-                                    >
-                                        {{ getDateRange(project) }}
+                                            {{ getDateRange(project) }}
+                                        </div>
                                     </div>
 
-                                    <div class="flex flex-wrap gap-3">
+                                    <div class="hidden shrink-0 flex-col gap-3 lg:flex">
                                         <a
-                                            v-if="
-                                                project.demo_url || project.url
-                                            "
-                                            :href="
-                                                project.demo_url ?? project.url ?? undefined
-                                            "
+                                            v-if="project.demo_url || project.url"
+                                            :href="project.demo_url ?? project.url ?? undefined"
                                             target="_blank"
                                             rel="noopener"
                                             class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700"
                                         >
-                                            <svg
-                                                class="mr-2 h-4 w-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                                />
+                                            <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                             </svg>
                                             View Live Demo
                                         </a>
-
                                         <a
                                             v-if="project.github_url"
                                             :href="project.github_url"
                                             target="_blank"
                                             rel="noopener"
-                                            class="inline-flex items-center rounded-lg bg-gray-800 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-900"
+                                            class="inline-flex items-center rounded-lg bg-white/10 px-4 py-2 font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20"
                                         >
-                                            <svg
-                                                class="mr-2 h-4 w-4"
-                                                fill="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    d="M12 0C5.37 0 0 5.37 0 12 0 17.31 3.435 21.795 8.205 23.385 8.805 23.49 9.03 23.13 9.03 22.815 9.03 22.53 9.015 21.585 9.015 20.055 5.67 20.76 4.965 18.795 4.965 18.795 4.425 17.46 3.63 17.1 3.63 17.1 2.535 16.38 3.72 16.395 3.72 16.395 4.92 16.65 5.555 17.955 5.555 17.955 6.63 19.935 8.385 19.395 9.075 19.065 9.18 18.27 9.495 17.7 9.84 17.385 7.17 17.025 4.35 15.66 4.35 11.145 4.35 9.87 4.815 8.82 5.595 7.98 5.46 7.59 6.45 5.115 6.45 5.115 7.44 4.8 12 6.345 16.56 4.8 17.55 5.115 17.55 5.115 18.54 7.59 18.405 7.98 19.185 8.82 19.65 9.87 19.65 11.145 19.65 15.66 16.83 17.025 14.16 17.385 14.505 17.7 14.82 18.27 14.925 19.065 15.615 19.395 17.37 19.935 18.445 17.955 19.08 16.65 19.335 16.395 20.52 16.38 19.425 17.1 18.63 17.46 18.09 18.795 18.09 18.795 17.385 20.76 14.67 20.055 14.67 21.585 14.655 22.53 14.655 22.815 14.88 23.13 15.48 23.385 20.25 21.795 23.685 17.31 23.685 12 23.685 5.37 18.315 0 11.685 0Z"
-                                                />
+                                            <svg class="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 0C5.37 0 0 5.37 0 12 0 17.31 3.435 21.795 8.205 23.385 8.805 23.49 9.03 23.13 9.03 22.815 9.03 22.53 9.015 21.585 9.015 20.055 5.67 20.76 4.965 18.795 4.965 18.795 4.425 17.46 3.63 17.1 3.63 17.1 2.535 16.38 3.72 16.395 3.72 16.395 4.92 16.65 5.555 17.955 5.555 17.955 6.63 19.935 8.385 19.395 9.075 19.065 9.18 18.27 9.495 17.7 9.84 17.385 7.17 17.025 4.35 15.66 4.35 11.145 4.35 9.87 4.815 8.82 5.595 7.98 5.46 7.59 6.45 5.115 6.45 5.115 7.44 4.8 12 6.345 16.56 4.8 17.55 5.115 17.55 5.115 18.54 7.59 18.405 7.98 19.185 8.82 19.65 9.87 19.65 11.145 19.65 15.66 16.83 17.025 14.16 17.385 14.505 17.7 14.82 18.27 14.925 19.065 15.615 19.395 17.37 19.935 18.445 17.955 19.08 16.65 19.335 16.395 20.52 16.38 19.425 17.1 18.63 17.46 18.09 18.795 18.09 18.795 17.385 20.76 14.67 20.055 14.67 21.585 14.655 22.53 14.655 22.815 14.88 23.13 15.48 23.385 20.25 21.795 23.685 17.31 23.685 12 23.685 5.37 18.315 0 11.685 0Z" />
                                             </svg>
                                             View Source
                                         </a>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Mobile buttons below image -->
+                        <div class="flex flex-wrap gap-3 px-6 pt-4 lg:hidden">
+                            <a
+                                v-if="project.demo_url || project.url"
+                                :href="project.demo_url ?? project.url ?? undefined"
+                                target="_blank"
+                                rel="noopener"
+                                class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700"
+                            >
+                                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                                View Live Demo
+                            </a>
+                            <a
+                                v-if="project.github_url"
+                                :href="project.github_url"
+                                target="_blank"
+                                rel="noopener"
+                                class="inline-flex items-center rounded-lg bg-gray-800 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-900"
+                            >
+                                <svg class="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 0C5.37 0 0 5.37 0 12 0 17.31 3.435 21.795 8.205 23.385 8.805 23.49 9.03 23.13 9.03 22.815 9.03 22.53 9.015 21.585 9.015 20.055 5.67 20.76 4.965 18.795 4.965 18.795 4.425 17.46 3.63 17.1 3.63 17.1 2.535 16.38 3.72 16.395 3.72 16.395 4.92 16.65 5.555 17.955 5.555 17.955 6.63 19.935 8.385 19.395 9.075 19.065 9.18 18.27 9.495 17.7 9.84 17.385 7.17 17.025 4.35 15.66 4.35 11.145 4.35 9.87 4.815 8.82 5.595 7.98 5.46 7.59 6.45 5.115 6.45 5.115 7.44 4.8 12 6.345 16.56 4.8 17.55 5.115 17.55 5.115 18.54 7.59 18.405 7.98 19.185 8.82 19.65 9.87 19.65 11.145 19.65 15.66 16.83 17.025 14.16 17.385 14.505 17.7 14.82 18.27 14.925 19.065 15.615 19.395 17.37 19.935 18.445 17.955 19.08 16.65 19.335 16.395 20.52 16.38 19.425 17.1 18.63 17.46 18.09 18.795 18.09 18.795 17.385 20.76 14.67 20.055 14.67 21.585 14.655 22.53 14.655 22.815 14.88 23.13 15.48 23.385 20.25 21.795 23.685 17.31 23.685 12 23.685 5.37 18.315 0 11.685 0Z" />
+                                </svg>
+                                View Source
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- No featured image fallback -->
+                    <div v-else class="px-6 pt-6">
+                        <div class="mb-4 flex items-center gap-2">
+                            <span
+                                v-if="project.is_featured"
+                                class="rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+                            >
+                                Featured
+                            </span>
+                            <span
+                                v-if="project.type"
+                                class="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                            >
+                                {{ project.type.replace('_', ' ') }}
+                            </span>
+                        </div>
+
+                        <h1 class="mb-4 text-3xl font-bold lg:text-5xl">
+                            {{ project.title }}
+                        </h1>
+
+                        <p
+                            v-if="project.summary"
+                            class="mb-6 max-w-5xl text-lg text-gray-600 lg:text-xl dark:text-gray-400"
+                        >
+                            {{ project.summary }}
+                        </p>
+
+                        <div
+                            v-if="getDateRange(project)"
+                            class="mb-6 text-sm text-gray-500 dark:text-gray-400"
+                        >
+                            {{ getDateRange(project) }}
+                        </div>
+
+                        <div class="flex flex-wrap gap-3">
+                            <a
+                                v-if="project.demo_url || project.url"
+                                :href="project.demo_url ?? project.url ?? undefined"
+                                target="_blank"
+                                rel="noopener"
+                                class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700"
+                            >
+                                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                                View Live Demo
+                            </a>
+                            <a
+                                v-if="project.github_url"
+                                :href="project.github_url"
+                                target="_blank"
+                                rel="noopener"
+                                class="inline-flex items-center rounded-lg bg-gray-800 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-900"
+                            >
+                                <svg class="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 0C5.37 0 0 5.37 0 12 0 17.31 3.435 21.795 8.205 23.385 8.805 23.49 9.03 23.13 9.03 22.815 9.03 22.53 9.015 21.585 9.015 20.055 5.67 20.76 4.965 18.795 4.965 18.795 4.425 17.46 3.63 17.1 3.63 17.1 2.535 16.38 3.72 16.395 3.72 16.395 4.92 16.65 5.555 17.955 5.555 17.955 6.63 19.935 8.385 19.395 9.075 19.065 9.18 18.27 9.495 17.7 9.84 17.385 7.17 17.025 4.35 15.66 4.35 11.145 4.35 9.87 4.815 8.82 5.595 7.98 5.46 7.59 6.45 5.115 6.45 5.115 7.44 4.8 12 6.345 16.56 4.8 17.55 5.115 17.55 5.115 18.54 7.59 18.405 7.98 19.185 8.82 19.65 9.87 19.65 11.145 19.65 15.66 16.83 17.025 14.16 17.385 14.505 17.7 14.82 18.27 14.925 19.065 15.615 19.395 17.37 19.935 18.445 17.955 19.08 16.65 19.335 16.395 20.52 16.38 19.425 17.1 18.63 17.46 18.09 18.795 18.09 18.795 17.385 20.76 14.67 20.055 14.67 21.585 14.655 22.53 14.655 22.815 14.88 23.13 15.48 23.385 20.25 21.795 23.685 17.31 23.685 12 23.685 5.37 18.315 0 11.685 0Z" />
+                                </svg>
+                                View Source
+                            </a>
                         </div>
                     </div>
 
@@ -523,7 +544,7 @@ const otherTechnologies = props.project.technologies.filter(
                                     >
                                         <img
                                             v-if="relatedProject.featured_image"
-                                            :src="relatedProject.featured_image"
+                                            :src="`/img/${relatedProject.featured_image}`"
                                             :alt="relatedProject.title"
                                             class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
                                         />

@@ -19,6 +19,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -198,7 +199,7 @@ class ProjectResource extends Resource
 
                 Section::make('Tags & Categories')
                     ->schema([
-                        TagsInput::make('tags')
+                        SpatieTagsInput::make('tags')
                             ->hint('General tags for categorization')
                             ->columnSpanFull(),
                     ])

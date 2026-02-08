@@ -21,7 +21,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
@@ -176,7 +176,7 @@ class PhotoResource extends Resource
                                     ->searchable()
                                     ->native(false),
 
-                                TagsInput::make('tags')
+                                SpatieTagsInput::make('tags')
                                     ->hint('Add tags for filtering'),
                             ]),
 
