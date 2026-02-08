@@ -68,6 +68,7 @@ class PhotoResource extends Resource
                                     ->required()
                                     ->disk(config('photography.storage.originals_disk', 'photos_originals'))
                                     ->directory('uploads')
+                                    ->visibility('private')
                                     ->imagePreviewHeight('300')
                                     ->maxSize(100 * 1024)
                                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/tiff'])

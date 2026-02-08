@@ -220,6 +220,23 @@ const nextUrl = computed(() =>
                                 </div>
                             </div>
 
+                            <div
+                                v-if="photo.tags && photo.tags.length"
+                                class="rounded-lg border border-[#1E2D3D] bg-[#011627] p-3"
+                            >
+                                <p class="mb-2 text-[11px] uppercase text-[#607B96]">Tags</p>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <Link
+                                        v-for="tag in photo.tags"
+                                        :key="tag.id"
+                                        :href="`${baseGalleryUrl}?tags=${tag.slug}`"
+                                        class="rounded-full border border-[#1E2D3D] bg-[#011221] px-2.5 py-0.5 text-xs text-[#607B96] transition-colors hover:border-[#607B96] hover:text-white"
+                                    >
+                                        #{{ tag.name }}
+                                    </Link>
+                                </div>
+                            </div>
+
                             <a
                                 v-if="photo.instagram_link"
                                 :href="photo.instagram_link"
@@ -284,6 +301,20 @@ const nextUrl = computed(() =>
                                 </div>
                             </div>
 
+                            <div
+                                v-if="photo.tags && photo.tags.length"
+                                class="mb-4 flex flex-wrap gap-2 lg:hidden"
+                            >
+                                <Link
+                                    v-for="tag in photo.tags"
+                                    :key="tag.id"
+                                    :href="`${baseGalleryUrl}?tags=${tag.slug}`"
+                                    class="rounded-full border border-[#1E2D3D] bg-[#011221] px-3 py-1 text-xs text-[#607B96] transition-colors hover:border-[#607B96] hover:text-white"
+                                >
+                                    #{{ tag.name }}
+                                </Link>
+                            </div>
+
                             <a
                                 v-if="photo.instagram_link"
                                 :href="photo.instagram_link"
@@ -320,22 +351,6 @@ const nextUrl = computed(() =>
                                 <div v-else />
                             </div>
 
-                            <div
-                                v-if="photo.tags && photo.tags.length"
-                                class="flex flex-wrap gap-2"
-                            >
-                                <Link
-                                    v-for="tag in photo.tags"
-                                    :key="tag.id"
-                                    :href="`${baseGalleryUrl}?tags=${tag.slug}`"
-                                    class="rounded-full border px-3 py-1 text-xs transition-colors"
-                                    :class="[
-                                        'border-[#1E2D3D] bg-[#011221] text-[#607B96] hover:border-[#607B96] hover:text-white',
-                                    ]"
-                                >
-                                    #{{ tag.name }}
-                                </Link>
-                            </div>
                     </div>
                 </div>
             </div>
