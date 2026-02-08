@@ -4,7 +4,6 @@ import { ref } from 'vue';
 import { Icon } from '..';
 
 const props = defineProps<{
-    // TODO: Typedef this thing
     sections: SectionType[];
 }>();
 

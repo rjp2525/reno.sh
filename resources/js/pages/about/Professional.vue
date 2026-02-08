@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SeoHead } from '@/components';
 import { MobilePageHeader } from '@/components/page';
 import { useAboutTabs } from '@/composables';
 import { GuestLayout } from '@/layouts';
@@ -57,7 +58,10 @@ const componentProps = computed(() => {
 
 <template>
     <GuestLayout>
-        <Head title="About Me - Professional" />
+        <SeoHead
+            title="About Me - Professional"
+            description="Learn about Reno Philibert's professional experience, technical skills, and education in software engineering."
+        />
 
         <main class="flex h-full w-full flex-auto overflow-hidden">
             <MobilePageHeader> _about / professional </MobilePageHeader>

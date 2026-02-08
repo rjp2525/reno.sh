@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { home, projects } from '@/routes';
+import { contact, gallery, home, projects } from '@/routes';
 import { professional } from '@/routes/about';
+import { index as blogIndex } from '@/routes/blog';
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { GitHubOctoCat, MobileNav, NavbarLink, NavbarLogo } from '.';
@@ -41,14 +42,22 @@ const isActive = (path: string, exact = false) => {
                     label="_projects"
                     :active="isActive('/projects')"
                 />
-                <NavbarLink url="#" label="_photography" :active="false" />
-                <NavbarLink url="#" label="_blog" :active="false" />
+                <NavbarLink
+                    :url="gallery.url()"
+                    label="_photography"
+                    :active="isActive('/gallery')"
+                />
+                <NavbarLink
+                    :url="blogIndex.url()"
+                    label="_blog"
+                    :active="isActive('/blog')"
+                />
             </div>
             <NavbarLink
-                url="#"
+                :url="contact.url()"
                 class="border-l-navy border-r-0 border-l"
                 label="_contact-me"
-                :active="false"
+                :active="isActive('/contact')"
             />
         </nav>
     </header>

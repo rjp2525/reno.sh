@@ -1,23 +1,25 @@
 <script setup lang="ts">
+import { SeoHead } from '@/components';
 import { MobilePageHeader } from '@/components/page';
 import type { TiptapContent } from '@/composables';
 import { useAboutTabs } from '@/composables';
 import { GuestLayout } from '@/layouts';
 import { hobbies } from '@/routes/about';
+import type { ContentBlock } from '@/types/blocks';
 import { computed } from 'vue';
-import { AboutSidebar, TiptapRenderer } from './partials';
+import { AboutSidebar, BlockRenderer } from './partials';
 
 interface ContentPage {
     slug: string;
     title: string;
     icon: string | null;
-    content: TiptapContent | string | null;
+    content: ContentBlock[] | TiptapContent | string | null;
 }
 
 const props = defineProps<{
     activeTab: string;
     tabs: Record<string, string>;
-    content: TiptapContent | string | null;
+    content: ContentBlock[] | TiptapContent | string | null;
     pages: ContentPage[];
 }>();
 
@@ -35,7 +37,10 @@ const currentPageContent = computed(() => {
 
 <template>
     <GuestLayout>
-        <Head title="About Me - Hobbies" />
+        <SeoHead
+            title="About Me - Hobbies"
+            description="Discover Reno Philibert's hobbies including photography, hiking, snowboarding, and overlanding."
+        />
 
         <main class="flex h-full w-full flex-auto overflow-hidden">
             <MobilePageHeader> _about / hobbies </MobilePageHeader>
@@ -51,7 +56,7 @@ const currentPageContent = computed(() => {
                     data-aos="fade-left"
                     class="relative flex h-full w-full flex-col"
                 >
-                    <TiptapRenderer :content="currentPageContent" />
+                    <BlockRenderer :content="currentPageContent" />
                 </div>
             </div>
         </main>

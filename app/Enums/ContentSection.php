@@ -26,21 +26,4 @@ enum ContentSection: string implements HasLabel
             self::HOBBIES => 'hobbies',
         };
     }
-
-    public function getDefaultTabs(): array
-    {
-        return match ($this) {
-            self::PERSONAL => [
-                'bio' => 'bio',
-                'maya' => 'maya',
-            ],
-            self::HOBBIES => [
-                'overlanding' => 'overlanding',
-                'photography' => 'photography',
-                'hiking' => 'hiking',
-                'snowboarding' => 'snowboarding',
-                'software' => 'software',
-            ],
-        };
-    }
 }

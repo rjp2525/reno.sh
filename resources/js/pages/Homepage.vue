@@ -1,17 +1,14 @@
 <script setup lang="ts">
+import { SeoHead } from '@/components';
 import { GuestLayout } from '@/layouts';
-
-defineProps<{
-    canLogin?: boolean;
-    canRegister?: boolean;
-    laravelVersion: string;
-    phpVersion: string;
-}>();
 </script>
 
 <template>
     <GuestLayout>
-        <Head title="Full Stack Software Engineer" />
+        <SeoHead
+            title="Full Stack Software Engineer"
+            description="Reno Philibert - Full Stack Software Engineer building awesome things for the web since 2011. Explore my projects, photography, and more."
+        />
 
         <main
             class="flex min-h-full w-full flex-col px-4 py-4 lg:px-0 lg:pl-72"

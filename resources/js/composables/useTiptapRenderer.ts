@@ -39,12 +39,10 @@ export function useTiptapRenderer(content: () => TiptapContent | string | null |
             return '';
         }
 
-        // If content is already a string (HTML), return it directly
         if (typeof rawContent === 'string') {
             return rawContent;
         }
 
-        // If content is Tiptap JSON, render it
         try {
             return generateHTML(rawContent as TiptapContent, extensions);
         } catch (error) {

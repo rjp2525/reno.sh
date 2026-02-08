@@ -4,8 +4,9 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { GuestLayout } from '@/layouts';
 import { projects as projectsRoute } from '@/routes';
 import { show as projectShow } from '@/routes/projects';
-import { Head, Link } from '@inertiajs/vue3';
-import { inject, ref } from 'vue';
+import { SeoHead } from '@/components';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed, inject, ref } from 'vue';
 
 const isMobile = inject('isMobile', ref(false));
 
@@ -35,6 +36,16 @@ const getDateRange = (project: Project) => {
     return start;
 };
 
+const page = usePage();
+const appUrl = computed(() => page.props.appUrl as string);
+
+const ogImage = computed(() => {
+    const img = props.project.og_image || props.project.featured_image;
+    if (!img) return undefined;
+    if (img.startsWith('http')) return img;
+    return `${appUrl.value}/storage/${img}`;
+});
+
 const primaryTechnologies = props.project.technologies.filter(
     (tech) => tech.pivot?.is_primary,
 );
@@ -45,52 +56,13 @@ const otherTechnologies = props.project.technologies.filter(
 
 <template>
     <GuestLayout>
-        <Head :title="project.meta_title || project.title" />
-
-        <Head>
-            <meta
-                v-if="project.meta_description"
-                name="description"
-                :content="project.meta_description"
-            />
-            <meta
-                v-if="project.meta_keywords"
-                name="keywords"
-                :content="project.meta_keywords.join(', ')"
-            />
-
-            <meta
-                property="og:title"
-                :content="project.meta_title || project.title"
-            />
-            <meta
-                v-if="project.meta_description"
-                property="og:description"
-                :content="project.meta_description"
-            />
-            <meta
-                v-if="project.og_image || project.featured_image"
-                property="og:image"
-                :content="project.og_image || project.featured_image"
-            />
-            <meta property="og:type" content="article" />
-
-            <meta name="twitter:card" content="summary_large_image" />
-            <meta
-                name="twitter:title"
-                :content="project.meta_title || project.title"
-            />
-            <meta
-                v-if="project.meta_description"
-                name="twitter:description"
-                :content="project.meta_description"
-            />
-            <meta
-                v-if="project.og_image || project.featured_image"
-                name="twitter:image"
-                :content="project.og_image || project.featured_image"
-            />
-        </Head>
+        <SeoHead
+            :title="project.meta_title || project.title"
+            :description="project.meta_description || project.summary"
+            :image="ogImage"
+            :keywords="project.meta_keywords?.join(', ')"
+            type="article"
+        />
 
         <main
             class="relative flex h-full w-full flex-auto flex-col overflow-hidden"

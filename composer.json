@@ -6,6 +6,7 @@
     "require": {
         "php": "^8.4",
         "filament/filament": "^4.0",
+        "filament/spatie-laravel-tags-plugin": "^4.5",
         "inertiajs/inertia-laravel": "^2.0",
         "intervention/image": "^3.9",
         "laravel/framework": "^12.47",
@@ -14,6 +15,8 @@
         "laravel/wayfinder": "^0.1.13",
         "league/flysystem-aws-s3-v3": "^3.30",
         "php-ffmpeg/php-ffmpeg": "^1.3",
+        "spatie/laravel-feed": "^4.4",
+        "spatie/laravel-sitemap": "^7.3",
         "spatie/laravel-tags": "^4.10",
         "tightenco/ziggy": "^2.6"
     },

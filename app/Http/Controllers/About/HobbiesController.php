@@ -21,13 +21,10 @@ class HobbiesController extends Controller
             ->get();
 
         $tabs = $pages->pluck('title', 'slug')->toArray();
-
-        // If no content pages exist yet, use default tabs
-        if (empty($tabs)) {
-            $tabs = ContentSection::HOBBIES->getDefaultTabs();
-        }
-
-        $activeTab = $this->resolveTab($tab, array_keys($tabs));
+        $validTabs = array_keys($tabs);
+        $activeTab = ($tab !== null && in_array($tab, $validTabs, true))
+            ? $tab
+            : ($validTabs[0] ?? '');
 
         $activePage = $pages->firstWhere('slug', $activeTab);
 
@@ -42,14 +39,5 @@ class HobbiesController extends Controller
                 'content' => $page->content,
             ]),
         ]);
-    }
-
-    private function resolveTab(?string $tab, array $validTabs): string
-    {
-        if ($tab === null || ! in_array($tab, $validTabs, true)) {
-            return $validTabs[0] ?? 'overlanding';
-        }
-
-        return $tab;
     }
 }

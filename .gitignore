@@ -27,3 +27,5 @@ resources/js/actions
 public/fonts
 public/js
 public/css
+public/vendor/feed
+resources/views/vendor/feed

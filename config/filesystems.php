@@ -57,6 +57,12 @@ return [
             'throw' => false,
         ],
 
+        'photos_originals' => [
+            'driver' => env('PHOTO_ORIGINALS_DRIVER', 'local'),
+            'root' => storage_path('app/photos/originals'),
+            'throw' => false,
+        ],
+
     ],
 
     /*

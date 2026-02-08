@@ -19,45 +19,33 @@ class ProjectsController extends Controller
             ->orderBy('sort_order', 'asc')
             ->orderBy('created_at', 'desc');
 
-        if ($request->filled('search')) {
-            $search = $request->get('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('summary', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhereRelation('tags', 'name', 'like', "%{$search}%");
-            });
-        }
+        $query
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $search = $request->get('search');
+                $q->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                        ->orWhere('summary', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%")
+                        ->orWhereRelation('tags', 'name', 'like', "%{$search}%");
+                });
+            })
+            ->when($request->filled('type'), fn ($q) => $q->byType($request->get('type')))
+            ->when($request->filled('status'), fn ($q) => $q->byStatus($request->get('status')))
+            ->when($request->filled('tags'), function ($q) use ($request) {
+                $tags = is_array($request->get('tags'))
+                    ? $request->get('tags')
+                    : explode(',', $request->get('tags'));
 
-        if ($request->filled('type')) {
-            $query->byType($request->get('type'));
-        }
+                $q->withAnyTags($tags);
+            })
+            ->when($request->filled('technologies'), function ($q) use ($request) {
+                $technologies = is_array($request->get('technologies'))
+                    ? $request->get('technologies')
+                    : explode(',', $request->get('technologies'));
 
-        if ($request->filled('status')) {
-            $query->byStatus($request->get('status'));
-        }
-
-        if ($request->filled('tags')) {
-            $tags = is_array($request->get('tags'))
-                ? $request->get('tags')
-                : explode(',', $request->get('tags'));
-
-            $query->withAnyTags($tags);
-        }
-
-        if ($request->filled('technologies')) {
-            $technologies = is_array($request->get('technologies'))
-                ? $request->get('technologies')
-                : explode(',', $request->get('technologies'));
-
-            $query->whereHas('technologies', function ($q) use ($technologies) {
-                $q->whereIn('technologies.slug', $technologies);
-            });
-        }
-
-        if ($request->boolean('featured')) {
-            $query->featured();
-        }
+                $q->whereHas('technologies', fn ($tech) => $tech->whereIn('technologies.slug', $technologies));
+            })
+            ->when($request->boolean('featured'), fn ($q) => $q->featured());
 
         $projects = $query->paginate(12)->withQueryString();
 

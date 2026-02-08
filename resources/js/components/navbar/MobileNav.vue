@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { home, projects } from '@/routes';
+import { contact, gallery, home, projects } from '@/routes';
 import { professional } from '@/routes/about';
+import { index as blogIndex } from '@/routes/blog';
 import { usePage } from '@inertiajs/vue3';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
@@ -50,9 +51,14 @@ const navLinks = [
         matchPath: '/projects',
         exact: false,
     },
-    { label: '_photography', url: null, matchPath: null, exact: false },
-    { label: '_blog', url: null, matchPath: null, exact: false },
-    { label: '_contact-me', url: null, matchPath: null, exact: false },
+    {
+        label: '_photography',
+        url: gallery.url(),
+        matchPath: '/gallery',
+        exact: false,
+    },
+    { label: '_blog', url: blogIndex.url(), matchPath: '/blog', exact: false },
+    { label: '_contact-me', url: contact.url(), matchPath: '/contact', exact: false },
 ];
 
 const isLinkActive = (link: (typeof navLinks)[number]) => {

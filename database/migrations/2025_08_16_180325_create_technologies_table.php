@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('technologies', function (Blueprint $table) {
+        Schema::create('technologies', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('project_technology', function (Blueprint $table) {
+        Schema::create('project_technology', function (Blueprint $table): void {
             $table->id();
             $table->foreignUlid('project_id')->constrained()->onDelete('cascade');
             $table->foreignId('technology_id')->constrained()->onDelete('cascade');

@@ -40,7 +40,7 @@ export interface ContentPage {
     slug: string;
     title: string;
     icon: string | null;
-    content: TiptapContent | string | null;
+    content: import('./blocks').ContentBlock[] | TiptapContent | string | null;
 }
 
 export interface TiptapContent {
@@ -51,7 +51,6 @@ export interface TiptapContent {
     marks?: Array<{ type: string; attrs?: Record<string, unknown> }>;
 }
 
-// Props interfaces for pages
 export interface ProfessionalPageProps {
     activeTab: string;
     tabs: Record<string, string>;
@@ -63,18 +62,17 @@ export interface ProfessionalPageProps {
 export interface PersonalPageProps {
     activeTab: string;
     tabs: Record<string, string>;
-    content: TiptapContent | string | null;
+    content: import('./blocks').ContentBlock[] | TiptapContent | string | null;
     pages: ContentPage[];
 }
 
 export interface HobbiesPageProps {
     activeTab: string;
     tabs: Record<string, string>;
-    content: TiptapContent | string | null;
+    content: import('./blocks').ContentBlock[] | TiptapContent | string | null;
     pages: ContentPage[];
 }
 
-// Legacy types for backward compatibility with PageMenu component
 import type { Component } from 'vue';
 
 export interface SectionInfo {

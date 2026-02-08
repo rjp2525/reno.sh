@@ -6,20 +6,25 @@ namespace App\Filament\Resources;
 
 use App\Enums\ContentSection;
 use App\Enums\NavigationGroup;
+use App\Filament\Blocks\ContentBlocks;
 use App\Filament\Resources\ContentPageResource\Pages;
 use App\Models\ContentPage;
 use BackedEnum;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Section;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class ContentPageResource extends Resource
@@ -44,6 +49,7 @@ class ContentPageResource extends Resource
     public static function form(Schema $form): Schema
     {
         return $form
+            ->columns(1)
             ->components([
                 Section::make('Page Settings')
                     ->schema([
@@ -78,23 +84,11 @@ class ContentPageResource extends Resource
 
                 Section::make('Content')
                     ->schema([
-                        RichEditor::make('content')
-                            ->toolbarButtons([
-                                'attachFiles',
-                                'blockquote',
-                                'bold',
-                                'bulletList',
-                                'codeBlock',
-                                'h2',
-                                'h3',
-                                'italic',
-                                'link',
-                                'orderedList',
-                                'redo',
-                                'strike',
-                                'underline',
-                                'undo',
-                            ])
+                        Builder::make('content')
+                            ->blocks(ContentBlocks::all('content-pages'))
+                            ->collapsible()
+                            ->reorderableWithButtons()
+                            ->blockPickerColumns(4)
                             ->columnSpanFull(),
                     ]),
             ]);
@@ -136,16 +130,16 @@ class ContentPageResource extends Resource
                 SelectFilter::make('section')
                     ->options(ContentSection::class),
 
-                Tables\Filters\TernaryFilter::make('is_published')
+                TernaryFilter::make('is_published')
                     ->label('Published'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

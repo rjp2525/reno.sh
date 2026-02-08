@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { SeoHead } from '@/components';
 import { MobilePageHeader } from '@/components/page';
+import { CheckboxInput, SearchInput, SelectInput } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { GuestLayout } from '@/layouts';
 import { projects as projectsRoute } from '@/routes';
 import { show as projectShow } from '@/routes/projects';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import { AppWindowMac } from 'lucide-vue-next';
 import { computed, inject, ref, watch } from 'vue';
 
@@ -114,7 +116,10 @@ const hasActiveFilters = computed(() => {
 
 <template>
     <GuestLayout>
-        <Head title="Projects" />
+        <SeoHead
+            title="Projects"
+            description="Browse my portfolio of software projects including web apps, open source tools, and more."
+        />
 
         <main class="flex h-full w-full flex-auto flex-col overflow-hidden">
             <MobilePageHeader>_projects</MobilePageHeader>
@@ -124,77 +129,45 @@ const hasActiveFilters = computed(() => {
                     <h1
                         class="mb-1 text-3xl font-bold text-gray-900 dark:text-white"
                     >
-                        Projects
+                        _projects
                     </h1>
-                    <p class="text-gray-400">
-                        Check out some of the cool things I've built for fun and
-                        work.
+                    <p class="text-gray-400 lowercase">
+                        // check out some of the cool things ive built for fun
+                        and work.
                     </p>
                 </div>
 
-                <div class="flex items-center justify-end">
-                    <div class="inline-flex items-center space-x-4">
-                        <div class="relative w-full">
-                            <input
-                                v-model="searchQuery"
-                                type="text"
-                                placeholder="Search projects..."
-                                class="w-full rounded-md border border-gray-700 bg-gray-800 px-4 py-1 pl-10 transition-all duration-200 focus:border-orange-400 focus:ring-0 focus:outline-0"
-                            />
-                            <svg
-                                class="absolute top-2 left-3 h-4 w-4 text-gray-400"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                                />
-                            </svg>
-                        </div>
+                <div class="flex items-end justify-end">
+                    <div class="flex w-full flex-wrap items-center gap-3">
+                        <SearchInput
+                            v-model="searchQuery"
+                            placeholder="Search projects..."
+                            class="w-full sm:w-auto sm:min-w-[200px] sm:flex-1"
+                        />
 
-                        <div class="flex w-full gap-4">
-                            <select
-                                v-model="selectedType"
-                                class="rounded-md border border-gray-700 bg-gray-800 px-3 py-1.5 text-sm transition-all duration-200 focus:border-orange-400 focus:ring-0 focus:outline-0"
+                        <SelectInput v-model="selectedType">
+                            <option value="">All Types</option>
+                            <option
+                                v-for="type in filterOptions.types"
+                                :key="type.value"
+                                :value="type.value"
                             >
-                                <option value="" class="text-sm">
-                                    All Types
-                                </option>
-                                <option
-                                    v-for="type in filterOptions.types"
-                                    :key="type.value"
-                                    :value="type.value"
-                                    class="text-sm"
-                                >
-                                    {{ type.label }}
-                                </option>
-                            </select>
+                                {{ type.label }}
+                            </option>
+                        </SelectInput>
 
-                            <label
-                                class="flex cursor-pointer items-center space-x-2"
-                            >
-                                <input
-                                    v-model="showFeaturedOnly"
-                                    type="checkbox"
-                                    class="rounded border-gray-700 bg-gray-600 text-gray-300 transition-all duration-200 checked:bg-orange-400 hover:bg-gray-500 checked:hover:bg-orange-500 focus:border-orange-400 focus:ring-0 focus:ring-offset-0 focus:outline-none focus:checked:bg-orange-400 active:ring-0 active:outline-none"
-                                />
-                                <span class="text-sm text-gray-300"
-                                    >Featured</span
-                                >
-                            </label>
+                        <CheckboxInput
+                            v-model="showFeaturedOnly"
+                            label="Featured"
+                        />
 
-                            <button
-                                v-if="hasActiveFilters"
-                                @click="clearFilters"
-                                class="px-3 py-2 text-sm text-gray-600 underline hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
-                            >
-                                Clear filters
-                            </button>
-                        </div>
+                        <button
+                            v-if="hasActiveFilters"
+                            @click="clearFilters"
+                            class="shrink-0 text-sm text-[#607B96] underline hover:text-white"
+                        >
+                            Clear
+                        </button>
 
                         <div
                             v-if="filterOptions.tags.length"
