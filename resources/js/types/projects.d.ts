@@ -8,7 +8,7 @@ interface Project {
     status: 'active' | 'archived' | 'in_development';
 
     featured_image: string | null;
-    gallery: string[] | null;
+    gallery: Array<{ image: string }> | null;
     url: string | null;
     github_url: string | null;
     demo_url: string | null;

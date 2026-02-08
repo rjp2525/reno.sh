@@ -184,7 +184,7 @@ const otherTechnologies = props.project.technologies.filter(
                                                 project.demo_url || project.url
                                             "
                                             :href="
-                                                project.demo_url || project.url
+                                                project.demo_url ?? project.url ?? undefined
                                             "
                                             target="_blank"
                                             rel="noopener"
@@ -457,8 +457,7 @@ const otherTechnologies = props.project.technologies.filter(
                                                     project.url
                                                 "
                                                 :href="
-                                                    project.demo_url ||
-                                                    project.url
+                                                    project.demo_url ?? project.url ?? undefined
                                                 "
                                                 target="_blank"
                                                 rel="noopener"
