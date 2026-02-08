@@ -113,4 +113,6 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Reno Philibert'),
     ],
 
+    'contact_to' => env('MAIL_CONTACT_TO', 'hello@reno.sh'),
+
 ];
