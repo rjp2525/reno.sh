@@ -5,7 +5,7 @@
     "scripts": {
         "preinstall": "npx only-allow pnpm",
         "dev": "vite",
-        "build": "vue-tsc && vite build && vite build --ssr",
+        "build": "vue-tsc && vite build && NODE_OPTIONS='--max-old-space-size=1024' vite build --ssr",
         "lint": "eslint resources/js --ext .js,.ts,.vue --ignore-path .gitignore --fix"
     },
     "devDependencies": {
