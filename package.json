@@ -49,6 +49,7 @@
         "@types/aos": "^3.0.7",
         "aos": "^2.3.4",
         "class-variance-authority": "^0.7.1",
+        "heroicons": "^2.2.0",
         "lucide-vue-next": "^0.562.0",
         "radix-vue": "^1.9.17",
         "shiki": "^3.22.0",
