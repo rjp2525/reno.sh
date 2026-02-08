@@ -139,46 +139,44 @@ const otherTechnologies = props.project.technologies.filter(
                                     </div>
                                 </div>
 
-                                <div class="flex items-center justify-between">
-                                    <div
+                                <div
+                                    :class="
+                                        project.featured_image
+                                            ? 'text-white'
+                                            : ''
+                                    "
+                                >
+                                    <h1
+                                        class="mb-4 text-3xl font-bold lg:text-5xl"
+                                    >
+                                        {{ project.title }}
+                                    </h1>
+
+                                    <p
+                                        v-if="project.summary"
+                                        class="mb-6 max-w-5xl text-lg lg:text-xl"
                                         :class="
                                             project.featured_image
-                                                ? 'text-white'
-                                                : ''
+                                                ? 'text-gray-100'
+                                                : 'text-gray-600 dark:text-gray-400'
                                         "
                                     >
-                                        <h1
-                                            class="mb-4 text-3xl font-bold lg:text-5xl"
-                                        >
-                                            {{ project.title }}
-                                        </h1>
+                                        {{ project.summary }}
+                                    </p>
 
-                                        <p
-                                            v-if="project.summary"
-                                            class="mb-6 max-w-5xl text-lg lg:text-xl"
-                                            :class="
-                                                project.featured_image
-                                                    ? 'text-gray-100'
-                                                    : 'text-gray-600 dark:text-gray-400'
-                                            "
-                                        >
-                                            {{ project.summary }}
-                                        </p>
-
-                                        <div
-                                            v-if="getDateRange(project)"
-                                            class="mb-6 text-sm"
-                                            :class="
-                                                project.featured_image
-                                                    ? 'text-gray-200'
-                                                    : 'text-gray-500 dark:text-gray-400'
-                                            "
-                                        >
-                                            {{ getDateRange(project) }}
-                                        </div>
+                                    <div
+                                        v-if="getDateRange(project)"
+                                        class="mb-6 text-sm"
+                                        :class="
+                                            project.featured_image
+                                                ? 'text-gray-200'
+                                                : 'text-gray-500 dark:text-gray-400'
+                                        "
+                                    >
+                                        {{ getDateRange(project) }}
                                     </div>
 
-                                    <div class="flex flex-col gap-3">
+                                    <div class="flex flex-wrap gap-3">
                                         <a
                                             v-if="
                                                 project.demo_url || project.url

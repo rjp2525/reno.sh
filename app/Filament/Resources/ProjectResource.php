@@ -119,6 +119,7 @@ class ProjectResource extends Resource
                             ->schema([
                                 FileUpload::make('featured_image')
                                     ->image()
+                                    ->disk('public')
                                     ->directory('projects/featured')
                                     ->columnSpan(1),
 
@@ -126,6 +127,7 @@ class ProjectResource extends Resource
                                     ->schema([
                                         FileUpload::make('image')
                                             ->image()
+                                            ->disk('public')
                                             ->directory('projects/gallery')
                                             ->required(),
                                     ])
@@ -186,6 +188,7 @@ class ProjectResource extends Resource
 
                         FileUpload::make('og_image')
                             ->image()
+                            ->disk('public')
                             ->directory('projects/og')
                             ->hint('If empty, will use featured image')
                             ->columnSpanFull(),
