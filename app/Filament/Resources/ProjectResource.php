@@ -131,6 +131,7 @@ class ProjectResource extends Resource
                                             ->image()
                                             ->disk('public')
                                             ->directory('projects/gallery')
+                                            ->visibility('private')
                                             ->required(),
                                     ])
                                     ->columns(1)
@@ -192,6 +193,7 @@ class ProjectResource extends Resource
                             ->image()
                             ->disk('public')
                             ->directory('projects/og')
+                            ->visibility('private')
                             ->hint('If empty, will use featured image')
                             ->columnSpanFull(),
                     ])
