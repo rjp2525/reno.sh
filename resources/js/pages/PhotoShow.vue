@@ -252,11 +252,11 @@ const nextUrl = computed(() =>
                         </div>
                     </div>
 
-                    <div>
+                    <div class="max-w-[1280px]">
                             <h1 class="mb-4 text-xl sm:text-2xl lg:text-3xl">
                                 <span class="text-[#4D5BCE]">const </span>
                                 <span class="text-white">{{
-                                    photo.title.replace(/\s+/g, '_')
+                                    photo.title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '_')
                                 }}</span>
                             </h1>
 
