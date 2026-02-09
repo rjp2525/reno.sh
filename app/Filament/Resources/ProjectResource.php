@@ -122,6 +122,7 @@ class ProjectResource extends Resource
                                     ->image()
                                     ->disk('public')
                                     ->directory('projects/featured')
+                                    ->visibility('private')
                                     ->columnSpan(1),
 
                                 Repeater::make('gallery')
