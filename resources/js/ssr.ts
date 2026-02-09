@@ -6,21 +6,25 @@ import { createSSRApp, DefineComponent, h } from 'vue';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Reno Philibert';
 
-createServer((page) =>
-    createInertiaApp({
-        page,
-        render: renderToString,
-        title: (title) => `${title} - ${appName}`,
-        resolve: (name) =>
-            resolvePageComponent(
-                `./pages/${name}.vue`,
-                import.meta.glob<DefineComponent>('./pages/**/*.vue'),
-            ),
-        setup({ App, props, plugin }) {
-            return createSSRApp({ render: () => h(App, props) })
-                .use(plugin)
-                .component('Link', Link)
-                .component('Head', Head);
-        },
-    }),
+const ssrPort = Number(import.meta.env.VITE_SSR_PORT || 13714);
+
+createServer(
+    (page) =>
+        createInertiaApp({
+            page,
+            render: renderToString,
+            title: (title) => `${title} - ${appName}`,
+            resolve: (name) =>
+                resolvePageComponent(
+                    `./pages/${name}.vue`,
+                    import.meta.glob<DefineComponent>('./pages/**/*.vue'),
+                ),
+            setup({ App, props, plugin }) {
+                return createSSRApp({ render: () => h(App, props) })
+                    .use(plugin)
+                    .component('Link', Link)
+                    .component('Head', Head);
+            },
+        }),
+    ssrPort,
 );
