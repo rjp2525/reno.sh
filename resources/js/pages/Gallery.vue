@@ -242,23 +242,23 @@ const hasActiveFilters = computed(() => {
                         </SelectInput>
                     </div>
 
-                    <div v-if="displayedPhotos.length > 0" class="masonry-grid">
+                    <div v-if="displayedPhotos.length > 0" class="mosaic-grid">
                         <Link
                             v-for="photo in displayedPhotos"
                             :key="photo.id"
                             :href="getPhotoUrl(photo)"
-                            class="masonry-item group"
+                            class="mosaic-item group"
+                            :style="{ flexGrow: photo.aspect_ratio, flexBasis: `${photo.aspect_ratio * 200}px` }"
                             @dragstart.prevent
                         >
                             <div
-                                class="relative overflow-hidden rounded-lg bg-[#011221]"
+                                class="relative h-full overflow-hidden rounded-lg bg-[#011221]"
                             >
                                 <div
                                     v-if="photo.thumbnail_url"
-                                    class="protected-thumbnail w-full transition-transform duration-300 group-hover:scale-105"
+                                    class="protected-thumbnail h-full w-full transition-transform duration-300 group-hover:scale-105"
                                     :style="{
                                         backgroundImage: `url(${photo.thumbnail_url})`,
-                                        paddingBottom: `${(1 / photo.aspect_ratio) * 100}%`,
                                     }"
                                     role="img"
                                     :aria-label="photo.title"
@@ -343,39 +343,33 @@ const hasActiveFilters = computed(() => {
 </template>
 
 <style scoped>
-.masonry-grid {
-    columns: 2;
-    column-gap: 1rem;
+.mosaic-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.mosaic-item {
+    height: 200px;
+    min-width: 0;
 }
 
 @media (min-width: 640px) {
-    .masonry-grid {
-        columns: 3;
-    }
-}
-
-@media (min-width: 1024px) {
-    .masonry-grid {
-        columns: 3;
+    .mosaic-item {
+        height: 240px;
     }
 }
 
 @media (min-width: 1280px) {
-    .masonry-grid {
-        columns: 4;
+    .mosaic-item {
+        height: 280px;
     }
 }
 
-@media (min-width: 1536px) {
-    .masonry-grid {
-        columns: 5;
-    }
-}
-
-.masonry-item {
-    display: block;
-    break-inside: avoid;
-    margin-bottom: 1rem;
+/* Fill the last row so images don't stretch to fill remaining space */
+.mosaic-grid::after {
+    content: '';
+    flex-grow: 999999;
 }
 
 .line-clamp-1 {
