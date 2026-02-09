@@ -3,7 +3,7 @@ import './bootstrap';
 
 import { createInertiaApp, Head, Link, router } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { createApp, DefineComponent, h } from 'vue';
+import { createSSRApp, DefineComponent, h } from 'vue';
 
 // Prevent Inertia from showing raw HTML error modals for non-Inertia responses
 router.on('invalid', (event) => {
@@ -20,7 +20,7 @@ createInertiaApp({
             import.meta.glob<DefineComponent>('./pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
-        createApp({ render: () => h(App, props) })
+        createSSRApp({ render: () => h(App, props) })
             .use(plugin)
             .component('Link', Link)
             .component('Head', Head)
