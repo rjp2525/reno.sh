@@ -6,6 +6,11 @@ import svgLoader from 'vite-svg-loader';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
+    ssr: {
+        define: {
+            'process.env.SSR_PORT': 'process.env.SSR_PORT',
+        },
+    },
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './resources/js'),
