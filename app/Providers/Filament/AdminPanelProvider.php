@@ -28,6 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->revealablePasswords(false)
             ->defaultThemeMode(ThemeMode::Dark)
             ->colors([
                 'primary' => '#43D9AD',

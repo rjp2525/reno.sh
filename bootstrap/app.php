@@ -30,7 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 return back()->with('error', 'Slow down! Please wait a moment before trying again.');
             }
 
-            if (in_array($status, [403, 404, 500, 503]) && ! request()->is('admin', 'admin/*')) {
+            if (in_array($status, [403, 404, 500, 503]) && ! request()->is('admin', 'admin/*', 'livewire/*')) {
                 return Inertia::render('Error', ['status' => $status])
                     ->toResponse(request())
                     ->setStatusCode($status);

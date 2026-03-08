@@ -13,7 +13,7 @@ class HandleInertiaRequests extends Middleware
 
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->is('admin') || $request->is('admin/*')) {
+        if ($request->is('admin', 'admin/*', 'livewire/*')) {
             return $next($request);
         }
 
