@@ -51,8 +51,8 @@ class ContentBlocks
                         'underline',
                         'undo',
                     ])
-                    ->disk('public')
-                    ->directory($directory)
+                    ->fileAttachmentsDisk('public')
+                    ->fileAttachmentsDirectory($directory)
                     ->columnSpanFull(),
             ]);
     }
