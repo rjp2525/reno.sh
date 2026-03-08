@@ -17,7 +17,7 @@ class ContentBlocks
     public static function all(string $uploadDirectory = 'content'): array
     {
         return [
-            static::richText(),
+            static::richText($uploadDirectory),
             static::image($uploadDirectory),
             static::imageGallery($uploadDirectory),
             static::heading(),
@@ -28,7 +28,7 @@ class ContentBlocks
         ];
     }
 
-    public static function richText(): Block
+    public static function richText(string $directory = 'content'): Block
     {
         return Block::make('rich-text')
             ->label('Rich Text')
@@ -51,6 +51,8 @@ class ContentBlocks
                         'underline',
                         'undo',
                     ])
+                    ->disk('public')
+                    ->directory($directory)
                     ->columnSpanFull(),
             ]);
     }
@@ -66,6 +68,10 @@ class ContentBlocks
                     ->directory($directory)
                     ->disk('public')
                     ->required(),
+                TextInput::make('alt')
+                    ->label('Alt text')
+                    ->maxLength(255)
+                    ->hint('Describe the image for accessibility'),
                 TextInput::make('caption')
                     ->maxLength(255),
                 Select::make('alignment')
@@ -93,6 +99,10 @@ class ContentBlocks
                             ->directory($directory)
                             ->disk('public')
                             ->required(),
+                        TextInput::make('alt')
+                            ->label('Alt text')
+                            ->maxLength(255)
+                            ->hint('Describe the image for accessibility'),
                         TextInput::make('caption')
                             ->maxLength(255),
                     ])

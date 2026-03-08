@@ -9,6 +9,7 @@ export interface ImageBlock {
     type: 'image';
     data: {
         image: string;
+        alt?: string | null;
         caption?: string | null;
         alignment: 'left' | 'center' | 'right' | 'full';
     };
@@ -16,6 +17,7 @@ export interface ImageBlock {
 
 export interface ImageGalleryImage {
     image: string;
+    alt?: string | null;
     caption?: string | null;
 }
 

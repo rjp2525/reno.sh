@@ -20,7 +20,7 @@ defineProps<{
     >
         <img
             :src="`/img/${data.image}`"
-            :alt="data.caption ?? ''"
+            :alt="data.alt || data.caption || ''"
             loading="lazy"
             :class="[
                 'rounded-lg',

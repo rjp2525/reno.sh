@@ -18,7 +18,7 @@ defineProps<{
         >
             <img
                 :src="`/img/${item.image}`"
-                :alt="item.caption ?? ''"
+                :alt="item.alt || item.caption || ''"
                 loading="lazy"
                 class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
