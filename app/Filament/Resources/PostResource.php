@@ -125,7 +125,8 @@ class PostResource extends Resource
                                     ->label('Featured image')
                                     ->image()
                                     ->directory('blog/featured')
-                                    ->disk('public'),
+                                    ->disk('public')
+                                    ->visibility('private'),
                             ]),
                     ]),
 
@@ -157,6 +158,7 @@ class PostResource extends Resource
                             ->image()
                             ->directory('blog/og')
                             ->disk('public')
+                            ->visibility('private')
                             ->hint('If empty, will use featured image'),
                     ])
                     ->collapsible()

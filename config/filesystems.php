@@ -48,7 +48,6 @@ return [
             'bucket' => env('AWS_BUCKET'),
             'endpoint' => env('AWS_ENDPOINT'),
             'url' => env('APP_URL').'/img',
-            'visibility' => 'public',
             'throw' => true,
         ],
 

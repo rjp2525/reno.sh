@@ -68,7 +68,8 @@ class BlogSeriesResource extends Resource
                         FileUpload::make('featured_image')
                             ->image()
                             ->directory('blog/series')
-                            ->disk('public'),
+                            ->disk('public')
+                            ->visibility('private'),
 
                         Toggle::make('is_published')
                             ->default(false),

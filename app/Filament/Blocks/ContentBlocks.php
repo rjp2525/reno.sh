@@ -67,6 +67,7 @@ class ContentBlocks
                     ->image()
                     ->directory($directory)
                     ->disk('public')
+                    ->visibility('private')
                     ->required(),
                 TextInput::make('alt')
                     ->label('Alt text')
@@ -98,6 +99,7 @@ class ContentBlocks
                             ->image()
                             ->directory($directory)
                             ->disk('public')
+                            ->visibility('private')
                             ->required(),
                         TextInput::make('alt')
                             ->label('Alt text')
