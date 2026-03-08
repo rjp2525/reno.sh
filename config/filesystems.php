@@ -46,8 +46,10 @@ return [
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_BUCKET'),
+            'endpoint' => env('AWS_ENDPOINT'),
             'url' => env('APP_URL').'/img',
-            'throw' => false,
+            'visibility' => 'public',
+            'throw' => true,
         ],
 
         's3' => [
