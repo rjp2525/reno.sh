@@ -247,14 +247,11 @@ const jsonLd = computed(() => {
                                                     post.category.slug,
                                             })
                                         "
-                                        class="rounded-full px-3 py-1 text-xs font-medium transition-opacity hover:opacity-80"
+                                        class="rounded-full border border-white/20 bg-black/40 px-3 py-1 text-xs font-medium backdrop-blur-sm transition-opacity hover:opacity-80"
                                         :style="{
-                                            backgroundColor:
-                                                (post.category.color ||
-                                                    '#607B96') + '30',
                                             color:
                                                 post.category.color ||
-                                                '#607B96',
+                                                '#E5E7EB',
                                         }"
                                     >
                                         {{ post.category.name }}
@@ -262,7 +259,7 @@ const jsonLd = computed(() => {
                                 </div>
 
                                 <h1
-                                    class="mb-2 text-xl font-bold text-white sm:mb-3 sm:text-3xl lg:text-4xl"
+                                    class="mb-2 text-lg font-bold text-white sm:mb-3 sm:text-3xl lg:text-4xl"
                                 >
                                     {{ post.title }}
                                 </h1>
@@ -425,17 +422,17 @@ const jsonLd = computed(() => {
                             />
 
                             <div
-                                class="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-[#1E2D3D] pt-6"
+                                class="mt-8 border-t border-[#1E2D3D] pt-6"
                             >
                                 <div
                                     v-if="post.tags.length"
-                                    class="flex flex-wrap items-center gap-2"
+                                    class="mb-4 flex flex-wrap items-center gap-1.5"
                                 >
-                                    <Tag class="h-4 w-4 text-[#607B96]" />
+                                    <Tag class="mr-1 h-4 w-4 text-[#607B96]" />
                                     <span
                                         v-for="tag in post.tags"
                                         :key="tag.id"
-                                        class="rounded-full border border-[#1E2D3D] bg-[#011221] px-3 py-1 text-xs text-[#607B96]"
+                                        class="rounded-full border border-[#1E2D3D] bg-[#011221] px-2.5 py-0.5 text-xs text-[#607B96]"
                                     >
                                         #{{ tag.name }}
                                     </span>
