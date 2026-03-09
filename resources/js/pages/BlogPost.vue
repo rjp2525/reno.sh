@@ -226,7 +226,7 @@ const jsonLd = computed(() => {
                 </div>
 
                 <div v-if="post.featured_image" class="relative">
-                    <div class="relative max-h-[350px] overflow-hidden">
+                    <div class="relative max-h-[250px] overflow-hidden sm:max-h-[350px]">
                         <img
                             :src="`/img/${post.featured_image}`"
                             :alt="post.title"
@@ -236,10 +236,10 @@ const jsonLd = computed(() => {
                             class="absolute inset-0 bg-gradient-to-t from-[#011627] via-[#011627]/70 to-transparent"
                         />
                         <div
-                            class="absolute bottom-0 left-0 right-0 p-6"
+                            class="absolute bottom-0 left-0 right-0 p-4 sm:p-6"
                         >
                             <div class="mx-auto w-full max-w-5xl">
-                                <div v-if="post.category" class="mb-2">
+                                <div v-if="post.category" class="mb-1 sm:mb-2">
                                     <Link
                                         :href="
                                             blogCategoryRoute.url({
@@ -262,15 +262,15 @@ const jsonLd = computed(() => {
                                 </div>
 
                                 <h1
-                                    class="mb-3 text-3xl font-bold text-white lg:text-4xl"
+                                    class="mb-2 text-xl font-bold text-white sm:mb-3 sm:text-3xl lg:text-4xl"
                                 >
                                     {{ post.title }}
                                 </h1>
 
                                 <div
-                                    class="flex w-full items-center justify-between text-sm text-white/70"
+                                    class="flex w-full items-center justify-between text-xs text-white/70 sm:text-sm"
                                 >
-                                    <div class="flex flex-wrap items-center gap-4">
+                                    <div class="flex flex-wrap items-center gap-2 sm:gap-4">
                                         <span
                                             v-if="post.published_at"
                                             class="flex items-center gap-1"
@@ -377,7 +377,7 @@ const jsonLd = computed(() => {
                     </header>
                 </div>
 
-                <div class="mx-auto w-full max-w-5xl px-6 py-8">
+                <div class="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
                     <div :class="tableOfContents.length ? 'grid gap-8 lg:grid-cols-[1fr_250px]' : ''">
                         <article class="min-w-0">
                             <div
