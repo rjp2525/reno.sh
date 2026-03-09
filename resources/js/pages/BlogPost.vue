@@ -166,7 +166,7 @@ const jsonLd = computed(() => {
         <main
             class="relative flex h-full w-full flex-auto flex-col overflow-hidden"
         >
-            <ScrollArea class="h-[calc(100vh-150px)] w-full">
+            <ScrollArea class="h-[calc(100vh-150px)] w-full [&_[data-radix-scroll-area-viewport]:focus]:outline-none">
                 <MobilePageHeader>
                     <Link
                         :href="blogIndex.url()"
@@ -385,15 +385,18 @@ const jsonLd = computed(() => {
                                 class="mb-8 rounded-lg border border-[#1E2D3D] bg-[#011221] p-4"
                             >
                                 <h3
-                                    class="mb-2 text-sm font-semibold text-white"
+                                    class="text-sm font-semibold text-white"
                                 >
                                     Series: {{ post.series.title }}
                                 </h3>
-                                <p class="mb-3 text-xs text-[#607B96]">
+                                <p class="text-xs text-[#607B96]"
+                                    :class="{ 'mb-3': prevPost || nextPost }"
+                                >
                                     Part {{ currentSeriesIndex + 1 }} of
                                     {{ seriesPosts.length }}
                                 </p>
                                 <div
+                                    v-if="prevPost || nextPost"
                                     class="flex items-center justify-between gap-4"
                                 >
                                     <Link

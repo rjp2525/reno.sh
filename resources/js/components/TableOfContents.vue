@@ -10,6 +10,12 @@ const activeId = ref('');
 let observer: IntersectionObserver | null = null;
 
 onMounted(() => {
+    const firstEl = props.entries.length
+        ? document.getElementById(props.entries[0].id)
+        : null;
+    const scrollRoot =
+        firstEl?.closest<HTMLElement>('[data-radix-scroll-area-viewport]') ?? null;
+
     observer = new IntersectionObserver(
         (entries) => {
             for (const entry of entries) {
@@ -19,6 +25,7 @@ onMounted(() => {
             }
         },
         {
+            root: scrollRoot,
             rootMargin: '-80px 0px -60% 0px',
             threshold: 0.1,
         },
@@ -36,7 +43,15 @@ onBeforeUnmount(() => {
 
 const scrollTo = (id: string) => {
     const el = document.getElementById(id);
-    if (el) {
+    if (!el) return;
+
+    const scrollContainer = el.closest('[data-radix-scroll-area-viewport]');
+    if (scrollContainer) {
+        const containerRect = scrollContainer.getBoundingClientRect();
+        const elRect = el.getBoundingClientRect();
+        const offset = elRect.top - containerRect.top + scrollContainer.scrollTop - 80;
+        scrollContainer.scrollTo({ top: offset, behavior: 'smooth' });
+    } else {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 };
@@ -67,7 +82,7 @@ const getIndent = (level: string) => {
                 :class="getIndent(entry.level)"
             >
                 <button
-                    class="block w-full border-l-2 py-1 pr-2 pl-3 text-left text-sm transition-colors"
+                    class="block w-full cursor-pointer border-l-2 py-1 pr-2 pl-3 text-left text-sm transition-colors"
                     :class="
                         activeId === entry.id
                             ? 'border-[#FEA55F] text-white'

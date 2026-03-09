@@ -1,15 +1,24 @@
 <script setup lang="ts">
 import type { HeadingBlock } from '@/types/blocks';
+import { computed } from 'vue';
 
-defineProps<{
+const props = defineProps<{
     data: HeadingBlock['data'];
 }>();
+
+const headingId = computed(() =>
+    props.data.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-'),
+);
 </script>
 
 <template>
-    <div>
+    <div class="-mb-3">
         <component
             :is="data.level"
+            :id="headingId"
             class="font-semibold text-slate-200"
             :class="{
                 'text-3xl': data.level === 'h2',
