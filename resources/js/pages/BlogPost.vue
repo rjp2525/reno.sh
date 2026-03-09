@@ -226,17 +226,17 @@ const jsonLd = computed(() => {
                 </div>
 
                 <div v-if="post.featured_image" class="relative">
-                    <div class="relative max-h-[250px] overflow-hidden sm:max-h-[350px]">
+                    <div class="relative min-h-[200px] overflow-hidden sm:max-h-[350px]">
                         <img
                             :src="`/img/${post.featured_image}`"
                             :alt="post.title"
-                            class="h-full w-full object-cover object-center"
+                            class="absolute inset-0 h-full w-full object-cover object-center"
                         />
                         <div
                             class="absolute inset-0 bg-gradient-to-t from-[#011627] via-[#011627]/70 to-transparent"
                         />
                         <div
-                            class="absolute bottom-0 left-0 right-0 p-4 sm:p-6"
+                            class="relative p-4 pt-16 sm:absolute sm:inset-x-0 sm:bottom-0 sm:p-6"
                         >
                             <div class="mx-auto w-full max-w-5xl">
                                 <div v-if="post.category" class="mb-1 sm:mb-2">

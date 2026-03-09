@@ -15,7 +15,7 @@ const headingId = computed(() =>
 </script>
 
 <template>
-    <div class="-mb-2">
+    <div class="mt-2 -mb-2">
         <component
             :is="data.level"
             :id="headingId"
