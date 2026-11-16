@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Enums\PhotoProcessingStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PhotoResource;
-use App\Jobs\ProcessPhotoJob;
 use App\Models\Photo;
-use App\Services\Photo\ExifExtractorService;
+use App\Services\Photo\PhotoImporter;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -26,7 +24,7 @@ class PhotoController extends Controller
             ->paginate($this->perPage($request)));
     }
 
-    public function store(Request $request, ExifExtractorService $exif): PhotoResource
+    public function store(Request $request, PhotoImporter $importer): PhotoResource
     {
         $data = $request->validate([
             'file' => ['required', 'file', 'mimetypes:image/jpeg,image/png,image/webp,image/tiff,image/heic,image/heif', 'max:102400'],
@@ -35,26 +33,13 @@ class PhotoController extends Controller
         ]);
 
         $file = $data['file'];
-        $disk = config('photography.storage.originals_disk', 'photos_originals');
-        $path = $file->storeAs('uploads', Str::ulid()->toBase32().'.'.strtolower($file->guessExtension() ?: 'jpg'), $disk);
-        $meta = $exif->extract($file->getRealPath());
-        $title = $data['title'] ?? Str::headline(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+        $path = $file->storeAs(
+            'uploads',
+            Str::ulid()->toBase32().'.'.strtolower($file->guessExtension() ?: 'jpg'),
+            config('photography.storage.originals_disk', 'photos_originals'),
+        );
 
-        $photo = Photo::create([
-            ...Arr::only($data, ['description', 'photo_category_id', 'is_published', 'is_favorite', 'prints_enabled', 'sort_order']),
-            ...Arr::only($meta, ['iso', 'aperture', 'shutter_speed', 'focal_length', 'camera_body', 'lens', 'gps_latitude', 'gps_longitude', 'taken_at', 'width', 'height']),
-            'title' => $title,
-            'slug' => Str::slug($title).'-'.Str::lower(Str::random(6)),
-            'original_path' => $path,
-            'file_size' => $file->getSize(),
-            'processing_status' => PhotoProcessingStatus::PENDING,
-        ]);
-
-        if (isset($data['tags'])) {
-            $photo->syncTags($data['tags']);
-        }
-
-        ProcessPhotoJob::dispatch($photo);
+        $photo = $importer->import($path, Arr::except($data, ['file', 'tags']), $data['tags'] ?? [], $file->getClientOriginalName());
 
         return new PhotoResource($photo->load(['category', 'tags']));
     }

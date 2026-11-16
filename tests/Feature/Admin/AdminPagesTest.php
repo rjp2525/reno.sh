@@ -2,9 +2,12 @@
 
 use App\Enums\SocialProvider;
 use App\Models\Post;
+use App\Models\PrintOrder;
+use App\Models\PrintProduct;
 use App\Models\SocialAccount;
 use App\Models\SocialPost;
 use App\Models\User;
+use Database\Seeders\PrintProductSeeder;
 
 beforeEach(function () {
     config(['site.admin_emails' => ['admin@example.com']]);
@@ -31,6 +34,8 @@ it('renders every admin page', function (string $path) {
     '/admin/social-posts/create',
     '/admin/social-accounts',
     '/admin/social/calendar',
+    '/admin/print-products',
+    '/admin/print-orders',
 ]);
 
 it('renders edit pages for existing records', function () {
@@ -39,4 +44,16 @@ it('renders edit pages for existing records', function () {
 
     $this->actingAs($this->admin)->get("/admin/posts/{$post->slug}/edit")->assertOk()->assertSee('Hello');
     $this->actingAs($this->admin)->get("/admin/social-posts/{$social->id}/edit")->assertOk();
+});
+
+it('renders a print order', function () {
+    $this->seed(PrintProductSeeder::class);
+    $order = PrintOrder::create(['currency' => 'USD', 'total' => 6500, 'status' => 'paid', 'email' => 'buyer@example.com']);
+    $order->items()->create(['photo_title' => 'Sunrise', 'product_name' => 'Fine Art Print · 12×18 in', 'sku' => 'X', 'quantity' => 1, 'unit_price' => 6500]);
+
+    expect(PrintProduct::count())->toBe(27)
+        ->and(PrintProduct::where('is_active', true)->count())->toBe(0)
+        ->and($order->number)->toStartWith('RP-');
+
+    $this->actingAs($this->admin)->get("/admin/print-orders/{$order->id}")->assertOk()->assertSee($order->number)->assertSee('Sunrise');
 });
