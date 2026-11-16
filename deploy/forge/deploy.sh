@@ -33,6 +33,9 @@ $ACTIVATE_RELEASE()
 
 $RESTART_QUEUES()
 
+# Stop reno.sh's SSR server (port VITE_SSR_PORT only); its daemon restarts it on the new bundle.
+$FORGE_PHP artisan inertia:stop-ssr || true
+
 if [ -n "$TUI_DAEMON_ID" ]; then
     sudo -S supervisorctl restart "daemon-$TUI_DAEMON_ID:*"
 fi

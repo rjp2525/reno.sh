@@ -7,7 +7,8 @@ import { createSSRApp, DefineComponent, h } from 'vue';
 const appName = import.meta.env.VITE_APP_NAME || 'Reno Philibert';
 
 declare const process: { env: Record<string, string | undefined> };
-const ssrPort = Number(process.env.SSR_PORT || 13714);
+// Must match config('inertia.ssr.url'). Baked in at build time from VITE_SSR_PORT; SSR_PORT overrides at runtime.
+const ssrPort = Number(process.env.SSR_PORT || import.meta.env.VITE_SSR_PORT || 13715);
 
 createServer(
     (page) =>

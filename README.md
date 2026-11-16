@@ -82,6 +82,9 @@ Nothing newer than **7 days** gets installed:
    `$RESTART_QUEUES()` helpers). Enable push to deploy.
 4. Queue: add a worker (`database` connection, `--tries=3 --timeout=600`).
 5. Scheduler: enable the Laravel scheduler (publishes scheduled posts and social posts every minute).
+   Inertia SSR: add a daemon `php artisan inertia:start-ssr` in `<site root>/current`. reno.sh listens on
+   `VITE_SSR_PORT` (default 13715, not Inertia's 13714) so it can't collide with another Inertia app on the
+   server; give every app its own port. The deploy script stops it after each release and the daemon restarts it.
 6. SSH TUI: install Go, add a daemon `reno-tui` running `<site root>/current/tui/bin/reno-tui` with
    `RENO_API_URL=https://reno.sh RENO_SSH_PORT=2222 RENO_HOST_KEY_PATH=/home/forge/.reno-tui/host_ed25519`,
    put its ID in `TUI_DAEMON_ID` at the top of the deploy script, then open port 2222 in the Forge firewall
