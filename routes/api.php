@@ -68,6 +68,15 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::delete('social/posts/{post}', [Admin\SocialController::class, 'destroy'])->name('social.posts.destroy');
             Route::post('social/posts/{post}/publish', [Admin\SocialController::class, 'publish'])->name('social.posts.publish');
 
+            // About section: pages, work history, education, skills.
+            Route::post('content-pages/reorder', [Admin\ContentPageController::class, 'reorder'])->name('content-pages.reorder');
+            Route::apiResource('content-pages', Admin\ContentPageController::class)
+                ->parameters(['content-pages' => 'contentPage:id'])->names('content-pages');
+            Route::apiResource('experiences', Admin\ExperienceController::class)->names('experiences');
+            Route::apiResource('education', Admin\EducationController::class)
+                ->parameters(['education' => 'education'])->names('education');
+            Route::apiResource('skills', Admin\SkillController::class)->names('skills');
+
             Route::get('orders', [Admin\OrderController::class, 'index'])->name('orders.index');
             Route::get('orders/{order}', [Admin\OrderController::class, 'show'])->name('orders.show');
         });
