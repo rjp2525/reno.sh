@@ -60,6 +60,9 @@ Route::middleware([SetUpPanel::class.':admin', Authenticate::class])
 Route::post('/webhooks/stripe', StripeWebhookController::class)->name('webhooks.stripe');
 Route::post('/webhooks/prodigi', ProdigiWebhookController::class)->name('webhooks.prodigi');
 
+// Must precede the blog routes: /blog/{category} would otherwise swallow /blog/feed.xml.
+Route::feeds();
+
 Route::prefix('blog')->name('blog.')->group(function () {
     Route::get('/', BlogController::class)->name('index');
     Route::get('/series/{series:slug}', BlogSeriesController::class)->name('series.show');
@@ -71,7 +74,5 @@ Route::prefix('blog')->name('blog.')->group(function () {
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send')
     ->middleware('throttle:5,1');
-
-Route::feeds();
 
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');

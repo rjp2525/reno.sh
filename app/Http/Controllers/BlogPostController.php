@@ -24,6 +24,8 @@ class BlogPostController extends Controller
 
     private function renderPost(Post $post): Response
     {
+        abort_unless($this->canPreview() || Post::published()->whereKey($post->getKey())->exists(), 404);
+
         $post->load(['category', 'tags', 'series' => function ($query) {
             $query->with(['posts' => function ($q) {
                 $q->published()->ordered();
@@ -82,12 +84,13 @@ class BlogPostController extends Controller
 
         $adjacentBase = Post::published()->where('id', '!=', $post->id);
 
-        $olderPost = (clone $adjacentBase)
+        // Drafts being previewed have no publish date, so no neighbours.
+        $olderPost = $post->published_at === null ? null : (clone $adjacentBase)
             ->where('published_at', '<', $post->published_at)
             ->orderBy('published_at', 'desc')
             ->first(['id', 'title', 'slug', 'blog_category_id']);
 
-        $newerPost = (clone $adjacentBase)
+        $newerPost = $post->published_at === null ? null : (clone $adjacentBase)
             ->where('published_at', '>', $post->published_at)
             ->orderBy('published_at', 'asc')
             ->first(['id', 'title', 'slug', 'blog_category_id']);
