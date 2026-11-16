@@ -86,7 +86,8 @@ Nothing newer than **7 days** gets installed:
    `VITE_SSR_PORT` (default 13715, not Inertia's 13714) so it can't collide with another Inertia app on the
    server; give every app its own port. The deploy script stops it after each release and the daemon restarts it.
 6. SSH TUI: install Go with the `deploy/forge/install-go.sh` recipe (run as root; verifies the checksum and
-   the 7-day release age). Add a daemon with command `tui/bin/reno-tui` and directory `<site root>/current`.
+   the 7-day release age). Add a daemon with the **absolute** command `<site root>/current/tui/bin/reno-tui` (Supervisor
+   searches $PATH for relative commands, not the directory) and directory `<site root>/current`.
    It reads the site's `.env` (`APP_URL`, `TUI_SSH_HOST`, `TUI_SSH_PORT`), so it needs no variables of its own;
    `RENO_*` variables still override. The host key lives in `~/.reno-tui/` so it survives releases (back it up).
    Put the daemon's ID in `TUI_DAEMON_ID` in the deploy script, and open port 2222 in the firewall
