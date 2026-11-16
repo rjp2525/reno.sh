@@ -15,8 +15,11 @@ use App\Http\Controllers\Prints\PrintOrderController;
 use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\ProjectShowController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\Social\OAuthController;
 use App\Http\Controllers\Webhooks\ProdigiWebhookController;
 use App\Http\Controllers\Webhooks\StripeWebhookController;
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\SetUpPanel;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/img/{path}', ImageController::class)->where('path', '.*')->name('image.serve');
@@ -44,6 +47,15 @@ Route::post('/prints/checkout', [PrintOrderController::class, 'checkout'])
     ->middleware('throttle:10,1')
     ->name('prints.checkout');
 Route::get('/prints/orders/{order}', [PrintOrderController::class, 'thanks'])->name('prints.thanks');
+
+// Social OAuth connect flow, behind the Filament admin session + auth.
+Route::middleware([SetUpPanel::class.':admin', Authenticate::class])
+    ->prefix('admin/social')
+    ->name('social.oauth.')
+    ->group(function () {
+        Route::get('connect/{provider}', [OAuthController::class, 'redirect'])->name('redirect');
+        Route::get('callback/{provider}', [OAuthController::class, 'callback'])->name('callback');
+    });
 
 Route::post('/webhooks/stripe', StripeWebhookController::class)->name('webhooks.stripe');
 Route::post('/webhooks/prodigi', ProdigiWebhookController::class)->name('webhooks.prodigi');
