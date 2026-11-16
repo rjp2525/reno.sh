@@ -21,9 +21,9 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, './resources/js'),
-            '@svg': path.resolve(__dirname, './resources/svg'),
-            '@img': path.resolve(__dirname, './resources/img'),
+            '@': path.resolve(import.meta.dirname, './resources/js'),
+            '@svg': path.resolve(import.meta.dirname, './resources/svg'),
+            '@img': path.resolve(import.meta.dirname, './resources/img'),
         },
     },
     plugins: [

@@ -24,9 +24,16 @@ $FORGE_PHP artisan optimize
 $FORGE_PHP artisan filament:optimize
 $FORGE_PHP artisan migrate --force
 
-# SSH TUI: every release is a fresh checkout, so build its binary each time (if Go is installed).
+# SSH TUI: every release is a fresh checkout, so build its binary each time. If the daemon is
+# configured, a missing Go toolchain fails here, before activation, so the live release keeps running.
+export PATH="$PATH:/usr/local/go/bin"
 if command -v go >/dev/null 2>&1; then
     (cd tui && CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o bin/reno-tui .)
+elif [ -n "$TUI_DAEMON_ID" ]; then
+    echo "Go is not installed but TUI_DAEMON_ID is set: run deploy/forge/install-go.sh as root first." >&2
+    exit 1
+else
+    echo "Go not installed; skipping the SSH TUI build."
 fi
 
 $ACTIVATE_RELEASE()
