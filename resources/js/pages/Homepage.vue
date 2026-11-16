@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { SeoHead } from '@/components';
 import { GuestLayout } from '@/layouts';
+import introSelf from '@img/home-intro-self.webp';
+import introSelfSmall from '@img/home-intro-self-800.webp';
 </script>
 
 <template>
@@ -70,8 +72,14 @@ import { GuestLayout } from '@/layouts';
                         class="relative flex h-auto w-full max-w-[280px] items-center justify-center p-4 lg:max-h-[65vh] lg:min-h-[350px] lg:w-auto lg:max-w-none lg:p-7"
                     >
                         <img
-                            src="@img/home-intro-self.png"
-                            class="max-h-full w-full rounded object-contain lg:w-auto"
+                            :src="introSelf"
+                            :srcset="`${introSelfSmall} 668w, ${introSelf} 1336w`"
+                            sizes="(min-width: 1024px) 55vh, 280px"
+                            width="1336"
+                            height="1600"
+                            alt="Reno Philibert"
+                            fetchpriority="high"
+                            class="h-auto max-h-full w-full rounded object-contain lg:w-auto"
                         />
                     </div>
                 </section>
