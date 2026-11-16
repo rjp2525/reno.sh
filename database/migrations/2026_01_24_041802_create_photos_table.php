@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('original_path');
             $table->string('web_path')->nullable();
             $table->string('thumbnail_path')->nullable();
+            $table->string('og_image_path')->nullable();
 
             // EXIF metadata
             $table->integer('iso')->nullable();
@@ -48,13 +49,13 @@ return new class extends Migration
             // Display flags
             $table->boolean('is_favorite')->default(false);
             $table->boolean('is_published')->default(true);
+            $table->boolean('prints_enabled')->default(true);
             $table->integer('sort_order')->default(0);
 
             // Processing status
             $table->string('processing_status')->default('pending');
 
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
