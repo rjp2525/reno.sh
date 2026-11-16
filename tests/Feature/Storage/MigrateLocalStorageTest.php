@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Photo;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -30,4 +31,15 @@ it('builds image URLs from FILESYSTEM_PUBLIC_URL', function () {
     Storage::forgetDisk('public');
 
     expect(Storage::disk('public')->url('photos/web/a.jpg'))->toBe('https://cdn.reno.sh/photos/web/a.jpg');
+});
+
+it('serves photo and shared image URLs from the configured public URL', function () {
+    config(['filesystems.disks.public.url' => 'https://cdn.reno.sh']);
+    Storage::forgetDisk('public');
+    $photo = new Photo(['web_path' => 'photos/web/a.jpg', 'thumbnail_path' => 'photos/thumbs/a.jpg']);
+
+    expect($photo->web_url)->toBe('https://cdn.reno.sh/photos/web/a.jpg')
+        ->and($photo->thumbnail_url)->toBe('https://cdn.reno.sh/photos/thumbs/a.jpg');
+
+    $this->get('/')->assertInertia(fn ($page) => $page->where('storageUrl', 'https://cdn.reno.sh'));
 });

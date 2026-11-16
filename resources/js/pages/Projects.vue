@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { imageUrl } from '@/lib/utils';
 import { SeoHead } from '@/components';
 import { MobilePageHeader } from '@/components/page';
 import { CheckboxInput, SearchInput, SelectInput } from '@/components/ui/form';
@@ -264,7 +265,7 @@ const hasActiveFilters = computed(() => {
                             >
                                 <img
                                     v-if="project.featured_image"
-                                    :src="`/img/${project.featured_image}`"
+                                    :src="imageUrl(project.featured_image)"
                                     :alt="project.title"
                                     class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
                                 />
@@ -273,7 +274,7 @@ const hasActiveFilters = computed(() => {
                                         project.gallery &&
                                         project.gallery.length > 0
                                     "
-                                    :src="`/img/${project.gallery[0].image}`"
+                                    :src="imageUrl(project.gallery[0].image)"
                                     :alt="project.title"
                                     class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
                                 />

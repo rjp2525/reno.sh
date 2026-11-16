@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { imageUrl } from '@/lib/utils';
 import type { ImageGalleryBlock } from '@/types/blocks';
 
 defineProps<{
@@ -17,7 +18,7 @@ defineProps<{
             class="group overflow-hidden rounded-lg"
         >
             <img
-                :src="`/img/${item.image}`"
+                :src="imageUrl(item.image)"
                 :alt="item.alt || item.caption || ''"
                 loading="lazy"
                 class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"

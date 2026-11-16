@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { imageUrl } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ref } from 'vue';
 
@@ -38,7 +39,7 @@ const delay = ref(0);
                         class="flex h-full items-center justify-center"
                     >
                         <img
-                            :src="'/img/' + section.data.content"
+                            :src="imageUrl(section.data.content)"
                             class="h-96 w-96 rounded border border-navy object-cover"
                         />
                     </div>
