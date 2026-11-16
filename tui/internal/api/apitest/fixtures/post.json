@@ -1,0 +1,11 @@
+{ "data": {
+  "id": "01JPOST1", "title": "Hello SSH", "slug": "hello-ssh", "excerpt": "Serving a site over SSH.",
+  "url": "https://reno.sh/blog/hello-ssh", "featured_image_url": null, "reading_time": 4,
+  "published_at": "2026-11-01T18:30:00Z", "is_featured": true,
+  "category": { "id": "01JCAT1", "name": "Go", "slug": "go", "color": "#43D9AD" },
+  "series": null, "tags": ["go", "ssh"],
+  "blocks": [{ "type": "markdown", "data": { "markdown": "Intro", "content": "<p>Intro</p>" } }],
+  "text": "Intro\n\nWhy SSH\n\nBecause.",
+  "markdown": "Intro paragraph.\n\n## Why SSH\n\nBecause terminals are fun.\n\n```go\nfmt.Println(\"hi\")\n```\n\n## Wrapping up\n\nThanks for reading.\n",
+  "meta_title": "Hello SSH", "meta_description": "Serving a site over SSH."
+} }

@@ -1,0 +1,13 @@
+{ "data": [
+  { "id": "01JPOST1", "title": "Hello SSH", "slug": "hello-ssh", "excerpt": "Serving a site over SSH.",
+    "url": "https://reno.sh/blog/hello-ssh", "featured_image_url": null, "reading_time": 4,
+    "published_at": "2026-11-01T18:30:00Z", "is_featured": true,
+    "category": { "id": "01JCAT1", "name": "Go", "slug": "go", "color": "#43D9AD" },
+    "series": null, "tags": ["go", "ssh"] },
+  { "id": "01JPOST2", "title": "Laravel Tips", "slug": "laravel-tips", "excerpt": "Some tips.",
+    "url": "https://reno.sh/blog/laravel-tips", "featured_image_url": "https://reno.sh/img/x.jpg", "reading_time": 7,
+    "published_at": "2026-10-01T12:00:00Z", "is_featured": false,
+    "category": { "id": "01JCAT2", "name": "Laravel", "slug": "laravel", "color": "#FEA55F" },
+    "series": { "id": "01JSER1", "title": "Laravel Deep Dive", "slug": "laravel-deep-dive", "order": 1 },
+    "tags": ["laravel"] }
+], "meta": { "current_page": 1, "last_page": 1, "per_page": 100, "total": 2 } }

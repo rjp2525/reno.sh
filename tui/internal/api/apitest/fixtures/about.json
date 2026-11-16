@@ -1,0 +1,21 @@
+{ "data": {
+  "pages": [
+    { "section": "professional", "slug": "bio", "title": "Bio", "icon": "user", "text": "I build things.", "markdown": "# Bio\n\nI build **things** for the web.\n" },
+    { "section": "personal", "slug": "interests", "title": "Interests", "icon": "heart", "text": "Coffee.", "markdown": "## Interests\n\n- Coffee\n- Mountains\n" },
+    { "section": "hobbies", "slug": "photography", "title": "Photography", "icon": "camera", "text": "Shooting film.", "markdown": "## Photography\n\nMostly landscapes.\n" }
+  ],
+  "experience": [
+    { "id": "1", "title": "Senior Engineer", "company": "Acme", "location": "Remote", "start": "2022-01-01", "end": null, "responsibilities": ["Led the platform team", "Shipped the API"] },
+    { "id": "2", "title": "Developer", "company": "Initech", "location": "Austin, TX", "start": "2015-06-01", "end": "2021-12-31", "responsibilities": ["TPS reports"] }
+  ],
+  "skills": [
+    { "id": "1", "category": "Backend", "name": "Laravel", "proficiency": "expert", "started": "2013-01-01", "ended": null },
+    { "id": "2", "category": "Backend", "name": "Go", "proficiency": "advanced", "started": "2019-01-01", "ended": null },
+    { "id": "3", "category": "Frontend", "name": "Vue", "proficiency": "intermediate", "started": "2017-01-01", "ended": null }
+  ],
+  "education": [
+    { "id": "1", "school_name": "State University", "location": "Somewhere", "degree": "B.S. Computer Science", "minor": "Mathematics",
+      "started": "2007-09-01", "graduated": "2011-05-01", "description": "Studied things.",
+      "achievements": ["Dean's list"], "projects": [], "extracurriculars": ["Robotics club"] }
+  ]
+} }

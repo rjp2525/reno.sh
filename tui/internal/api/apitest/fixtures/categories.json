@@ -1,0 +1,4 @@
+{ "data": [
+  { "id": "01JCAT1", "name": "Go", "slug": "go", "description": "Gophers", "color": "#43D9AD", "posts_count": 1 },
+  { "id": "01JCAT2", "name": "Laravel", "slug": "laravel", "description": "PHP", "color": "#FEA55F", "posts_count": 1 }
+] }

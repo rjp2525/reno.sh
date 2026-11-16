@@ -1,0 +1,9 @@
+{ "data": {
+  "id": "01JPRJ1", "title": "reno.sh", "slug": "reno-sh", "summary": "This very site.", "type": "website", "status": "active",
+  "url": "https://reno.sh", "github_url": "https://github.com/rjp2525/reno.sh", "demo_url": null, "featured_image_url": null,
+  "start_date": "2024-01-01", "end_date": null, "is_ongoing": true, "is_featured": true,
+  "technologies": [{ "name": "Laravel", "slug": "laravel", "color": "#FF2D20" }, { "name": "Go", "slug": "go", "color": "#00ADD8" }],
+  "web_url": "https://reno.sh/projects/reno-sh",
+  "description_html": "<p>The site.</p>", "text": "The site.", "markdown": "## Overview\n\nThe site, now with an SSH app.\n",
+  "gallery": ["https://reno.sh/img/a.jpg"]
+} }
