@@ -11,6 +11,8 @@ enum NavigationGroup: string implements HasLabel
     case ABOUT = 'about';
     case BLOG = 'blog';
     case CONTENT = 'content';
+    case SOCIAL = 'social';
+    case SHOP = 'shop';
     case SYSTEM = 'system';
 
     public function getLabel(): string
@@ -18,7 +20,9 @@ enum NavigationGroup: string implements HasLabel
         return match ($this) {
             self::ABOUT => 'About',
             self::BLOG => 'Blog',
-            self::CONTENT => 'Content',
+            self::CONTENT => 'Photography',
+            self::SOCIAL => 'Social',
+            self::SHOP => 'Print shop',
             self::SYSTEM => 'System',
         };
     }

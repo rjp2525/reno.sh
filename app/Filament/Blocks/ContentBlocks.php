@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Filament\Blocks;
 
 use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\Components\CodeEditor;
+use Filament\Forms\Components\CodeEditor\Enums\Language;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 
 class ContentBlocks
@@ -17,6 +19,7 @@ class ContentBlocks
     public static function all(string $uploadDirectory = 'content'): array
     {
         return [
+            static::markdown($uploadDirectory),
             static::richText($uploadDirectory),
             static::image($uploadDirectory),
             static::imageGallery($uploadDirectory),
@@ -26,6 +29,28 @@ class ContentBlocks
             static::divider(),
             static::code(),
         ];
+    }
+
+    /** Markdown is stored as source; App\Support\Content\Blocks renders + sanitizes the HTML on save. */
+    public static function markdown(string $directory = 'content'): Block
+    {
+        return Block::make('markdown')
+            ->label('Markdown')
+            ->icon('heroicon-o-hashtag')
+            ->schema([
+                MarkdownEditor::make('markdown')
+                    ->label('')
+                    ->toolbarButtons([
+                        ['bold', 'italic', 'strike', 'link'],
+                        ['heading', 'blockquote', 'codeBlock', 'bulletList', 'orderedList', 'table'],
+                        ['attachFiles'],
+                        ['undo', 'redo'],
+                    ])
+                    ->fileAttachmentsDirectory($directory)
+                    ->minHeight('18rem')
+                    ->placeholder('Start writing… **Markdown** works, paste or drop images anywhere.')
+                    ->columnSpanFull(),
+            ]);
     }
 
     public static function richText(string $directory = 'content'): Block
@@ -228,6 +253,7 @@ class ContentBlocks
         return Block::make('code')
             ->label('Code')
             ->icon('heroicon-o-code-bracket')
+            ->columns(['default' => 1, 'sm' => 2])
             ->schema([
                 Select::make('language')
                     ->options([
@@ -247,15 +273,27 @@ class ContentBlocks
                         'plaintext' => 'Plain Text',
                     ])
                     ->default('php')
-                    ->native(false)
+                    ->searchable()
+                    ->live()
                     ->required(),
-                Textarea::make('code')
-                    ->required()
-                    ->rows(10)
-                    ->columnSpanFull(),
                 TextInput::make('filename')
                     ->maxLength(255)
-                    ->placeholder('e.g., app/Models/Post.php'),
+                    ->placeholder('e.g. app/Models/Post.php'),
+                CodeEditor::make('code')
+                    ->required()
+                    ->language(fn ($get) => match ($get('language')) {
+                        'php' => Language::Php,
+                        'javascript', 'typescript', 'vue' => Language::JavaScript,
+                        'html' => Language::Html,
+                        'css' => Language::Css,
+                        'sql' => Language::Sql,
+                        'json' => Language::Json,
+                        'yaml' => Language::Yaml,
+                        'python' => Language::Python,
+                        'go' => Language::Go,
+                        default => null,
+                    })
+                    ->columnSpanFull(),
             ]);
     }
 }

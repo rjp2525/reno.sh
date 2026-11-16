@@ -1,31 +1,35 @@
 {
     "name": "rjp2525/reno.sh",
     "type": "project",
-    "description": "Personal portfolio website of Reno Philibert",
+    "description": "Personal site of Reno Philibert: portfolio, blog, photography prints and social publishing",
     "license": "MIT",
     "require": {
         "php": "^8.4",
-        "filament/filament": "^4.0",
-        "filament/spatie-laravel-tags-plugin": "^4.5",
-        "inertiajs/inertia-laravel": "^2.0",
-        "intervention/image": "^3.9",
-        "laravel/framework": "^12.47",
-        "laravel/tinker": "^2.11",
-        "laravel/wayfinder": "^0.1.13",
+        "filament/filament": "^5.11",
+        "filament/spatie-laravel-tags-plugin": "^5.11",
+        "inertiajs/inertia-laravel": "^3.7",
+        "intervention/image": "^4.4",
+        "laravel/framework": "^13.40",
+        "laravel/sanctum": "^4.0",
+        "laravel/tinker": "^3.1",
+        "laravel/wayfinder": "^0.1.23",
         "league/flysystem-aws-s3-v3": "^3.30",
-        "resend/resend-laravel": "^1.1",
-        "spatie/laravel-feed": "^4.4",
-        "spatie/laravel-sitemap": "^7.3",
-        "spatie/laravel-tags": "^4.10"
+        "resend/resend-laravel": "^1.7",
+        "spatie/laravel-feed": "^4.5",
+        "spatie/laravel-sitemap": "^8.2",
+        "spatie/laravel-tags": "^4.12",
+        "stripe/stripe-php": "^22.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
-        "laravel/pint": "^1.27",
-        "laravel/sail": "^1.52",
+        "larastan/larastan": "^3.14",
+        "laravel/pail": "^1.3",
+        "laravel/pint": "^1.32",
+        "laravel/sail": "^1.70",
         "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.8",
-        "pestphp/pest": "^4.3",
-        "pestphp/pest-plugin-laravel": "^4.0"
+        "nunomaduro/collision": "^8.9",
+        "pestphp/pest": "^5.3",
+        "pestphp/pest-plugin-laravel": "^5.0"
     },
     "autoload": {
         "psr-4": {
@@ -46,7 +50,8 @@
             "@php artisan filament:upgrade"
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
+            "@age:check"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
@@ -55,6 +60,16 @@
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi"
+        ],
+        "age:check": "@php scripts/composer-age-gate.php check",
+        "age:update": "@php scripts/composer-age-gate.php update",
+        "test": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test"
+        ],
+        "lint": [
+            "vendor/bin/pint",
+            "vendor/bin/phpstan analyse --memory-limit=1G"
         ]
     },
     "extra": {

@@ -80,7 +80,9 @@ import { GuestLayout } from '@/layouts';
     </GuestLayout>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
+@reference "../../css/app.css";
+
 .custom-gradient-blue {
     @apply fixed right-[5%] bottom-1/4 z-10 h-[300px] w-[300px] opacity-50;
     border-radius: 0% 0% 50% 50%;

@@ -9,6 +9,8 @@ class BlogSeriesController extends Controller
 {
     public function __invoke(BlogSeries $series)
     {
+        abort_unless($series->is_published || $this->canPreview(), 404);
+
         $series->load(['posts' => function ($query) {
             $query->published()->with('category');
         }]);

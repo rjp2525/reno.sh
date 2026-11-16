@@ -2,6 +2,7 @@
 import { GuestLayout } from '@/layouts';
 import { gallery as galleryRoute, home } from '@/routes';
 import { SeoHead } from '@/components';
+import PrintOrderPanel from '@/components/PrintOrderPanel.vue';
 import { Link } from '@inertiajs/vue3';
 import {
     Camera,
@@ -14,6 +15,7 @@ import { computed } from 'vue';
 
 const props = defineProps<{
     photo: Photo;
+    printOptions: PrintOption[];
     prevPhoto: { slug: string; title: string } | null;
     nextPhoto: { slug: string; title: string } | null;
 }>();
@@ -249,6 +251,8 @@ const nextUrl = computed(() =>
                                     >View on Instagram</span
                                 >
                             </a>
+
+                            <PrintOrderPanel :photo-id="photo.id" :options="printOptions" />
                         </div>
                     </div>
 
@@ -325,6 +329,8 @@ const nextUrl = computed(() =>
                                 <Instagram class="h-4 w-4 text-[#E1306C]" />
                                 <span class="text-white">View on Instagram</span>
                             </a>
+
+                            <PrintOrderPanel class="mb-4 lg:hidden" :photo-id="photo.id" :options="printOptions" />
 
                             <div
                             v-if="prevUrl || nextUrl"

@@ -10,6 +10,8 @@ class ProjectShowController extends Controller
 {
     public function __invoke(Request $request, Project $project)
     {
+        abort_unless($project->is_published || $this->canPreview(), 404);
+
         $project->load(['tags', 'technologies']);
 
         $relatedProjects = Project::published()

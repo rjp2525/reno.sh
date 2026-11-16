@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 import { contact, gallery, home, projects } from '@/routes';
 import { professional } from '@/routes/about';
 import { index as blogIndex } from '@/routes/blog';
@@ -7,6 +7,14 @@ import { computed } from 'vue';
 import { GitHubOctoCat, MobileNav, NavbarLink, NavbarLogo } from '.';
 
 const page = usePage();
+const urls = {
+    home: home.url(),
+    about: professional.url(),
+    projects: projects.url(),
+    gallery: gallery.url(),
+    blog: blogIndex.url(),
+    contact: contact.url(),
+};
 const currentUrl = computed(() => page.url);
 
 const isActive = (path: string, exact = false) => {
@@ -28,33 +36,33 @@ const isActive = (path: string, exact = false) => {
             <div class="flex">
                 <NavbarLogo />
                 <NavbarLink
-                    :url="home.url()"
+                    :url="urls.home"
                     label="_hello"
                     :active="isActive('/', true)"
                 />
                 <NavbarLink
-                    :url="professional.url()"
+                    :url="urls.about"
                     label="_about"
                     :active="isActive('/about')"
                 />
                 <NavbarLink
-                    :url="projects.url()"
+                    :url="urls.projects"
                     label="_projects"
                     :active="isActive('/projects')"
                 />
                 <NavbarLink
-                    :url="gallery.url()"
+                    :url="urls.gallery"
                     label="_photography"
                     :active="isActive('/gallery')"
                 />
                 <NavbarLink
-                    :url="blogIndex.url()"
+                    :url="urls.blog"
                     label="_blog"
                     :active="isActive('/blog')"
                 />
             </div>
             <NavbarLink
-                :url="contact.url()"
+                :url="urls.contact"
                 class="border-l-navy border-r-0 border-l"
                 label="_contact-me"
                 :active="isActive('/contact')"

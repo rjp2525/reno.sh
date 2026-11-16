@@ -1,0 +1,8 @@
+{ "data": {
+  "name": "Reno Philibert", "title": "Full Stack Software Engineer",
+  "tagline": "building awesome things for the web since 2011",
+  "location": "Somewhere, Earth", "email": "hello@example.com", "url": "https://reno.sh",
+  "socials": [{ "label": "GitHub", "url": "https://github.com/rjp2525" }],
+  "ssh": { "host": "reno.sh", "port": 2222 },
+  "sections": ["about", "projects", "blog", "gallery", "prints", "contact"]
+} }

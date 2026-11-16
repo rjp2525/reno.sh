@@ -6,9 +6,13 @@ namespace App\Filament\Resources;
 
 use App\Enums\NavigationGroup;
 use App\Enums\PhotoProcessingStatus;
+use App\Filament\Actions\ShareToSocialAction;
 use App\Filament\Resources\PhotoResource\Pages;
+use App\Jobs\ProcessPhotoJob;
 use App\Models\Photo;
 use App\Models\PhotoCategory;
+use App\Models\PrintProduct;
+use App\Models\SocialAccount;
 use App\Services\Photo\ExifExtractorService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -37,6 +41,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class PhotoResource extends Resource
 {
@@ -80,7 +85,7 @@ class PhotoResource extends Resource
 
                                         $filePath = null;
 
-                                        if ($state instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
+                                        if ($state instanceof TemporaryUploadedFile) {
                                             $filePath = $state->getRealPath();
                                         } elseif (is_string($state)) {
                                             $disk = config('photography.storage.originals_disk', 'photos_originals');
@@ -119,6 +124,13 @@ class PhotoResource extends Resource
 
                                 Toggle::make('is_favorite')
                                     ->default(false),
+
+                                Toggle::make('prints_enabled')
+                                    ->label('Sell prints')
+                                    ->default(true)
+                                    ->helperText(fn ($get) => ($get('width') && $get('height'))
+                                        ? PrintProduct::active()->get()->filter->fits((int) $get('width'), (int) $get('height'))->count().' print sizes fit this photo'
+                                        : null),
 
                                 TextInput::make('sort_order')
                                     ->numeric()
@@ -296,12 +308,20 @@ class PhotoResource extends Resource
                     ->boolean()
                     ->label('Pub'),
 
+                IconColumn::make('prints_enabled')
+                    ->boolean()
+                    ->trueIcon('heroicon-s-shopping-bag')
+                    ->falseIcon('heroicon-o-shopping-bag')
+                    ->label('Prints')
+                    ->toggleable(),
+
                 TextColumn::make('created_at')
                     ->dateTime('d-m-Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('created_at', 'desc')
+            ->poll(fn () => Photo::whereIn('processing_status', [PhotoProcessingStatus::PENDING, PhotoProcessingStatus::PROCESSING])->exists() ? '5s' : null)
             ->filters([
                 SelectFilter::make('photo_category_id')
                     ->label('Category')
@@ -316,8 +336,10 @@ class PhotoResource extends Resource
                 TernaryFilter::make('is_published')
                     ->label('Published'),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
+                ShareToSocialAction::make()
+                    ->visible(fn (Photo $record) => $record->is_published && $record->processing_status === PhotoProcessingStatus::COMPLETED && SocialAccount::active()->exists()),
                 EditAction::make()
                     ->slideOver(),
                 Action::make('reprocess')
@@ -327,14 +349,14 @@ class PhotoResource extends Resource
                     ->visible(fn (Photo $record): bool => $record->processing_status === PhotoProcessingStatus::FAILED)
                     ->action(function (Photo $record) {
                         $record->update(['processing_status' => PhotoProcessingStatus::PENDING]);
-                        \App\Jobs\ProcessPhotoJob::dispatch($record);
+                        ProcessPhotoJob::dispatch($record);
                     }),
                 DeleteAction::make()
                     ->requiresConfirmation()
                     ->modalHeading('Delete Photo')
                     ->modalDescription('This will permanently delete the photo and all associated files (original, web, thumbnail, OG image). This action cannot be undone.'),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
                         ->requiresConfirmation()

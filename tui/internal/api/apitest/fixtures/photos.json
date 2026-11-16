@@ -1,0 +1,14 @@
+{ "data": [
+  { "id": "01JPH1", "title": "Mountain Dawn", "slug": "mountain-dawn", "description_html": "<p>Early light.</p>", "text": "Early light.",
+    "web_url": "https://reno.sh/photography/mountain-dawn", "thumbnail_url": "{{BASE}}/img/thumb.png", "og_image_url": "{{BASE}}/img/og.jpg",
+    "width": 6000, "height": 4000, "taken_at": "2026-05-04T06:12:00Z",
+    "exif_summary": "Sony A7 IV · 24mm · f/8 · 1/250s · ISO 100",
+    "camera_body": "Sony A7 IV", "lens": "FE 24-70mm F2.8 GM II", "focal_length": "24mm", "aperture": "f/8", "shutter_speed": "1/250", "iso": 100,
+    "category": { "id": "01JPC1", "name": "Landscape", "slug": "landscape" }, "tags": ["mountains"], "is_favorite": true, "prints_available": true,
+    "url": "https://reno.sh/photography/mountain-dawn" },
+  { "id": "01JPH2", "title": "City Night", "slug": "city-night", "description_html": null, "text": null,
+    "web_url": "https://reno.sh/photography/city-night", "thumbnail_url": "{{BASE}}/img/thumb.jpg", "og_image_url": null,
+    "width": 4000, "height": 6000, "taken_at": null, "exif_summary": null,
+    "camera_body": null, "lens": null, "focal_length": null, "aperture": null, "shutter_speed": null, "iso": null,
+    "category": null, "tags": [], "is_favorite": false, "prints_available": false, "url": "https://reno.sh/photography/city-night" }
+], "meta": { "current_page": 1, "last_page": 1, "per_page": 100, "total": 2 } }

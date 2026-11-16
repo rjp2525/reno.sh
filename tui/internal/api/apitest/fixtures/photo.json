@@ -1,0 +1,15 @@
+{ "data": {
+  "id": "01JPH1", "title": "Mountain Dawn", "slug": "mountain-dawn", "description_html": "<p>Early light.</p>", "text": "Early light over the ridge.",
+  "web_url": "https://reno.sh/photography/mountain-dawn", "thumbnail_url": "{{BASE}}/img/thumb.png", "og_image_url": "{{BASE}}/img/og.jpg",
+  "width": 6000, "height": 4000, "taken_at": "2026-05-04T06:12:00Z",
+  "exif_summary": "Sony A7 IV · 24mm · f/8 · 1/250s · ISO 100",
+  "camera_body": "Sony A7 IV", "lens": "FE 24-70mm F2.8 GM II", "focal_length": "24mm", "aperture": "f/8", "shutter_speed": "1/250", "iso": 100,
+  "category": { "id": "01JPC1", "name": "Landscape", "slug": "landscape" }, "tags": ["mountains"], "is_favorite": true, "prints_available": true,
+  "url": "https://reno.sh/photography/mountain-dawn",
+  "print_options": [
+    { "product_id": "01JPRD1", "name": "Fine Art Print", "type": "fine_art", "size_label": "12×18 in", "width_in": 12, "height_in": 18,
+      "price": 6500, "currency": "USD", "description": "Hahnemühle Photo Rag", "attributes": {} },
+    { "product_id": "01JPRD2", "name": "Metal Print", "type": "metal", "size_label": "20×30 in", "width_in": 20, "height_in": 30,
+      "price": 24900, "currency": "USD", "description": "HD aluminium", "attributes": { "finish": "gloss" } }
+  ]
+} }

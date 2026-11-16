@@ -6,7 +6,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createSSRApp, DefineComponent, h } from 'vue';
 
 // Prevent Inertia from showing raw HTML error modals for non-Inertia responses
-router.on('invalid', (event) => {
+router.on('httpException', (event) => {
     event.preventDefault();
 });
 

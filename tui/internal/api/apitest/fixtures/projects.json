@@ -1,0 +1,12 @@
+{ "data": [
+  { "id": "01JPRJ1", "title": "reno.sh", "slug": "reno-sh", "summary": "This very site.", "type": "website", "status": "active",
+    "url": "https://reno.sh", "github_url": "https://github.com/rjp2525/reno.sh", "demo_url": null, "featured_image_url": null,
+    "start_date": "2024-01-01", "end_date": null, "is_ongoing": true, "is_featured": true,
+    "technologies": [{ "name": "Laravel", "slug": "laravel", "color": "#FF2D20" }, { "name": "Go", "slug": "go", "color": "#00ADD8" }],
+    "web_url": "https://reno.sh/projects/reno-sh" },
+  { "id": "01JPRJ2", "title": "CLI Tool", "slug": "cli-tool", "summary": "A handy CLI.", "type": "open-source", "status": "completed",
+    "url": null, "github_url": "https://github.com/rjp2525/cli", "demo_url": null, "featured_image_url": null,
+    "start_date": "2020-01-01", "end_date": "2020-06-01", "is_ongoing": false, "is_featured": false,
+    "technologies": [{ "name": "Go", "slug": "go", "color": "#00ADD8" }],
+    "web_url": "https://reno.sh/projects/cli-tool" }
+], "meta": { "current_page": 1, "last_page": 1, "per_page": 100, "total": 2 } }

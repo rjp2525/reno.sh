@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Tags\HasTags;
 
@@ -43,6 +44,7 @@ class Photo extends Model
         'instagram_link',
         'is_favorite',
         'is_published',
+        'prints_enabled',
         'sort_order',
         'processing_status',
     ];
@@ -57,6 +59,7 @@ class Photo extends Model
         'file_size' => 'integer',
         'is_favorite' => 'boolean',
         'is_published' => 'boolean',
+        'prints_enabled' => 'boolean',
         'processing_status' => PhotoProcessingStatus::class,
     ];
 
@@ -128,6 +131,30 @@ class Photo extends Model
         }
 
         return $parts ? implode(' · ', $parts) : null;
+    }
+
+    /**
+     * Print products this photo can be ordered on (aspect ratio + resolution match).
+     *
+     * @return Collection<int, PrintProduct>
+     */
+    public function printOptions(): Collection
+    {
+        if (! $this->prints_enabled || ! $this->original_path) {
+            return collect();
+        }
+
+        return PrintProduct::active()->get()->filter(fn (PrintProduct $p) => $p->fits($this->width, $this->height))->values();
+    }
+
+    /**
+     * Short-lived signed URL to the full resolution original, handed to the print lab.
+     */
+    public function printAssetUrl(int $minutes = 60 * 24 * 3): string
+    {
+        // S3 presigns; the local "served" disk signs a /originals/... URL.
+        return Storage::disk(config('photography.storage.originals_disk', 'photos_originals'))
+            ->temporaryUrl($this->original_path, now()->addMinutes($minutes));
     }
 
     public function scopePublished($query)

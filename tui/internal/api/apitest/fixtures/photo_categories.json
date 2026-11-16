@@ -1,0 +1,4 @@
+{ "data": [
+  { "id": "01JPC1", "name": "Landscape", "slug": "landscape", "color": "#43D9AD", "photos_count": 1 },
+  { "id": "01JPC2", "name": "Street", "slug": "street", "color": "#FEA55F", "photos_count": 0 }
+] }

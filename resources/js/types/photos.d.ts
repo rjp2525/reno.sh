@@ -82,3 +82,16 @@ interface PaginatedPhotos {
     to: number;
     total: number;
 }
+
+interface PrintOption {
+    product_id: string;
+    name: string;
+    type: string;
+    type_label: string;
+    size_label: string;
+    width_in: number;
+    height_in: number;
+    price: number;
+    currency: string;
+    description: string | null;
+}

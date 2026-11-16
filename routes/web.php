@@ -11,9 +11,15 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PhotoShowController;
+use App\Http\Controllers\Prints\PrintOrderController;
 use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\ProjectShowController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\Social\OAuthController;
+use App\Http\Controllers\Webhooks\ProdigiWebhookController;
+use App\Http\Controllers\Webhooks\StripeWebhookController;
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\SetUpPanel;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/img/{path}', ImageController::class)->where('path', '.*')->name('image.serve');
@@ -37,6 +43,26 @@ Route::get('/gallery', GalleryController::class)
 Route::get('/gallery/{photo:slug}', PhotoShowController::class)
     ->name('gallery.show');
 
+Route::post('/prints/checkout', [PrintOrderController::class, 'checkout'])
+    ->middleware('throttle:10,1')
+    ->name('prints.checkout');
+Route::get('/prints/orders/{order}', [PrintOrderController::class, 'thanks'])->name('prints.thanks');
+
+// Social OAuth connect flow, behind the Filament admin session + auth.
+Route::middleware([SetUpPanel::class.':admin', Authenticate::class])
+    ->prefix('admin/social')
+    ->name('social.oauth.')
+    ->group(function () {
+        Route::get('connect/{provider}', [OAuthController::class, 'redirect'])->name('redirect');
+        Route::get('callback/{provider}', [OAuthController::class, 'callback'])->name('callback');
+    });
+
+Route::post('/webhooks/stripe', StripeWebhookController::class)->name('webhooks.stripe');
+Route::post('/webhooks/prodigi', ProdigiWebhookController::class)->name('webhooks.prodigi');
+
+// Must precede the blog routes: /blog/{category} would otherwise swallow /blog/feed.xml.
+Route::feeds();
+
 Route::prefix('blog')->name('blog.')->group(function () {
     Route::get('/', BlogController::class)->name('index');
     Route::get('/series/{series:slug}', BlogSeriesController::class)->name('series.show');
@@ -48,7 +74,5 @@ Route::prefix('blog')->name('blog.')->group(function () {
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send')
     ->middleware('throttle:5,1');
-
-Route::feeds();
 
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
