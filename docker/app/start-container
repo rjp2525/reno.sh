@@ -15,6 +15,11 @@ fi
 
 chmod -R ugo+rw /.composer
 
+# Named volumes (e.g. the vite service's Linux node_modules) are created root-owned.
+if [ -d /var/www/html/node_modules ] && [ "$(stat -c %u /var/www/html/node_modules)" = "0" ]; then
+    chown sail /var/www/html/node_modules
+fi
+
 if [ $# -gt 0 ]; then
     if [ "$SUPERVISOR_PHP_USER" = "root" ]; then
         exec "$@"

@@ -1,3 +1,4 @@
+import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
 import * as path from 'path';
@@ -6,6 +7,13 @@ import svgLoader from 'vite-svg-loader';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
+    server: {
+        host: '0.0.0.0',
+        port: Number(process.env.VITE_PORT ?? 5188),
+        strictPort: true,
+        hmr: { host: 'localhost' },
+        cors: true,
+    },
     ssr: {
         define: {
             'process.env.SSR_PORT': 'process.env.SSR_PORT',
@@ -20,6 +28,7 @@ export default defineConfig({
     },
     plugins: [
         tailwindcss(),
+        wayfinder(),
         laravel({
             input: [
                 'resources/js/app.ts',
