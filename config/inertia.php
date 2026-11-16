@@ -23,7 +23,9 @@ return [
 
         'enabled' => true,
 
-        'url' => env('INERTIA_SSR_URL', 'http://127.0.0.1:13714'),
+        // reno.sh's SSR server listens on its own port so it can share a server with other
+        // Inertia apps (13714 is Inertia's default). VITE_SSR_PORT is also baked into the SSR bundle.
+        'url' => env('INERTIA_SSR_URL', 'http://127.0.0.1:'.env('VITE_SSR_PORT', 13715)),
 
         'bundle' => base_path('bootstrap/ssr/ssr.js'),
 
