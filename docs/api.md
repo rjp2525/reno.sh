@@ -230,6 +230,74 @@ Read shape: write fields + `id`, `url`, `featured_image_url`, `reading_time`, `c
 - `GET /admin/social/posts/{id}`, `PATCH /admin/social/posts/{id}` (only while `draft|scheduled|failed`), `DELETE` → `204`
 - `POST /admin/social/posts/{id}/publish` → `202 SocialPost` (publish now / retry failed targets)
 
+### About (pages, work history, education, skills)
+All routes: Bearer token (Sanctum, ability `admin`), JSON. Same envelope as the existing admin API:
+single resource `{"data": {...}}`, lists `{"data": [...]}` (NOT paginated — these sets are small).
+IDs are strings. Dates are `YYYY-MM-DD` strings (or null). Validation errors: 422 `{"message", "errors": {field: [msg]}}`.
+Store returns 201, update returns 200 with the full resource, delete returns 204.
+PATCH is partial: only send fields you change.
+
+#### About pages — `content-pages`
+Sections: `personal`, `hobbies` (the About → Personal / Hobbies tabs on the site).
+
+GET    /admin/content-pages?section=personal     list, ordered by section then order
+POST   /admin/content-pages                       create
+GET    /admin/content-pages/{id}
+PATCH  /admin/content-pages/{id}
+DELETE /admin/content-pages/{id}
+POST   /admin/content-pages/reorder   body {"ids": ["3","1","2"]}  → sets order = index within the given ids; returns {"data": [...]} (all pages, ordered)
+
+Resource:
+{
+  "id": "1", "section": "personal", "slug": "biography", "title": "Biography",
+  "icon": "person" | null, "order": 0, "is_published": true,
+  "markdown": "…",            // content as Markdown (same converter as posts)
+  "is_markdown": true,        // false if the blocks include things Markdown can't round-trip (gallery, two-columns…); editing markdown then replaces them
+  "blocks": [...],            // raw blocks, same shape as posts
+  "url": "https://reno.sh/about/personal/biography",
+  "updated_at": "2026-11-16T22:00:00+00:00"
+}
+Input: title (required on create, ≤255), slug (optional, generated from title; unique), section (required on create, enum),
+icon (nullable ≤64), order (int ≥0, default = end of section), is_published (bool, default false),
+markdown (string ≤200000) — or blocks (array, same rules as posts). Send one of them.
+
+#### Work history — `experiences`
+GET    /admin/experiences          list (current roles first, then by end date desc)
+POST   /admin/experiences
+GET    /admin/experiences/{id}
+PATCH  /admin/experiences/{id}
+DELETE /admin/experiences/{id}
+
+Resource:
+{ "id": "1", "title": "Lead Software Developer", "company": "Clean Program", "location": "Remote" | null,
+  "start": "2021-06-22", "end": "2023-06-09" | null (null = current role),
+  "responsibilities": ["…", "…"], "tenure": "2 years", "updated_at": "…" }
+Input: title (required, ≤255), company (required, ≤255), location (nullable ≤255), start (required date),
+end (nullable date, ≥ start), responsibilities (array of non-empty strings ≤2000, max 50 items).
+
+#### Education — `education`
+GET/POST /admin/education, GET/PATCH/DELETE /admin/education/{id}
+
+Resource:
+{ "id": "1", "school_name": "…", "location": "…" | null, "degree": "…", "minor": "…" | null,
+  "started": "2015-09-02" | null, "graduated": "2019-05-12" | null, "description": "…" | null,
+  "achievements": ["…"], "projects": ["…"], "extracurriculars": ["…"], "updated_at": "…" }
+Input: school_name (required ≤255), degree (required ≤255), location/minor (nullable ≤255),
+started/graduated (nullable dates, graduated ≥ started), description (nullable ≤5000),
+achievements/projects/extracurriculars (arrays of non-empty strings ≤1000, max 50 each).
+
+#### Skills — `skills`
+GET    /admin/skills       list ordered by category, name. Response adds
+       "meta": {"categories": ["Backend", "Frontend", …] (existing distinct categories, for autocomplete),
+                "proficiencies": [{"value": "beginner", "label": "Beginner"}, …intermediate, proficient, expert]}
+POST/GET/PATCH/DELETE as above (/admin/skills/{id})
+
+Resource:
+{ "id": "1", "category": "Backend", "name": "Laravel", "proficiency": "expert", "level": "Expert",
+  "started": "2014-01-01", "ended": null, "experience": "12 years", "updated_at": "…" }
+Input: category (required ≤100), name (required ≤100), proficiency (required enum), started (required date),
+ended (nullable date ≥ started).
+
 ### Print orders
 `PrintOrder`:
 ```json

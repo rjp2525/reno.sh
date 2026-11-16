@@ -10,7 +10,7 @@ class EducationSeeder extends Seeder
 {
     public function run(): void
     {
-        Education::create([
+        Education::updateOrCreate(['school_name' => 'Southern New Hampshire University', 'degree' => 'Bachelor of Science - BS, Computer Science'], [
             'school_name' => 'Southern New Hampshire University',
             'location' => 'Manchester, NH',
             'degree' => 'Bachelor of Science - BS, Computer Science',
