@@ -72,7 +72,10 @@ return [
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_BUCKET'),
+            // Private: only reachable through signed temporaryUrl()s (e.g. print lab asset fetches).
             'serve' => true,
+            'url' => env('APP_URL').'/originals',
+            'visibility' => 'private',
             'throw' => false,
         ],
 

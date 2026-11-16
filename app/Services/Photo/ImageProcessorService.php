@@ -12,8 +12,11 @@ use Illuminate\Support\Str;
 use Imagick;
 use ImagickDraw;
 use ImagickPixel;
+use Intervention\Image\Colors\Rgb\Colorspace as RgbColorspace;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
+use Intervention\Image\Encoders\JpegEncoder;
+use Intervention\Image\Encoders\PngEncoder;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\ImageInterface;
 
@@ -40,7 +43,7 @@ class ImageProcessorService
             return null;
         }
 
-        $image = $this->manager->read(
+        $image = $this->manager->decode(
             Storage::disk($originalsDisk)->get($originalPath)
         );
 
@@ -55,7 +58,7 @@ class ImageProcessorService
         $webPath = 'photos/web/'.$filename;
 
         $quality = PhotoSettings::getWebQuality();
-        $encoded = $image->toJpeg($quality);
+        $encoded = $image->encode(new JpegEncoder(quality: $quality));
 
         Storage::disk($publicDisk)->put($webPath, (string) $encoded);
 
@@ -71,7 +74,7 @@ class ImageProcessorService
             return null;
         }
 
-        $image = $this->manager->read(
+        $image = $this->manager->decode(
             Storage::disk($originalsDisk)->get($originalPath)
         );
 
@@ -83,7 +86,7 @@ class ImageProcessorService
         $filename = Str::random(40).'.jpg';
         $thumbnailPath = 'photos/thumbnails/'.$filename;
 
-        $encoded = $image->toJpeg(80);
+        $encoded = $image->encode(new JpegEncoder(quality: 80));
 
         Storage::disk($publicDisk)->put($thumbnailPath, (string) $encoded);
 
@@ -103,7 +106,7 @@ class ImageProcessorService
             return null;
         }
 
-        $image = $this->manager->read(
+        $image = $this->manager->decode(
             Storage::disk($originalsDisk)->get($originalPath)
         );
 
@@ -122,7 +125,7 @@ class ImageProcessorService
         $filename = Str::random(40).'.jpg';
         $ogPath = 'photos/og/'.$filename;
 
-        $encoded = $image->toJpeg(90);
+        $encoded = $image->encode(new JpegEncoder(quality: 90));
 
         Storage::disk($publicDisk)->put($ogPath, (string) $encoded);
 
@@ -155,8 +158,8 @@ class ImageProcessorService
             $gradient->newPseudoImage($width, $gradientHeight, "gradient:transparent-rgba(0,0,0,{$opacity}%)");
             $gradient->setImageFormat('png');
 
-            $gradientImage = $this->manager->read($gradient->getImageBlob());
-            $image->place($gradientImage, 'bottom-left', 0, 0);
+            $gradientImage = $this->manager->decode($gradient->getImageBlob());
+            $image->insert($gradientImage, 0, 0, 'bottom-left');
 
             $gradient->clear();
             $gradient->destroy();
@@ -172,11 +175,10 @@ class ImageProcessorService
             $height = $image->height();
             $overlayHeight = (int) ($height * 0.25);
 
-            $overlay = $this->manager->create($width, $overlayHeight);
-            $alphaValue = (int) (($opacity / 100) * 127);
+            $overlay = $this->manager->createImage($width, $overlayHeight);
             $overlay->fill("rgba(0, 0, 0, {$opacity}%)");
 
-            $image->place($overlay, 'bottom-left', 0, 0);
+            $image->insert($overlay, 0, 0, 'bottom-left');
         } catch (Exception $e) {
             Log::warning('Failed to apply OG overlay', ['error' => $e->getMessage()]);
         }
@@ -190,7 +192,7 @@ class ImageProcessorService
             $draw->setTextAlignment(Imagick::ALIGN_LEFT);
 
             $imagick = new Imagick;
-            $imagick->readImageBlob((string) $image->toJpeg(100));
+            $imagick->readImageBlob((string) $image->encode(new JpegEncoder(quality: 100)));
 
             $padding = 40;
             $bottomY = $image->height() - $padding;
@@ -216,8 +218,8 @@ class ImageProcessorService
             $imagick->clear();
             $imagick->destroy();
 
-            $modified = $this->manager->read($modifiedBlob);
-            $image->place($modified, 'top-left', 0, 0);
+            $modified = $this->manager->decode($modifiedBlob);
+            $image->insert($modified);
 
         } catch (Exception $e) {
             Log::warning('Failed to add OG text', ['error' => $e->getMessage()]);
@@ -273,7 +275,7 @@ class ImageProcessorService
                     return;
                 }
             } else {
-                $watermark = $this->manager->read($logoFullPath);
+                $watermark = $this->manager->decode($logoFullPath);
                 if ($shouldInvert) {
                     $watermark = $this->invertWatermark($watermark);
                 }
@@ -293,7 +295,7 @@ class ImageProcessorService
 
             $opacity = PhotoSettings::getWatermarkOpacity();
 
-            $image->place($watermark, 'top-left', $x, $y, $opacity);
+            $image->insert($watermark, $x, $y, 'top-left', $opacity / 100);
 
         } catch (Exception $e) {
             Log::warning('Failed to apply watermark', [
@@ -324,10 +326,10 @@ class ImageProcessorService
 
             for ($sx = 0; $sx < $width; $sx += $sampleStep) {
                 for ($sy = 0; $sy < $height; $sy += $sampleStep) {
-                    $color = $region->pickColor($sx, $sy);
-                    $r = $color->red()->toInt();
-                    $g = $color->green()->toInt();
-                    $b = $color->blue()->toInt();
+                    $color = $region->colorAt($sx, $sy)->toColorspace(RgbColorspace::class);
+                    $r = $color->red()->value();
+                    $g = $color->green()->value();
+                    $b = $color->blue()->value();
                     $luminance = (0.299 * $r + 0.587 * $g + 0.114 * $b);
                     $totalLuminance += $luminance;
                     $sampleCount++;
@@ -354,9 +356,9 @@ class ImageProcessorService
         try {
             if ($this->hasImagick) {
                 $imagick = new Imagick;
-                $imagick->readImageBlob((string) $watermark->toPng());
+                $imagick->readImageBlob((string) $watermark->encode(new PngEncoder));
                 $imagick->negateImage(false, Imagick::CHANNEL_ALL & ~Imagick::CHANNEL_ALPHA);
-                $result = $this->manager->read($imagick->getImageBlob());
+                $result = $this->manager->decode($imagick->getImageBlob());
                 $imagick->clear();
                 $imagick->destroy();
 
@@ -426,7 +428,7 @@ class ImageProcessorService
             $imagick->clear();
             $imagick->destroy();
 
-            return $this->manager->read($pngBlob);
+            return $this->manager->decode($pngBlob);
 
         } catch (Exception $e) {
             Log::warning('Failed to load SVG watermark', [
