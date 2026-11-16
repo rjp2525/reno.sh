@@ -43,3 +43,11 @@ it('serves photo and shared image URLs from the configured public URL', function
 
     $this->get('/')->assertInertia(fn ($page) => $page->where('storageUrl', 'https://cdn.reno.sh'));
 });
+
+it('checks both disks with a round trip', function () {
+    Storage::fake('public');
+    Storage::fake('photos_originals');
+
+    $this->artisan('storage:check')->expectsOutputToContain('Site images')->assertSuccessful();
+    expect(Storage::disk('public')->allFiles())->toBe([]);
+});

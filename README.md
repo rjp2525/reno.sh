@@ -114,7 +114,8 @@ Nothing newer than **7 days** gets installed:
    FILESYSTEM_PUBLIC_URL=https://cdn.reno.sh
    PHOTO_ORIGINALS_BUCKET=<private bucket>
    ```
-4. Deploy (re-caches config and restarts queue workers), then copy existing uploads once:
+4. Deploy (re-caches config and restarts queue workers; saving env in Forge alone does neither), run
+   `php artisan storage:check` to confirm both disks report S3/R2 and pass, then copy existing uploads once:
    `php artisan storage:migrate-local --dry-run`, then without `--dry-run`. Paths are unchanged, so
    nothing in the database needs updating. Old `/img/...` links keep working (proxied from R2).
 
