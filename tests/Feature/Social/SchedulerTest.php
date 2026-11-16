@@ -68,7 +68,7 @@ it('skips a due post another runner claims between select and claim', function (
     // Simulate a concurrent runner: right after our "due" select runs, someone else claims the post.
     $raced = false;
     DB::listen(function (QueryExecuted $query) use ($post, &$raced) {
-        if (! $raced && str_starts_with($query->sql, 'select') && str_contains($query->sql, '"social_posts"')) {
+        if (! $raced && str_starts_with($query->sql, 'select') && str_contains($query->sql, 'social_posts')) {
             $raced = true;
             DB::table('social_posts')->where('id', $post->id)->update(['status' => SocialPostStatus::PUBLISHING->value]);
         }

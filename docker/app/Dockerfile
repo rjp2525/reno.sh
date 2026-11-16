@@ -27,7 +27,7 @@ RUN apt-get update && apt-get upgrade -y \
     && echo "deb [signed-by=/etc/apt/keyrings/pgdg.gpg] http://apt.postgresql.org/pub/repos/apt noble-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get install -y \
-        php8.5-cli php8.5-pgsql php8.5-sqlite3 php8.5-gd php8.5-curl php8.5-mbstring \
+        php8.5-cli php8.5-pgsql php8.5-mysql php8.5-sqlite3 php8.5-gd php8.5-curl php8.5-mbstring \
         php8.5-xml php8.5-zip php8.5-bcmath php8.5-intl php8.5-readline php8.5-redis \
         php8.5-igbinary php8.5-msgpack php8.5-pcov php8.5-imagick php8.5-xdebug \
         nodejs postgresql-client-18 \
