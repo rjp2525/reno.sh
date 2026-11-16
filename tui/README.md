@@ -39,13 +39,17 @@ deployed twice. The terminal UI follows the site's code-editor look: the `_hello
 
 ## Configuration
 
+Variables come from the process environment, falling back to the Laravel `.env` in the working
+directory (`RENO_ENV_FILE` to point elsewhere). Run it from the site root and it picks up `APP_URL`,
+`TUI_SSH_HOST` and `TUI_SSH_PORT` with nothing else to configure.
+
 | env | default | |
 |---|---|---|
-| `RENO_API_URL` | `https://reno.sh` | Site base URL; `/api/v1` is appended (unless already present) |
-| `RENO_SITE_URL` | `https://reno.sh` | Used for links shown to visitors |
-| `RENO_SSH_PORT` | `2222` | Listen port |
-| `RENO_HOST_KEY_PATH` | `.ssh/host_ed25519` | Persistent ed25519 host key; generated on first start |
-| `RENO_SSH_HOST` | `reno.sh` | Hostname shown in hints (the API's `site.ssh` wins when present) |
+| `RENO_API_URL` | site URL | Site base URL; `/api/v1` is appended (unless already present) |
+| `RENO_SITE_URL` | `APP_URL`, else `https://reno.sh` | Used for links shown to visitors |
+| `RENO_SSH_PORT` | `TUI_SSH_PORT`, else `2222` | Listen port |
+| `RENO_HOST_KEY_PATH` | `~/.reno-tui/host_ed25519` | Persistent ed25519 host key; generated on first start |
+| `RENO_SSH_HOST` | `TUI_SSH_HOST`, else `reno.sh` | Hostname shown in hints (the API's `site.ssh` wins when present) |
 | `RENO_LISTEN_HOST` | `0.0.0.0` | Bind address |
 | `RENO_CACHE_TTL` | `60s` | Shared in-memory API cache TTL |
 | `RENO_HTTP_TIMEOUT` | `10s` | API request timeout |
