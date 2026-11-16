@@ -25,8 +25,8 @@ if [ -f artisan ]; then
     $FORGE_PHP artisan queue:restart
 fi
 
-# SSH TUI (Forge daemon "reno-tui" runs ./tui/bin/reno-tui); rebuild only when tui/ changed.
-if git diff --name-only HEAD@{1} HEAD 2>/dev/null | grep -q '^tui/'; then
+# SSH TUI (Forge daemon "reno-tui" runs ./tui/bin/reno-tui); build on first deploy, then only when tui/ changed.
+if [ ! -x tui/bin/reno-tui ] || git diff --name-only HEAD@{1} HEAD 2>/dev/null | grep -q '^tui/'; then
     (cd tui && CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o bin/reno-tui .)
     sudo -S supervisorctl restart daemon-reno-tui:* || true
 fi
