@@ -73,16 +73,19 @@ Nothing newer than **7 days** gets installed:
 
 ## Deploying on Laravel Forge
 
-1. Create a PHP 8.5 server with Postgres, and a site for `reno.sh` from this repo (branch `master`).
+1. Create a PHP 8.5 server with Postgres, and a site for `reno.sh` from this repo (branch `master`)
+   with zero-downtime deployments on. Make sure `storage` is a shared path (uploads and originals live there).
 2. Environment: copy `.env.example`, set `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL`, DB, S3
    (`FILESYSTEM_PUBLIC_DRIVER=s3`, `PHOTO_ORIGINALS_DRIVER=s3`), `RESEND_API_KEY` (`MAIL_MAILER=resend`),
    `ADMIN_EMAILS`, Stripe, Prodigi (`PRODIGI_ENVIRONMENT=live` when ready) and social app credentials.
-3. Deploy script: `deploy/forge/deploy.sh`. Enable Quick Deploy.
+3. Deploy script: `deploy/forge/deploy.sh` (uses the `$CREATE_RELEASE()` / `$ACTIVATE_RELEASE()` /
+   `$RESTART_QUEUES()` helpers). Enable push to deploy.
 4. Queue: add a worker (`database` connection, `--tries=3 --timeout=600`).
 5. Scheduler: enable the Laravel scheduler (publishes scheduled posts and social posts every minute).
-6. SSH TUI: install Go, add a daemon `reno-tui` running `/home/forge/reno.sh/tui/bin/reno-tui` with
+6. SSH TUI: install Go, add a daemon `reno-tui` running `<site root>/current/tui/bin/reno-tui` with
    `RENO_API_URL=https://reno.sh RENO_SSH_PORT=2222 RENO_HOST_KEY_PATH=/home/forge/.reno-tui/host_ed25519`,
-   then open port 2222 in the Forge firewall (keep the server's own sshd on 22). See `tui/README.md`.
+   put its ID in `TUI_DAEMON_ID` at the top of the deploy script, then open port 2222 in the Forge firewall
+   (keep the server's own sshd on 22). See `tui/README.md`.
 7. Webhooks: Stripe → `https://reno.sh/webhooks/stripe` (`checkout.session.completed`,
    `checkout.session.expired`, `checkout.session.async_payment_succeeded`, `…_failed`) and put the signing
    secret in `STRIPE_WEBHOOK_SECRET`; Prodigi callbacks are set per order automatically.
