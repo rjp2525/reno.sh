@@ -11,9 +11,12 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PhotoShowController;
+use App\Http\Controllers\Prints\PrintOrderController;
 use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\ProjectShowController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\Webhooks\ProdigiWebhookController;
+use App\Http\Controllers\Webhooks\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/img/{path}', ImageController::class)->where('path', '.*')->name('image.serve');
@@ -36,6 +39,14 @@ Route::get('/gallery', GalleryController::class)
     ->name('gallery');
 Route::get('/gallery/{photo:slug}', PhotoShowController::class)
     ->name('gallery.show');
+
+Route::post('/prints/checkout', [PrintOrderController::class, 'checkout'])
+    ->middleware('throttle:10,1')
+    ->name('prints.checkout');
+Route::get('/prints/orders/{order}', [PrintOrderController::class, 'thanks'])->name('prints.thanks');
+
+Route::post('/webhooks/stripe', StripeWebhookController::class)->name('webhooks.stripe');
+Route::post('/webhooks/prodigi', ProdigiWebhookController::class)->name('webhooks.prodigi');
 
 Route::prefix('blog')->name('blog.')->group(function () {
     Route::get('/', BlogController::class)->name('index');

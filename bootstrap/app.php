@@ -11,12 +11,21 @@ use Symfony\Component\HttpFoundation\Response;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
         health: '/up',
     )
     ->withSchedule(function (Schedule $schedule) {
         $schedule->command('blog:publish-scheduled')->everyMinute();
     })
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->alias([
+            'abilities' => \Laravel\Sanctum\Http\Middleware\CheckAbilities::class,
+            'ability' => \Laravel\Sanctum\Http\Middleware\CheckForAnyAbility::class,
+        ]);
+
+        // Signed by the sender (Stripe) or token-guarded (Prodigi) instead of CSRF.
+        $middleware->validateCsrfTokens(except: ['webhooks/*']);
+
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
@@ -30,7 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 return back()->with('error', 'Slow down! Please wait a moment before trying again.');
             }
 
-            if (in_array($status, [403, 404, 500, 503]) && ! request()->is('admin', 'admin/*', 'livewire/*')) {
+            if (in_array($status, [403, 404, 500, 503]) && ! request()->is('admin', 'admin/*', 'livewire/*', 'api/*', 'webhooks/*') && ! request()->expectsJson()) {
                 return Inertia::render('Error', ['status' => $status])
                     ->toResponse(request())
                     ->setStatusCode($status);

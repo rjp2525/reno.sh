@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PostStatus;
 use App\Observers\PostObserver;
+use App\Support\Content\Blocks;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -91,31 +92,17 @@ class Post extends Model implements Feedable
             return 0;
         }
 
-        $text = '';
-        foreach ($this->content as $block) {
-            $data = $block['data'] ?? [];
-            switch ($block['type'] ?? '') {
-                case 'rich-text':
-                    $text .= ' '.strip_tags($data['content'] ?? '');
-                    break;
-                case 'heading':
-                    $text .= ' '.($data['title'] ?? '').(' '.($data['subtitle'] ?? ''));
-                    break;
-                case 'two-columns':
-                    $text .= ' '.strip_tags($data['left'] ?? '').' '.strip_tags($data['right'] ?? '');
-                    break;
-                case 'callout':
-                    $text .= ' '.strip_tags($data['content'] ?? '');
-                    break;
-                case 'code':
-                    $text .= ' '.($data['code'] ?? '');
-                    break;
-            }
-        }
-
-        $wordCount = str_word_count(trim($text));
+        $wordCount = str_word_count(Blocks::toText($this->content));
 
         return max(1, (int) ceil($wordCount / 200));
+    }
+
+    /** Canonical public URL (posts without a category live under /blog/post/{slug}). */
+    public function url(): string
+    {
+        return $this->category
+            ? route('blog.show', [$this->category, $this])
+            : route('blog.show.uncategorized', $this);
     }
 
     public function getOgImageUrlAttribute(): ?string
@@ -130,7 +117,7 @@ class Post extends Model implements Feedable
 
     public function toFeedItem(): FeedItem
     {
-        $link = url("/blog/{$this->category?->slug}/{$this->slug}");
+        $link = $this->url();
 
         return FeedItem::create()
             ->id($link)

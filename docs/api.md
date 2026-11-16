@@ -1,0 +1,228 @@
+# reno.sh API v1
+
+Single JSON API consumed by the iOS app (`reno.sh-ios`), the SSH TUI (`tui/`) and anything else.
+Base URL: `{APP_URL}/api/v1`. Local Docker: `http://localhost:8088/api/v1`.
+
+## Conventions
+
+- JSON only. Send `Accept: application/json`.
+- IDs are strings (ULIDs for posts/photos/projects/categories/social/orders; numeric ids are serialized as strings too).
+- Timestamps are ISO-8601 UTC strings (`2026-11-16T18:30:00Z`), nullable where noted.
+- Money is integer minor units (`2500` = $25.00) plus a `currency` (ISO 4217).
+- Single resources: `{ "data": {...} }`. Collections: `{ "data": [...], "meta": { "current_page", "last_page", "per_page", "total" } }`.
+  Pagination via `?page=N&per_page=N` (max 100, default 20).
+- Errors: Laravel standard. `401` unauthenticated, `403` forbidden, `404`, `422` `{ "message": "...", "errors": { "field": ["..."] } }`, `429` throttled.
+- Auth: Sanctum personal access tokens, `Authorization: Bearer {token}`. All `/admin/*` routes require a token.
+
+## Rich content ("blocks")
+
+Posts, projects and pages store an ordered list of blocks:
+
+```json
+{ "type": "rich-text", "data": { "content": "<p>HTML…</p>", "markdown": "optional source" } }
+```
+
+| type            | data                                                                                  |
+|-----------------|---------------------------------------------------------------------------------------|
+| `rich-text`     | `content` (HTML), `markdown` (string, present when authored as Markdown)              |
+| `markdown`      | `markdown` (string). Rendered server side; API responses also include `content` HTML |
+| `heading`       | `title`, `subtitle?`, `level` (`h2`/`h3`)                                             |
+| `image`         | `image` (url), `alt?`, `caption?`, `alignment` (`left`/`center`/`right`/`full`)       |
+| `image-gallery` | `images: [{ image (url), alt?, caption? }]`, `columns?`                               |
+| `two-columns`   | `left` (HTML), `right` (HTML)                                                         |
+| `callout`       | `type` (`info`/`warning`/`success`/`danger`), `title?`, `content` (HTML)              |
+| `code`          | `language`, `code`, `filename?`                                                       |
+| `divider`       | `{}`                                                                                  |
+
+API responses resolve image paths to absolute URLs. Every block-bearing resource also has
+`text` (plain text, ~80 col friendly, for terminals) and `markdown` (full document as Markdown).
+
+When **writing** posts through the admin API, clients may send blocks as above. For `image` blocks
+send the `path` returned by `POST /admin/media` in `data.image`.
+
+---
+
+## Public endpoints (no auth)
+
+### `GET /site`
+```json
+{ "data": {
+  "name": "Reno Philibert", "title": "Full Stack Software Engineer", "tagline": "…",
+  "location": "…", "email": "…", "url": "https://reno.sh",
+  "socials": [{ "label": "GitHub", "url": "https://github.com/rjp2525" }],
+  "ssh": { "host": "reno.sh", "port": 2222 },
+  "sections": ["about", "projects", "blog", "gallery", "prints", "contact"]
+} }
+```
+
+### `GET /about`
+```json
+{ "data": {
+  "pages": [{ "section": "professional|personal|hobbies", "slug", "title", "icon", "text", "markdown" }],
+  "experience": [{ "id", "title", "company", "location", "start": "2022-01-01", "end": null, "responsibilities": ["…"] }],
+  "skills": [{ "id", "category", "name", "proficiency": "beginner|intermediate|advanced|expert", "started", "ended" }],
+  "education": [{ "id", "school_name", "location", "degree", "minor", "started", "graduated", "description", "achievements": [], "projects": [], "extracurriculars": [] }]
+} }
+```
+
+### `GET /posts` (published only)
+Query: `category` (slug), `series` (slug), `tag`, `q` (search), `page`, `per_page`.
+```json
+{ "data": [PostSummary], "meta": {…} }
+```
+`PostSummary`:
+```json
+{ "id", "title", "slug", "excerpt", "url", "featured_image_url", "reading_time": 4,
+  "published_at", "is_featured": false,
+  "category": { "id", "name", "slug", "color" } | null,
+  "series": { "id", "title", "slug", "order": 1 } | null,
+  "tags": ["laravel", "vue"] }
+```
+
+### `GET /posts/{slug}`
+`PostSummary` + `{ "blocks": [Block], "text": "…", "markdown": "…", "meta_title", "meta_description" }`
+
+### `GET /blog/categories`
+`{ "data": [{ "id", "name", "slug", "description", "color", "posts_count" }] }`
+
+### `GET /projects`
+Query: `type`. `{ "data": [{ "id", "title", "slug", "summary", "type", "status", "url", "github_url", "demo_url", "featured_image_url", "start_date", "end_date", "is_ongoing", "is_featured", "technologies": [{ "name", "slug", "color" }], "web_url" }] }`
+
+### `GET /projects/{slug}`
+Project + `{ "description_html", "text", "markdown", "gallery": [url] }`
+
+### `GET /photos`
+Query: `category` (slug), `favorites` (bool), `printable` (bool), `page`, `per_page`.
+`Photo`:
+```json
+{ "id", "title", "slug", "description_html", "text", "web_url", "thumbnail_url", "og_image_url",
+  "width", "height", "taken_at", "exif_summary", "camera_body", "lens", "focal_length", "aperture", "shutter_speed", "iso",
+  "category": { "id", "name", "slug" } | null, "tags": [], "is_favorite", "prints_available": true, "url" }
+```
+
+### `GET /photos/{slug}`
+`Photo` + `{ "print_options": [PrintOption] }`
+
+`PrintOption` (only products that match the photo's aspect ratio and resolution):
+```json
+{ "product_id", "name": "Fine Art Print", "type": "fine_art|photo_print|canvas|metal|acrylic|framed",
+  "size_label": "12×18 in", "width_in": 12, "height_in": 18, "price": 6500, "currency": "USD",
+  "description": "…", "attributes": {} }
+```
+
+### `GET /photo-categories`
+`{ "data": [{ "id", "name", "slug", "color", "photos_count" }] }`
+
+### `POST /prints/checkout`
+Body: `{ "photo_id", "product_id", "quantity": 1, "email?": "…" }`
+→ `201 { "data": { "order_id", "number": "RP-000123", "checkout_url": "https://checkout.stripe.com/…" } }`
+Clients open `checkout_url` (iOS: `SFSafariViewController`/`ASWebAuthenticationSession`).
+
+### `POST /contact`
+Body: `{ "name", "email", "subject?", "message" }` → `202`. Throttled 5/min.
+
+---
+
+## Auth
+
+### `POST /auth/token`
+Body: `{ "email", "password", "device_name": "Reno's iPhone" }`
+Only emails in `ADMIN_EMAILS` can mint tokens.
+→ `201 { "data": { "token": "1|abc…", "user": { "id", "name", "email" } } }` · `422` on bad credentials.
+
+### `GET /auth/me` → `{ "data": { "id", "name", "email" } }`
+### `DELETE /auth/token` → `204` (revokes the current token)
+
+---
+
+## Admin endpoints (Bearer token)
+
+### Dashboard: `GET /admin/dashboard`
+```json
+{ "data": {
+  "posts": { "published": 12, "drafts": 3, "scheduled": 1 },
+  "photos": { "total": 140, "processing": 0, "failed": 0 },
+  "social": { "scheduled": 4, "failed_last_7d": 0, "next": SocialPost | null },
+  "orders": { "open": 2, "revenue_30d": 32000, "currency": "USD" },
+  "recent_orders": [PrintOrder], "upcoming_social": [SocialPost]
+} }
+```
+
+### Media: `POST /admin/media` (multipart)
+Fields: `file` (image, ≤ 50 MB), `directory?` (`blog/images` default, `social`, `blog/featured`).
+→ `201 { "data": { "path": "blog/images/abc.jpg", "url": "https://…/img/blog/images/abc.jpg", "width", "height", "mime", "size" } }`
+
+### Posts
+- `GET /admin/posts` query `status` (`draft|scheduled|published|archived`), `q`, `page` → `[AdminPost]` (summary fields + `status`, `updated_at`)
+- `POST /admin/posts` → `201 AdminPost`
+- `GET /admin/posts/{id}` → `AdminPost` (with `blocks`)
+- `PATCH /admin/posts/{id}` → `AdminPost` (partial)
+- `DELETE /admin/posts/{id}` → `204` (soft delete)
+
+`AdminPost` write body:
+```json
+{ "title": "required", "slug?": "auto from title", "excerpt?", "blog_category_id?", "blog_series_id?", "series_order?",
+  "tags?": ["…"], "status": "draft|scheduled|published|archived", "published_at?": "ISO (required when scheduled)",
+  "is_featured?": false, "featured_image?": "path from /admin/media", "meta_title?", "meta_description?",
+  "blocks?": [Block], "markdown?": "shortcut: replaces blocks with a single rich-text block rendered from Markdown",
+  "share?": { "account_ids": ["…"], "body?": "custom text", "scheduled_at?": "ISO" } }
+```
+`share` creates a SocialPost announcing the post (scheduled at `published_at` if not given).
+Read shape: write fields + `id`, `url`, `featured_image_url`, `reading_time`, `category`, `series`, `created_at`, `updated_at`.
+
+### Taxonomy helpers (autocomplete)
+- `GET /admin/blog-categories` → `[{ id, name, slug, color }]`
+- `GET /admin/blog-series` → `[{ id, title, slug }]`
+- `GET /admin/tags?type=posts|photos&q=` → `{ "data": ["laravel", "vue"] }`
+- `GET /admin/photo-categories` → `[{ id, name, slug }]`
+
+### Photos
+- `GET /admin/photos` query `q`, `category`, `status` (`pending|processing|completed|failed`), `page` → `[AdminPhoto]`
+- `POST /admin/photos` (multipart) fields: `file` (jpeg/png/webp/tiff/heic, ≤ 100 MB), `title`, `description?`,
+  `photo_category_id?`, `tags[]?`, `is_published?` (default true), `is_favorite?`, `prints_enabled?` (default true)
+  → `201 AdminPhoto` (`processing_status: "pending"`; EXIF extracted server side, variants generated by the queue)
+- `GET /admin/photos/{id}`, `PATCH /admin/photos/{id}` (JSON, metadata only), `DELETE /admin/photos/{id}`
+
+`AdminPhoto` = `Photo` + `{ "processing_status", "is_published", "prints_enabled", "sort_order", "created_at" }`
+
+### Social
+`SocialAccount`:
+```json
+{ "id", "provider": "facebook|instagram|linkedin|x|threads|bluesky|mastodon", "name", "username", "avatar_url",
+  "is_active": true, "needs_reauth": false, "limits": { "max_chars": 500, "max_media": 10, "requires_media": false } }
+```
+`SocialPost`:
+```json
+{ "id", "body", "status": "draft|scheduled|publishing|published|partially_published|failed",
+  "scheduled_at", "published_at", "link_url",
+  "media": [{ "path", "url", "mime" }],
+  "targets": [{ "id", "account": SocialAccount, "status": "pending|publishing|published|failed", "body_override",
+               "provider_url", "error", "published_at" }],
+  "source": { "type": "post|photo", "id", "title" } | null,
+  "created_at", "updated_at" }
+```
+- `GET /admin/social/accounts` → `[SocialAccount]` (connecting accounts happens in the web admin; OAuth)
+- `GET /admin/social/posts` query `status`, `from`, `to` (ISO, filters `scheduled_at`), `page` → `[SocialPost]`
+- `GET /admin/social/calendar?from=&to=` → `{ "data": [{ "date": "2026-11-16", "posts": [SocialPost] }] }`
+- `POST /admin/social/posts` body:
+  ```json
+  { "body": "required unless every target overrides", "account_ids": ["…"], "overrides?": { "{account_id}": "text" },
+    "media?": ["path from /admin/media"], "link_url?", "scheduled_at?": "ISO; omit + publish_now=true to post immediately",
+    "publish_now?": false, "draft?": false }
+  ```
+  → `201 SocialPost`. Validation enforces each account's `limits`.
+- `GET /admin/social/posts/{id}`, `PATCH /admin/social/posts/{id}` (only while `draft|scheduled|failed`), `DELETE` → `204`
+- `POST /admin/social/posts/{id}/publish` → `202 SocialPost` (publish now / retry failed targets)
+
+### Print orders
+`PrintOrder`:
+```json
+{ "id", "number", "status": "pending_payment|paid|submitted|in_production|shipped|completed|cancelled|failed",
+  "email", "name", "currency", "subtotal", "shipping", "tax", "total",
+  "items": [{ "photo": { "id", "title", "thumbnail_url" }, "product": { "id", "name", "size_label" }, "quantity", "unit_price" }],
+  "shipping_address": { "line1", "line2", "city", "state", "postal_code", "country" } | null,
+  "tracking": [{ "carrier", "number", "url" }], "prodigi_order_id", "error",
+  "paid_at", "submitted_at", "shipped_at", "created_at" }
+```
+- `GET /admin/orders` query `status`, `page` → `[PrintOrder]`
+- `GET /admin/orders/{id}` → `PrintOrder`

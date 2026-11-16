@@ -23,7 +23,7 @@ class ContactController extends Controller
             ->notify(new ContactFormNotification(
                 name: $validated['name'],
                 email: $validated['email'],
-                subject: $validated['subject'],
+                subject: $validated['subject'] ?? 'New message from reno.sh',
                 contactMessage: $validated['message'],
             ));
 
