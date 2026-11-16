@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\ServeTerminal;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -32,6 +33,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // Signed by the sender (Stripe) or token-guarded (Prodigi) instead of CSRF.
         $middleware->validateCsrfTokens(except: ['webhooks/*']);
 
+        // curl/wget/httpie get the ANSI terminal site. Prepended so it runs before sessions and bindings.
+        $middleware->web(prepend: [ServeTerminal::class]);
+
         $middleware->web(append: [
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
@@ -40,6 +44,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->respond(function (Response $response, Throwable $exception) {
             $status = $response->getStatusCode();
+
+            if (in_array($status, [403, 404, 429, 500, 503]) && ($terminal = ServeTerminal::renderError(request(), $status))) {
+                return $terminal;
+            }
 
             if ($exception instanceof ThrottleRequestsException && request()->inertia()) {
                 return back()->with('error', 'Slow down! Please wait a moment before trying again.');
