@@ -88,8 +88,16 @@ class PhotoResource extends Resource
                                         if ($state instanceof TemporaryUploadedFile) {
                                             $filePath = $state->getRealPath();
                                         } elseif (is_string($state)) {
-                                            $disk = config('photography.storage.originals_disk', 'photos_originals');
-                                            $filePath = Storage::disk($disk)->path($state);
+                                            $disk = Storage::disk(config('photography.storage.originals_disk', 'photos_originals'));
+
+                                            if (config('filesystems.disks.'.config('photography.storage.originals_disk', 'photos_originals').'.driver') === 'local') {
+                                                $filePath = $disk->path($state);
+                                            } elseif ($stream = rescue(fn () => $disk->readStream($state), null, false)) {
+                                                // Remote disk (S3/R2): EXIF needs a local file.
+                                                $filePath = tempnam(sys_get_temp_dir(), 'exif');
+                                                file_put_contents($filePath, $stream);
+                                                register_shutdown_function(fn () => @unlink($filePath));
+                                            }
                                         }
 
                                         if (! $filePath || ! file_exists($filePath)) {

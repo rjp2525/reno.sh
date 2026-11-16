@@ -75,8 +75,8 @@ Nothing newer than **7 days** gets installed:
 
 1. Create a PHP 8.5 server with Postgres, and a site for `reno.sh` from this repo (branch `master`)
    with zero-downtime deployments on. Make sure `storage` is a shared path (uploads and originals live there).
-2. Environment: copy `.env.example`, set `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL`, DB, S3
-   (`FILESYSTEM_PUBLIC_DRIVER=s3`, `PHOTO_ORIGINALS_DRIVER=s3`), `RESEND_API_KEY` (`MAIL_MAILER=resend`),
+2. Environment: copy `.env.example`, set `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL`, DB, storage
+   (local by default; for Cloudflare R2 see "Storage on R2" below), `RESEND_API_KEY` (`MAIL_MAILER=resend`),
    `ADMIN_EMAILS`, Stripe, Prodigi (`PRODIGI_ENVIRONMENT=live` when ready) and social app credentials.
 3. Deploy script: `deploy/forge/deploy.sh` (uses the `$CREATE_RELEASE()` / `$ACTIVATE_RELEASE()` /
    `$RESTART_QUEUES()` helpers). Enable push to deploy.
@@ -96,3 +96,25 @@ Nothing newer than **7 days** gets installed:
    `checkout.session.expired`, `checkout.session.async_payment_succeeded`, `…_failed`) and put the signing
    secret in `STRIPE_WEBHOOK_SECRET`; Prodigi callbacks are set per order automatically.
 8. Social OAuth redirect URI for every network: `https://reno.sh/admin/social/callback/{provider}`.
+
+## Storage on Cloudflare R2
+
+1. Create two buckets: a **public** one for site images (connect a custom domain such as `cdn.reno.sh`)
+   and a **private** one for full-resolution photo originals (no public access; prints use signed URLs).
+2. Create an R2 API token with *Object Read & Write* on both buckets.
+3. Environment:
+   ```
+   FILESYSTEM_PUBLIC_DRIVER=s3
+   PHOTO_ORIGINALS_DRIVER=s3
+   AWS_ACCESS_KEY_ID=<token access key id>
+   AWS_SECRET_ACCESS_KEY=<token secret>
+   AWS_DEFAULT_REGION=auto
+   AWS_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
+   AWS_BUCKET=<public bucket>
+   FILESYSTEM_PUBLIC_URL=https://cdn.reno.sh
+   PHOTO_ORIGINALS_BUCKET=<private bucket>
+   ```
+4. Deploy (re-caches config and restarts queue workers), then copy existing uploads once:
+   `php artisan storage:migrate-local --dry-run`, then without `--dry-run`. Paths are unchanged, so
+   nothing in the database needs updating. Old `/img/...` links keep working (proxied from R2).
+
