@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { imageUrl } from '@/lib/utils';
 import { BlogSidebar, SeoHead } from '@/components';
 import { MobilePageHeader } from '@/components/page';
 import { SearchInput } from '@/components/ui/form';
@@ -227,7 +228,7 @@ const pageDescription = computed(
                                 >
                                     <img
                                         v-if="post.featured_image"
-                                        :src="`/img/${post.featured_image}`"
+                                        :src="imageUrl(post.featured_image)"
                                         :alt="post.title"
                                         class="h-full w-full object-cover"
                                     />
@@ -284,7 +285,7 @@ const pageDescription = computed(
                                 >
                                     <img
                                         v-if="post.featured_image"
-                                        :src="`/img/${post.featured_image}`"
+                                        :src="imageUrl(post.featured_image)"
                                         :alt="post.title"
                                         class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
                                     />

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { imageUrl } from '@/lib/utils';
 import { MobilePageHeader } from '@/components/page';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { GuestLayout } from '@/layouts';
@@ -42,8 +43,7 @@ const appUrl = computed(() => page.props.appUrl as string);
 const ogImage = computed(() => {
     const img = props.project.og_image || props.project.featured_image;
     if (!img) return undefined;
-    if (img.startsWith('http')) return img;
-    return `${appUrl.value}/img/${img}`;
+    return imageUrl(img);
 });
 
 const primaryTechnologies = props.project.technologies.filter(
@@ -83,7 +83,7 @@ const otherTechnologies = props.project.technologies.filter(
                     <div v-if="project.featured_image" class="relative">
                         <div class="relative aspect-[16/9] overflow-hidden lg:aspect-[21/9]">
                             <img
-                                :src="`/img/${project.featured_image}`"
+                                :src="imageUrl(project.featured_image)"
                                 :alt="project.title"
                                 class="h-full w-full object-cover"
                             />
@@ -290,7 +290,7 @@ const otherTechnologies = props.project.technologies.filter(
                                                 class="aspect-video overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800"
                                             >
                                                 <img
-                                                    :src="`/img/${image.image}`"
+                                                    :src="imageUrl(image.image)"
                                                     :alt="`${project.title} screenshot ${index + 1}`"
                                                     class="h-full w-full object-cover transition-transform duration-200 hover:scale-105"
                                                 />
@@ -544,7 +544,7 @@ const otherTechnologies = props.project.technologies.filter(
                                     >
                                         <img
                                             v-if="relatedProject.featured_image"
-                                            :src="`/img/${relatedProject.featured_image}`"
+                                            :src="imageUrl(relatedProject.featured_image)"
                                             :alt="relatedProject.title"
                                             class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
                                         />

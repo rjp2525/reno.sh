@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { imageUrl } from '@/lib/utils';
 import { SeoHead } from '@/components';
 import { MobilePageHeader } from '@/components/page';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -74,7 +75,7 @@ const getPostUrl = (post: BlogSeriesDetail['posts'][number]) => {
                         class="mb-6 overflow-hidden rounded-lg"
                     >
                         <img
-                            :src="`/img/${series.featured_image}`"
+                            :src="imageUrl(series.featured_image)"
                             :alt="series.title"
                             class="h-auto w-full object-cover"
                         />

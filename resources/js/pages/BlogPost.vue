@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { imageUrl } from '@/lib/utils';
 import { SeoHead, TableOfContents } from '@/components';
 import { MobilePageHeader } from '@/components/page';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -38,8 +39,7 @@ const shareUrlCopied = ref(false);
 const ogImage = computed(() => {
     const img = props.post.og_image || props.post.featured_image;
     if (!img) return undefined;
-    if (img.startsWith('http')) return img;
-    return `${appUrl.value}/img/${img}`;
+    return imageUrl(img);
 });
 
 const postUrl = computed(() => `${appUrl.value}${page.url}`);
@@ -228,7 +228,7 @@ const jsonLd = computed(() => {
                 <div v-if="post.featured_image" class="relative">
                     <div class="relative min-h-[200px] overflow-hidden sm:max-h-[350px]">
                         <img
-                            :src="`/img/${post.featured_image}`"
+                            :src="imageUrl(post.featured_image)"
                             :alt="post.title"
                             class="absolute inset-0 h-full w-full object-cover object-center"
                         />
@@ -480,7 +480,7 @@ const jsonLd = computed(() => {
                                 >
                                     <img
                                         v-if="related.featured_image"
-                                        :src="`/img/${related.featured_image}`"
+                                        :src="imageUrl(related.featured_image)"
                                         :alt="related.title"
                                         class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
                                     />

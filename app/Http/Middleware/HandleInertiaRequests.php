@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Middleware;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -30,6 +31,8 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'appUrl' => config('app.url'),
+            // Base URL for stored images (CDN on R2, /img proxy locally); see imageUrl() in resources/js/lib/utils.ts.
+            'storageUrl' => rtrim(Storage::disk('public')->url(''), '/'),
             'currentUrl' => $request->url(),
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

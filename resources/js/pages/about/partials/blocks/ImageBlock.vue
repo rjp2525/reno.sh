@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { imageUrl } from '@/lib/utils';
 import type { ImageBlock } from '@/types/blocks';
 
 defineProps<{
@@ -19,7 +20,7 @@ defineProps<{
         ]"
     >
         <img
-            :src="`/img/${data.image}`"
+            :src="imageUrl(data.image)"
             :alt="data.alt || data.caption || ''"
             loading="lazy"
             :class="[
