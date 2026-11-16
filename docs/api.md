@@ -14,6 +14,22 @@ Base URL: `{APP_URL}/api/v1`. Local Docker: `http://localhost:8088/api/v1`.
 - Errors: Laravel standard. `401` unauthenticated, `403` forbidden, `404`, `422` `{ "message": "...", "errors": { "field": ["..."] } }`, `429` throttled.
 - Auth: Sanctum personal access tokens, `Authorization: Bearer {token}`. All `/admin/*` routes require a token.
 
+### Clarifications (aligned with the iOS client)
+
+- Small taxonomy lists (`/admin/blog-categories`, `/admin/blog-series`, `/admin/photo-categories`,
+  `/admin/social/accounts`) are `{ "data": [...] }` without `meta`.
+- `PATCH` accepts explicit `null` to clear nullable fields (`excerpt`, `meta_*`, `blog_category_id`,
+  `blog_series_id`, `featured_image`, `published_at`).
+- `status: published` without `published_at` publishes now; `scheduled` requires `published_at`.
+- Every write containing `share` creates a new SocialPost.
+- Multipart booleans are `1`/`0`; arrays are repeated `field[]`.
+- `/admin/media` accepts JPEG, PNG, WebP, GIF, HEIC/HEIF, MP4 and MOV (≤ 50 MB). Inline Markdown images
+  should use the returned absolute `url`.
+- `link_url` is appended to the text (after a blank line) unless the text already contains it.
+- Character counting: X and Mastodon count each URL as 23; everything else counts graphemes.
+- Social calendar `date` keys are bucketed in the site time zone (`APP_TIMEZONE`).
+- A post is Markdown-editable when `is_markdown` is true (a single `markdown` block).
+
 ## Rich content ("blocks")
 
 Posts, projects and pages store an ordered list of blocks:

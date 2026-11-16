@@ -8,6 +8,7 @@ use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Services\Social\SocialComposer;
 use App\Support\Content\Blocks;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -29,11 +30,11 @@ class PostController extends Controller
         return PostResource::collection($posts);
     }
 
-    public function store(Request $request, SocialComposer $composer): PostResource
+    public function store(Request $request, SocialComposer $composer): JsonResponse
     {
         $post = $this->persist(new Post, $this->validated($request), $request, $composer);
 
-        return (new PostResource($post))->admin();
+        return (new PostResource($post))->admin()->response()->setStatusCode(201);
     }
 
     public function show(Post $post): PostResource

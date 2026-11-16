@@ -93,8 +93,8 @@ enum SocialProvider: string implements HasColor, HasIcon, HasLabel
     /** Character count the way the network counts it. */
     public function length(string $text): int
     {
-        if ($this === self::X) {
-            // X counts every URL as 23 characters (t.co wrapping).
+        if ($this === self::X || $this === self::MASTODON) {
+            // X (t.co wrapping) and Mastodon both count every URL as 23 characters.
             $text = (string) preg_replace('~https?://\S+~i', str_repeat('x', 23), $text);
         }
 

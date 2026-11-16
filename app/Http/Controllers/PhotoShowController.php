@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\PhotoProcessingStatus;
+use App\Http\Resources\PrintOptionResource;
 use App\Models\Photo;
 use Inertia\Inertia;
 
@@ -44,6 +45,10 @@ class PhotoShowController extends Controller
 
         return Inertia::render('PhotoShow', [
             'photo' => $this->transformPhoto($photo),
+            // Only offered once Stripe is configured; sizes are filtered to what the photo can print at.
+            'printOptions' => filled(config('prints.stripe.secret'))
+                ? PrintOptionResource::collection($photo->printOptions())->resolve()
+                : [],
             'prevPhoto' => $prevPhoto ? ['slug' => $prevPhoto->slug, 'title' => $prevPhoto->title] : null,
             'nextPhoto' => $nextPhoto ? ['slug' => $nextPhoto->slug, 'title' => $nextPhoto->title] : null,
         ]);

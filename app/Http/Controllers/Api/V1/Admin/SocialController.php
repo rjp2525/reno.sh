@@ -43,11 +43,11 @@ class SocialController extends Controller
         return response()->json(['data' => $days]);
     }
 
-    public function store(Request $request, SocialComposer $composer): SocialPostResource
+    public function store(Request $request, SocialComposer $composer): JsonResponse
     {
         $post = $composer->create($this->validated($request), $request->user()->id);
 
-        return new SocialPostResource($post->load('targets.account'));
+        return (new SocialPostResource($post->load('targets.account')))->response()->setStatusCode(201);
     }
 
     public function show(SocialPost $post): SocialPostResource

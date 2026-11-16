@@ -18,11 +18,11 @@ use Stripe\StripeClient;
 
 class PrintCheckout
 {
-    public function __construct(private readonly ?StripeClient $stripe = null) {}
+    public function __construct(private readonly StripeClient $stripe) {}
 
     public function stripe(): StripeClient
     {
-        return $this->stripe ?? new StripeClient(['api_key' => (string) config('prints.stripe.secret')]);
+        return $this->stripe;
     }
 
     /**
