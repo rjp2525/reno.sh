@@ -94,7 +94,7 @@ class PostController extends Controller
         if (array_key_exists('markdown', $data)) {
             $attributes['content'] = Blocks::fromMarkdown((string) $data['markdown']);
         } elseif (array_key_exists('blocks', $data)) {
-            $attributes['content'] = $data['blocks'];
+            $attributes['content'] = Blocks::fromApi($data['blocks']);
         }
 
         if (! $post->exists && blank($attributes['slug'] ?? null)) {

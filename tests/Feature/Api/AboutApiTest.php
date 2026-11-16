@@ -9,6 +9,7 @@ use App\Models\Skill;
 use App\Models\User;
 use Database\Seeders\EducationSeeder;
 use Database\Seeders\SkillSeeder;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 
 beforeEach(function () {
@@ -209,4 +210,27 @@ it('can re-run the profile seeders without duplicating rows', function () {
     $this->seed(SkillSeeder::class);
 
     expect([Education::count(), Skill::count()])->toBe($counts);
+});
+
+it('sanitizes rich text and stores image paths when blocks come from the app', function () {
+    $page = ContentPage::factory()->create();
+    $url = Storage::disk('public')->url('content-pages/a.jpg');
+
+    $this->patchJson("/api/v1/admin/content-pages/{$page->id}", ['blocks' => [
+        ['type' => 'rich-text', 'data' => ['content' => '<p onclick="x()">Hi <strong>there</strong><script>alert(1)</script> <a href="javascript:alert(1)">bad</a> <a href="https://reno.sh">ok</a></p><ul><li>one</li></ul>']],
+        ['type' => 'two-columns', 'data' => ['left' => '<p>L<img src=x onerror=alert(1)></p>', 'right' => '<p><em>R</em></p>', 'ratio' => '50-50']],
+        ['type' => 'image', 'data' => ['image' => $url, 'alt' => 'A', 'alignment' => 'center']],
+        ['type' => 'image-gallery', 'data' => ['images' => [['image' => $url], ['image' => 'https://example.com/b.jpg']], 'columns' => 2]],
+    ]])->assertOk()
+        ->assertJsonPath('data.blocks.2.data.image', $url);
+
+    $content = $page->fresh()->content;
+    expect($content[0]['data']['content'])
+        ->toContain('<strong>there</strong>', '<ul><li>one</li></ul>', 'href="https://reno.sh"')
+        ->not->toContain('script', 'onclick', 'javascript:')
+        ->and($content[1]['data']['left'])->not->toContain('onerror')
+        ->and($content[1]['data']['right'])->toBe('<p><em>R</em></p>')
+        ->and($content[2]['data']['image'])->toBe('content-pages/a.jpg')
+        ->and($content[3]['data']['images'][0]['image'])->toBe('content-pages/a.jpg')
+        ->and($content[3]['data']['images'][1]['image'])->toBe('https://example.com/b.jpg');
 });

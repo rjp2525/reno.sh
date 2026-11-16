@@ -6,6 +6,8 @@ namespace App\Support\Content;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
 /**
  * Helpers for the block arrays stored on posts, projects and content pages.
@@ -49,6 +51,75 @@ final class Blocks
             })
             ->values()
             ->all();
+    }
+
+    /** HTML-bearing fields per block type (rich text the site renders unescaped). */
+    private const HTML_FIELDS = [
+        'rich-text' => ['content'],
+        'callout' => ['content'],
+        'two-columns' => ['left', 'right'],
+    ];
+
+    /**
+     * Blocks received over the API (e.g. from the iOS editor): normalize, restrict rich-text HTML
+     * to the tags the web editor produces, and turn image URLs on our public disk back into paths
+     * so they are stored the same way as uploads from the admin panel.
+     */
+    public static function fromApi(?array $blocks): array
+    {
+        return collect(self::normalize($blocks))->map(function (array $block) {
+            $data = $block['data'];
+
+            foreach (self::HTML_FIELDS[$block['type']] ?? [] as $field) {
+                if (is_string($data[$field] ?? null)) {
+                    $data[$field] = self::sanitizeHtml($data[$field]);
+                }
+            }
+
+            if ($block['type'] === 'image' && is_string($data['image'] ?? null)) {
+                $data['image'] = self::path($data['image']);
+            }
+
+            if ($block['type'] === 'image-gallery') {
+                $data['images'] = collect($data['images'] ?? [])
+                    ->filter(fn ($img) => is_array($img))
+                    ->map(fn (array $img) => [...$img, 'image' => is_string($img['image'] ?? null) ? self::path($img['image']) : null])
+                    ->values()->all();
+            }
+
+            return [...$block, 'data' => $data];
+        })->all();
+    }
+
+    /** Allow-list matching the Filament rich editor toolbar (headings, lists, quotes, code, links, basic marks). */
+    public static function sanitizeHtml(string $html): string
+    {
+        static $sanitizer;
+
+        $sanitizer ??= new HtmlSanitizer((new HtmlSanitizerConfig)
+            ->allowElement('p')->allowElement('br')->allowElement('hr')
+            ->allowElement('h2')->allowElement('h3')->allowElement('h4')
+            ->allowElement('strong')->allowElement('b')->allowElement('em')->allowElement('i')
+            ->allowElement('u')->allowElement('s')->allowElement('del')
+            ->allowElement('ul')->allowElement('ol', ['start'])->allowElement('li')
+            ->allowElement('blockquote')->allowElement('pre')->allowElement('code', ['class'])
+            ->allowElement('a', ['href', 'target', 'rel'])
+            ->allowElement('img', ['src', 'alt', 'width', 'height'])
+            ->allowLinkSchemes(['https', 'http', 'mailto'])
+            ->allowMediaSchemes(['https', 'http'])
+            ->allowRelativeLinks()
+            ->allowRelativeMedias()
+            ->withMaxInputLength(200_000));
+
+        return $sanitizer->sanitize($html);
+    }
+
+    /** Inverse of url() for files on the public disk; anything else is returned unchanged. */
+    public static function path(string $value): string
+    {
+        $base = rtrim(Storage::disk('public')->url(''), '/').'/';
+
+        return Str::startsWith($value, $base) ? Str::after($value, $base) : $value;
     }
 
     /** Copy of the blocks with stored image paths turned into absolute URLs. */

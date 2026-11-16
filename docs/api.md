@@ -55,6 +55,11 @@ API responses resolve image paths to absolute URLs. Every block-bearing resource
 
 When **writing** posts through the admin API, clients may send blocks as above. For `image` blocks
 send the `path` returned by `POST /admin/media` in `data.image`.
+Blocks sent to the admin API are cleaned before storage: HTML in `rich-text.content`, `callout.content` and
+`two-columns.left/right` is limited to `p br hr h2-h4 strong b em i u s del ul ol li blockquote pre code a img`
+(http/https/mailto links only, no attributes beyond `href target rel src alt width height start class`), and
+image URLs on the site's own public disk are converted back to stored paths, so sending back the URLs you
+received is fine.
 
 ---
 

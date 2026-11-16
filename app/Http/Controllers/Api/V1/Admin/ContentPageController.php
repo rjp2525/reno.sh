@@ -101,7 +101,7 @@ class ContentPageController extends Controller
         if (array_key_exists('markdown', $data)) {
             $attributes['content'] = Blocks::fromMarkdown((string) $data['markdown']);
         } elseif (array_key_exists('blocks', $data)) {
-            $attributes['content'] = Blocks::normalize($data['blocks'] ?? []);
+            $attributes['content'] = Blocks::fromApi($data['blocks'] ?? []);
         }
 
         $section = $attributes['section'] ?? $page->section?->value;
