@@ -34,6 +34,8 @@ interface BlogPostSummary {
 
 interface BlogPost extends BlogPostSummary {
     content: import('./blocks').ContentBlock[] | null;
+    url: string;
+    word_count: number;
     updated_at: string | null;
     meta_title: string | null;
     meta_description: string | null;

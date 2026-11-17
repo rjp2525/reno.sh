@@ -11,7 +11,11 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet">
-        <title inertia>{{ config('app.name', 'Reno Philibert') }}</title>
+        {{-- SSR renders the page's own <title>; only fall back when it didn't, so there's never two. --}}
+        @php($__ssrHead = app(\Inertia\Ssr\SsrState::class)->setPage($page)->dispatch()?->head)
+        @unless ($__ssrHead && str_contains($__ssrHead, '<title'))
+            <title inertia>{{ config('app.name', 'Reno Philibert') }}</title>
+        @endunless
         @include('feed::links')
         @vite(['resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
         @inertiaHead

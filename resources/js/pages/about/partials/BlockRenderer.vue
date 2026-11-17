@@ -27,6 +27,7 @@ const props = withDefaults(
 
 const blockComponents: Record<string, Component> = {
     'rich-text': RichTextBlock,
+    markdown: RichTextBlock,
     image: ImageBlock,
     'image-gallery': ImageGalleryBlock,
     heading: HeadingBlock,

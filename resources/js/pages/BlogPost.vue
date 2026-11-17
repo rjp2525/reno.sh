@@ -130,22 +130,58 @@ const getAdjacentPostUrl = (post: BlogAdjacentPost) => {
     return `/blog/post/${post.slug}`;
 };
 
+const author = {
+    '@type': 'Person',
+    name: 'Reno Philibert',
+    url: appUrl.value,
+};
+
+// JSON-LD for search engines. "<" is escaped so the text can't close the script tag.
 const jsonLd = computed(() => {
-    return JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'BlogPosting',
-        headline: props.post.title,
-        description: props.post.meta_description || props.post.excerpt || '',
-        image: ogImage.value,
-        datePublished: props.post.published_at,
-        dateModified: props.post.updated_at || props.post.published_at,
-        author: {
-            '@type': 'Person',
-            name: 'Reno Philibert',
+    const crumbs = [
+        { name: 'Blog', item: `${appUrl.value}${blogIndex.url()}` },
+        ...(props.post.category
+            ? [
+                  {
+                      name: props.post.category.name,
+                      item: `${appUrl.value}${blogCategoryRoute.url({ category: props.post.category.slug })}`,
+                  },
+              ]
+            : []),
+        { name: props.post.title, item: props.post.url },
+    ];
+
+    return JSON.stringify([
+        {
+            '@context': 'https://schema.org',
+            '@type': 'BlogPosting',
+            '@id': `${props.post.url}#article`,
+            mainEntityOfPage: { '@type': 'WebPage', '@id': props.post.url },
+            url: props.post.url,
+            headline: props.post.title,
+            description: props.post.meta_description || props.post.excerpt || '',
+            image: ogImage.value ? [ogImage.value] : undefined,
+            datePublished: props.post.published_at,
+            dateModified: props.post.updated_at || props.post.published_at,
+            author,
+            publisher: author,
+            articleSection: props.post.category?.name,
+            keywords: props.post.tags.map((t) => t.name).join(', ') || undefined,
+            wordCount: props.post.word_count,
+            timeRequired: `PT${props.post.reading_time}M`,
+            inLanguage: 'en',
         },
-        wordCount: props.post.reading_time * 200,
-        timeRequired: `PT${props.post.reading_time}M`,
-    });
+        {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: crumbs.map((c, i) => ({
+                '@type': 'ListItem',
+                position: i + 1,
+                name: c.name,
+                item: c.item,
+            })),
+        },
+    ]).replace(/</g, '\\u003c');
 });
 </script>
 
@@ -156,11 +192,17 @@ const jsonLd = computed(() => {
             :description="post.meta_description || post.excerpt"
             :image="ogImage"
             :keywords="post.meta_keywords?.join(', ')"
+            :url="post.url"
             type="article"
         />
 
         <Head>
-            <component is="script" type="application/ld+json" v-html="jsonLd" />
+            <meta v-if="post.published_at" head-key="article:published_time" property="article:published_time" :content="post.published_at" />
+            <meta v-if="post.updated_at" head-key="article:modified_time" property="article:modified_time" :content="post.updated_at" />
+            <meta head-key="article:author" property="article:author" content="Reno Philibert" />
+            <meta v-if="post.category" head-key="article:section" property="article:section" :content="post.category.name" />
+            <meta v-for="tag in post.tags" :key="tag.id" :head-key="`article:tag:${tag.id}`" property="article:tag" :content="tag.name" />
+            <component is="script" type="application/ld+json" head-key="ld-json">{{ jsonLd }}</component>
         </Head>
 
         <main
@@ -192,7 +234,8 @@ const jsonLd = computed(() => {
                     <span class="text-white">{{ kebabSlug }}</span>
                 </MobilePageHeader>
 
-                <div
+                <nav
+                    aria-label="Breadcrumb"
                     class="hidden items-center gap-1 border-b border-[#1E2D3D] px-4 py-3 text-xs text-[#607B96] sm:px-6 sm:text-sm lg:flex"
                 >
                     <Link
@@ -222,9 +265,10 @@ const jsonLd = computed(() => {
                         </Link>
                     </template>
                     <span>/</span>
-                    <span class="truncate text-white">{{ kebabSlug }}</span>
-                </div>
+                    <span class="truncate text-white" aria-current="page">{{ kebabSlug }}</span>
+                </nav>
 
+                <article aria-labelledby="post-title">
                 <div v-if="post.featured_image" class="relative">
                     <div class="relative min-h-[200px] overflow-hidden sm:max-h-[350px]">
                         <img
@@ -259,6 +303,7 @@ const jsonLd = computed(() => {
                                 </div>
 
                                 <h1
+                                    id="post-title"
                                     class="mb-2 text-lg font-bold text-white sm:mb-3 sm:text-3xl lg:text-4xl"
                                 >
                                     {{ post.title }}
@@ -273,11 +318,11 @@ const jsonLd = computed(() => {
                                             class="flex items-center gap-1"
                                         >
                                             <Calendar class="h-4 w-4" />
-                                            {{
+                                            <time :datetime="post.published_at">{{
                                                 formatDate(
                                                     post.published_at,
                                                 )
-                                            }}
+                                            }}</time>
                                         </span>
                                         <span
                                             class="flex items-center gap-1"
@@ -332,6 +377,7 @@ const jsonLd = computed(() => {
                         </div>
 
                         <h1
+                            id="post-title"
                             class="mb-4 text-3xl font-bold text-white lg:text-4xl"
                         >
                             {{ post.title }}
@@ -346,7 +392,7 @@ const jsonLd = computed(() => {
                                     class="flex items-center gap-1"
                                 >
                                     <Calendar class="h-4 w-4" />
-                                    {{ formatDate(post.published_at) }}
+                                    <time :datetime="post.published_at">{{ formatDate(post.published_at) }}</time>
                                 </span>
                                 <span class="flex items-center gap-1">
                                     <Clock class="h-4 w-4" />
@@ -376,7 +422,7 @@ const jsonLd = computed(() => {
 
                 <div class="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
                     <div :class="tableOfContents.length ? 'grid gap-8 lg:grid-cols-[1fr_250px]' : ''">
-                        <article class="min-w-0">
+                        <div class="min-w-0">
                             <div
                                 v-if="seriesPosts && post.series"
                                 class="mb-8 rounded-lg border border-[#1E2D3D] bg-[#011221] p-4"
@@ -454,12 +500,16 @@ const jsonLd = computed(() => {
                                     }}
                                 </button>
                             </div>
-                        </article>
+                        </div>
 
-                        <aside class="hidden lg:block">
+                        <aside class="hidden lg:block" aria-label="Table of contents">
                             <TableOfContents :entries="tableOfContents" />
                         </aside>
                     </div>
+                </div>
+                </article>
+
+                <div class="mx-auto w-full max-w-5xl px-4 pb-6 sm:px-6 sm:pb-8">
 
                     <div
                         v-if="relatedPosts.length"
