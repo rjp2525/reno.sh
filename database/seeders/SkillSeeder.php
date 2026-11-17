@@ -2,219 +2,96 @@
 
 namespace Database\Seeders;
 
-use App\Enums\SkillProficiency;
+use App\Enums\SkillProficiency as P;
 use App\Models\Skill;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 
+/**
+ * Skills, matching the 2026 resume. Re-runnable: matched on (category, name).
+ * Start dates for the newer entries are the start of the earliest resume role
+ * that uses them; adjust in the admin or iOS app as needed.
+ */
 class SkillSeeder extends Seeder
 {
     public function run(): void
     {
-        Skill::updateOrCreate(['category' => 'Backend', 'name' => 'PHP'], [
-            'category' => 'Backend',
-            'name' => 'PHP',
-            'proficiency' => SkillProficiency::EXPERT,
-            'started' => Carbon::parse('2011-08-01'),
-        ]);
+        // SQL moved from Backend to Data; rename rather than duplicate.
+        if (! Skill::where(['category' => 'Data', 'name' => 'SQL'])->exists()) {
+            Skill::where(['category' => 'Backend', 'name' => 'SQL'])->update(['category' => 'Data']);
+        }
 
-        Skill::updateOrCreate(['category' => 'Backend', 'name' => 'Laravel'], [
-            'category' => 'Backend',
-            'name' => 'Laravel',
-            'proficiency' => SkillProficiency::EXPERT,
-            'started' => Carbon::parse('2013-12-12'), // 4.1
-        ]);
+        foreach ($this->skills() as $category => $skills) {
+            foreach ($skills as [$name, $proficiency, $started, $ended]) {
+                Skill::updateOrCreate(['category' => $category, 'name' => $name], [
+                    'proficiency' => $proficiency,
+                    'started' => Carbon::parse($started),
+                    'ended' => $ended ? Carbon::parse($ended) : null,
+                ]);
+            }
+        }
+    }
 
-        Skill::updateOrCreate(['category' => 'Backend', 'name' => 'SQL'], [
-            'category' => 'Backend',
-            'name' => 'SQL',
-            'proficiency' => SkillProficiency::EXPERT,
-            'started' => Carbon::parse('2013-02-05'), // 5.6
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Backend', 'name' => 'Node.js'], [
-            'category' => 'Backend',
-            'name' => 'Node.js',
-            'proficiency' => SkillProficiency::PROFICIENT,
-            'started' => Carbon::parse('2016-07-21'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Backend', 'name' => 'Go'], [
-            'category' => 'Backend',
-            'name' => 'Go',
-            'proficiency' => SkillProficiency::BEGINNER,
-            'started' => Carbon::parse('2018-10-10'),
-            'ended' => Carbon::parse('2019-12-14'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Backend', 'name' => 'Python'], [
-            'category' => 'Backend',
-            'name' => 'Python',
-            'proficiency' => SkillProficiency::INTERMEDIATE,
-            'started' => Carbon::parse('2017-02-08'),
-            'ended' => Carbon::parse('2020-04-14'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Backend', 'name' => 'Inertia.js'], [
-            'category' => 'Backend',
-            'name' => 'Inertia.js',
-            'proficiency' => SkillProficiency::EXPERT,
-            'started' => Carbon::parse('2021-06-01'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Frontend', 'name' => 'HTML'], [
-            'category' => 'Frontend',
-            'name' => 'HTML',
-            'proficiency' => SkillProficiency::EXPERT,
-            'started' => Carbon::parse('2011-08-01'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Frontend', 'name' => 'CSS'], [
-            'category' => 'Frontend',
-            'name' => 'CSS',
-            'proficiency' => SkillProficiency::EXPERT,
-            'started' => Carbon::parse('2011-08-01'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Frontend', 'name' => 'JavaScript'], [
-            'category' => 'Frontend',
-            'name' => 'JavaScript',
-            'proficiency' => SkillProficiency::EXPERT,
-            'started' => Carbon::parse('2014-10-01'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Frontend', 'name' => 'React'], [
-            'category' => 'Frontend',
-            'name' => 'React',
-            'proficiency' => SkillProficiency::INTERMEDIATE,
-            'started' => Carbon::parse('2016-08-01'),
-            'ended' => Carbon::parse('2018-11-14'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Frontend', 'name' => 'Vue.js'], [
-            'category' => 'Frontend',
-            'name' => 'Vue.js',
-            'proficiency' => SkillProficiency::EXPERT,
-            'started' => Carbon::parse('2017-08-23'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Frontend', 'name' => 'Tailwind CSS'], [
-            'category' => 'Frontend',
-            'name' => 'Tailwind CSS',
-            'proficiency' => SkillProficiency::EXPERT,
-            'started' => Carbon::parse('2020-05-13'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Frontend', 'name' => 'TypeScript'], [
-            'category' => 'Frontend',
-            'name' => 'TypeScript',
-            'proficiency' => SkillProficiency::EXPERT,
-            'started' => Carbon::parse('2023-03-23'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Frontend', 'name' => 'Sass'], [
-            'category' => 'Frontend',
-            'name' => 'Sass',
-            'proficiency' => SkillProficiency::EXPERT,
-            'started' => Carbon::parse('2015-04-29'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Tools & DevOps', 'name' => 'Docker'], [
-            'category' => 'Tools & DevOps',
-            'name' => 'Docker',
-            'proficiency' => SkillProficiency::PROFICIENT,
-            'started' => Carbon::parse('2020-12-08'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Tools & DevOps', 'name' => 'GitHub Actions'], [
-            'category' => 'Tools & DevOps',
-            'name' => 'GitHub Actions',
-            'proficiency' => SkillProficiency::PROFICIENT,
-            'started' => Carbon::parse('2020-10-20'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Tools & DevOps', 'name' => 'Git'], [
-            'category' => 'Tools & DevOps',
-            'name' => 'Git',
-            'proficiency' => SkillProficiency::PROFICIENT,
-            'started' => Carbon::parse('2013-02-01'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Tools & DevOps', 'name' => 'GitHub Actions'], [
-            'category' => 'Tools & DevOps',
-            'name' => 'GitHub Actions',
-            'proficiency' => SkillProficiency::PROFICIENT,
-            'started' => Carbon::parse('2020-10-20'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Tools & DevOps', 'name' => 'Linux System Administration'], [
-            'category' => 'Tools & DevOps',
-            'name' => 'Linux System Administration',
-            'proficiency' => SkillProficiency::PROFICIENT,
-            'started' => Carbon::parse('2012-11-15'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Tools & DevOps', 'name' => 'Continuous Integration'], [
-            'category' => 'Tools & DevOps',
-            'name' => 'Continuous Integration',
-            'proficiency' => SkillProficiency::PROFICIENT,
-            'started' => Carbon::parse('2021-05-15'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Other', 'name' => 'Agile Methodology'], [
-            'category' => 'Other',
-            'name' => 'Agile Methodology',
-            'proficiency' => SkillProficiency::PROFICIENT,
-            'started' => Carbon::parse('2020-10-20'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Other', 'name' => 'Leadership'], [
-            'category' => 'Other',
-            'name' => 'Leadership',
-            'proficiency' => SkillProficiency::PROFICIENT,
-            'started' => Carbon::parse('2022-08-10'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Other', 'name' => 'Project Management'], [
-            'category' => 'Other',
-            'name' => 'Project Management',
-            'proficiency' => SkillProficiency::PROFICIENT,
-            'started' => Carbon::parse('2023-06-12'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Other', 'name' => 'Problem Solving & Critical Thinking'], [
-            'category' => 'Other',
-            'name' => 'Problem Solving & Critical Thinking',
-            'proficiency' => SkillProficiency::EXPERT,
-            'started' => Carbon::parse('2016-03-01'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Other', 'name' => 'Teamwork & Collaboration'], [
-            'category' => 'Other',
-            'name' => 'Teamwork & Collaboration',
-            'proficiency' => SkillProficiency::EXPERT,
-            'started' => Carbon::parse('2021-06-22'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Other', 'name' => 'Attention to Detail'], [
-            'category' => 'Other',
-            'name' => 'Attention to Detail',
-            'proficiency' => SkillProficiency::EXPERT,
-            'started' => Carbon::parse('2011-08-24'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Other', 'name' => 'Interpersonal Skills'], [
-            'category' => 'Other',
-            'name' => 'Interpersonal Skills',
-            'proficiency' => SkillProficiency::INTERMEDIATE,
-            'started' => Carbon::parse('2021-06-22'),
-        ]);
-
-        Skill::updateOrCreate(['category' => 'Other', 'name' => 'Accountability'], [
-            'category' => 'Other',
-            'name' => 'Accountability',
-            'proficiency' => SkillProficiency::EXPERT,
-            'started' => Carbon::parse('2021-06-22'),
-        ]);
+    /** @return array<string, list<array{string, P, string, ?string}>> */
+    private function skills(): array
+    {
+        return [
+            'Backend' => [
+                ['PHP', P::EXPERT, '2011-08-01', null],
+                ['Laravel', P::EXPERT, '2013-12-12', null], // 4.1
+                ['Go', P::PROFICIENT, '2018-10-10', null],
+                ['Inertia.js', P::EXPERT, '2021-06-01', null],
+                ['REST APIs & OpenAPI', P::EXPERT, '2013-12-12', null],
+                ['Rust', P::BEGINNER, '2024-09-01', null],
+                ['Node.js', P::PROFICIENT, '2016-07-21', null],
+                ['Python', P::INTERMEDIATE, '2017-02-08', '2020-04-14'],
+            ],
+            'Frontend' => [
+                ['TypeScript', P::EXPERT, '2023-03-23', null],
+                ['JavaScript', P::EXPERT, '2014-10-01', null],
+                ['Vue.js', P::EXPERT, '2017-08-23', null],
+                ['React', P::INTERMEDIATE, '2016-08-01', '2018-11-14'],
+                ['HTML', P::EXPERT, '2011-08-01', null],
+                ['CSS', P::EXPERT, '2011-08-01', null],
+                ['Tailwind CSS', P::EXPERT, '2020-05-13', null],
+                ['Sass', P::EXPERT, '2015-04-29', null],
+            ],
+            'Data' => [
+                ['SQL', P::EXPERT, '2013-02-05', null], // MySQL 5.6
+                ['PostgreSQL', P::PROFICIENT, '2024-09-01', null],
+                ['ClickHouse', P::PROFICIENT, '2024-10-21', null],
+                ['Kafka', P::PROFICIENT, '2024-10-21', null],
+                ['Redis', P::PROFICIENT, '2022-10-24', null],
+            ],
+            'Tools & DevOps' => [
+                ['Docker', P::PROFICIENT, '2020-12-08', null],
+                ['Kubernetes & EKS', P::INTERMEDIATE, '2025-09-01', null],
+                ['AWS', P::INTERMEDIATE, '2025-09-01', null],
+                ['Pulumi', P::INTERMEDIATE, '2025-09-01', null],
+                ['Argo CD', P::INTERMEDIATE, '2025-09-01', null],
+                ['GitHub Actions', P::PROFICIENT, '2020-10-20', null],
+                ['Continuous Integration', P::PROFICIENT, '2021-05-15', null],
+                ['Git', P::PROFICIENT, '2013-02-01', null],
+                ['Linux System Administration', P::PROFICIENT, '2012-11-15', null],
+            ],
+            'Practices' => [
+                ['System Design', P::EXPERT, '2021-06-22', null],
+                ['Distributed Processing', P::PROFICIENT, '2024-10-21', null],
+                ['Multi-tenancy', P::PROFICIENT, '2024-09-01', null],
+                ['Security', P::PROFICIENT, '2024-10-21', null],
+                ['Automated Testing', P::EXPERT, '2022-10-24', null],
+                ['Code Review & Mentoring', P::EXPERT, '2022-10-24', null],
+            ],
+            'Other' => [
+                ['Leadership', P::PROFICIENT, '2022-08-10', null],
+                ['Project Management', P::PROFICIENT, '2023-06-12', null],
+                ['Agile Methodology', P::PROFICIENT, '2020-10-20', null],
+                ['Problem Solving & Critical Thinking', P::EXPERT, '2016-03-01', null],
+                ['Teamwork & Collaboration', P::EXPERT, '2021-06-22', null],
+                ['Attention to Detail', P::EXPERT, '2011-08-24', null],
+                ['Interpersonal Skills', P::INTERMEDIATE, '2021-06-22', null],
+                ['Accountability', P::EXPERT, '2021-06-22', null],
+            ],
+        ];
     }
 }

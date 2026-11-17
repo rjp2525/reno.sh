@@ -8,6 +8,7 @@ use App\Models\Experience;
 use App\Models\Skill;
 use App\Models\User;
 use Database\Seeders\EducationSeeder;
+use Database\Seeders\ExperienceSeeder;
 use Database\Seeders\SkillSeeder;
 use Laravel\Sanctum\Sanctum;
 
@@ -209,4 +210,27 @@ it('can re-run the profile seeders without duplicating rows', function () {
     $this->seed(SkillSeeder::class);
 
     expect([Education::count(), Skill::count()])->toBe($counts);
+});
+
+it('upgrades the old seeded work history and skills in place', function () {
+    Experience::create(['title' => 'Lead Software Developer', 'company' => 'Clean Program', 'start' => '2021-06-22', 'end' => '2023-06-09']);
+    $it = Experience::create(['title' => 'IT Director', 'company' => 'Clean Program', 'start' => '2023-06-09', 'end' => '2024-10-18']);
+    $lead = Experience::create(['title' => 'Lead Software Engineer', 'company' => 'Galactic Advisors', 'start' => '2025-09-01']);
+    $mine = Experience::create(['title' => 'Consultant', 'company' => 'Side Gig', 'start' => '2020-01-01', 'end' => '2020-06-01']);
+    $sql = Skill::create(['category' => 'Backend', 'name' => 'SQL', 'proficiency' => SkillProficiency::EXPERT, 'started' => '2013-02-05']);
+
+    $this->seed(ExperienceSeeder::class);
+    $this->seed(ExperienceSeeder::class);
+    $this->seed(SkillSeeder::class);
+
+    expect(Experience::count())->toBe(7)
+        ->and($it->fresh()->title)->toBe('IT Director / Lead Software Developer')
+        ->and($it->fresh()->start->toDateString())->toBe('2021-06-22')
+        ->and($lead->fresh()->title)->toBe('Principal Software Engineer')
+        ->and($lead->fresh()->end->toDateString())->toBe('2026-09-01')
+        ->and($mine->fresh())->not->toBeNull()
+        ->and(Experience::where('end', null)->sole()->company)->toBe('StockShift, Inc.')
+        ->and($sql->fresh()->category)->toBe('Data')
+        ->and(Skill::where('name', 'SQL')->count())->toBe(1)
+        ->and(Skill::where('name', 'Go')->sole()->ended)->toBeNull();
 });
