@@ -21,7 +21,7 @@ const segments = computed(() => splitCodeBlocks(props.data.content));
             />
             <div
                 v-else
-                class="blog-prose prose prose-invert prose-headings:text-slate-200 prose-p:text-menu prose-p:my-4 prose-p:leading-relaxed prose-a:text-cyan-400 prose-a:no-underline hover:prose-a:text-cyan-300 prose-strong:text-slate-300 prose-blockquote:border-l-cyan-500 prose-blockquote:text-menu prose-code:text-cyan-400 prose-code:before:content-none prose-code:after:content-none prose-pre:bg-dark-navy/50 prose-li:text-menu prose-li:leading-relaxed max-w-none"
+                class="blog-prose prose [&>:first-child]:mt-0 [&>:last-child]:mb-0 prose-invert prose-headings:text-slate-200 prose-p:text-menu prose-p:my-4 prose-p:leading-relaxed prose-a:text-cyan-400 prose-a:no-underline hover:prose-a:text-cyan-300 prose-strong:text-slate-300 prose-blockquote:border-l-cyan-500 prose-blockquote:text-menu prose-code:text-cyan-400 prose-code:before:content-none prose-code:after:content-none prose-pre:bg-dark-navy/50 prose-li:text-menu prose-li:leading-relaxed max-w-none"
                 v-html="segment.html"
             />
         </template>
