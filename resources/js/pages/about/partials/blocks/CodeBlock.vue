@@ -57,16 +57,13 @@ onMounted(async () => {
                 </button>
             </div>
         </div>
-        <div v-if="isLoading" class="bg-[#0d1117] p-4">
-            <div class="h-4 w-3/4 animate-pulse rounded bg-[#1E2D3D]"></div>
-            <div class="mt-2 h-4 w-1/2 animate-pulse rounded bg-[#1E2D3D]"></div>
-        </div>
+        <!-- Plain code until Shiki loads (and in the SSR HTML, so the code is always crawlable). -->
         <div
-            v-else-if="highlightedHtml"
+            v-if="!isLoading && highlightedHtml"
             class="code-block-content overflow-x-auto text-sm"
             v-html="highlightedHtml"
         />
-        <pre v-else class="overflow-x-auto bg-[#0d1117] p-4 text-sm text-gray-300"><code>{{ data.code }}</code></pre>
+        <pre v-else class="code-block-fallback overflow-x-auto bg-[#24292e] p-4 text-sm text-[#e1e4e8]"><code>{{ data.code }}</code></pre>
     </div>
 </template>
 
