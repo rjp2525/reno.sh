@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BlogCategory;
 use App\Models\Post;
+use App\Support\Content\Blocks;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -117,6 +118,8 @@ class BlogPostController extends Controller
                 'content' => $post->content,
                 'featured_image' => $post->featured_image,
                 'reading_time' => $post->reading_time,
+                'word_count' => str_word_count(Blocks::toText($post->content)),
+                'url' => $post->url(),
                 'published_at' => $post->published_at?->toIso8601String(),
                 'updated_at' => $post->updated_at?->toIso8601String(),
                 'is_featured' => $post->is_featured,
