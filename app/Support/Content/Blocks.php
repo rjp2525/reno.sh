@@ -71,6 +71,12 @@ final class Blocks
         })->all();
     }
 
+    /** Self-contained HTML (absolute image URLs, no embeds) for feeds and email. */
+    public static function toHtml(?array $blocks): string
+    {
+        return self::markdownToHtml(self::toMarkdown($blocks));
+    }
+
     public static function toMarkdown(?array $blocks): string
     {
         return self::render($blocks, 'md');

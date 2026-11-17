@@ -247,11 +247,11 @@ const hasActiveFilters = computed(() => {
                         <div
                             v-for="project in projects.data"
                             :key="project.id"
-                            class="group relative overflow-hidden rounded-xl border border-gray-700 bg-gray-800 shadow-sm transition-all duration-200 hover:shadow-lg"
+                            class="group relative overflow-hidden rounded-xl border border-gray-700 bg-gray-800 shadow-sm transition-all duration-200 focus-within:border-blue-400/60 hover:border-gray-500 hover:shadow-lg"
                         >
                             <div
                                 v-if="project.is_featured"
-                                class="absolute top-4 right-4 z-10"
+                                class="pointer-events-none absolute top-4 right-4 z-10"
                             >
                                 <span
                                     class="rounded-full bg-yellow-900 px-2 py-1 text-xs font-medium text-yellow-300"
@@ -419,12 +419,13 @@ const hasActiveFilters = computed(() => {
                                 >
                                     <Link
                                         :href="projectShow.url(project.slug)"
-                                        class="text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                                        :aria-label="`View details for ${project.title}`"
+                                        class="text-sm font-medium text-blue-600 outline-none after:absolute after:inset-0 after:content-[''] hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                                     >
                                         View Details →
                                     </Link>
 
-                                    <div class="flex items-center space-x-3">
+                                    <div class="relative z-10 flex items-center space-x-3">
                                         <a
                                             v-if="project.github_url"
                                             :href="project.github_url"
