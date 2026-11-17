@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\PostStatus;
 use App\Observers\PostObserver;
 use App\Support\Content\Blocks;
+use App\Support\Feed\PostFeedItem;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -118,18 +119,24 @@ class Post extends Model implements Feedable
     public function toFeedItem(): FeedItem
     {
         $link = $this->url();
+        $image = Blocks::url($this->featured_image);
 
-        return FeedItem::create()
+        return PostFeedItem::create()
             ->id($link)
             ->title($this->title)
             ->summary($this->excerpt ?? '')
+            ->content(($image ? '<p><img src="'.e($image).'" alt="'.e($this->title).'"></p>' : '').Blocks::toHtml($this->content))
             ->updated($this->published_at)
             ->link($link)
-            ->authorName('Reno Philibert');
+            ->authorName('Reno Philibert')
+            ->category(...array_values(array_filter([
+                $this->category?->name,
+                ...$this->tags->map(fn ($tag) => $tag->name)->all(),
+            ])));
     }
 
     public static function getFeedItems()
     {
-        return static::published()->ordered()->with('category')->limit(20)->get();
+        return static::published()->ordered()->with(['category', 'tags'])->limit(20)->get();
     }
 }
