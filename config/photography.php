@@ -62,4 +62,23 @@ return [
         'public_disk' => 'public',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | AI suggestions
+    |--------------------------------------------------------------------------
+    |
+    | After a photo is uploaded in the admin, Claude suggests a title, description,
+    | category and tags. Needs ANTHROPIC_API_KEY; off automatically without one.
+    |
+    */
+
+    'ai' => [
+        'enabled' => (bool) env('PHOTO_AI_ENABLED', filled(env('ANTHROPIC_API_KEY'))),
+        'model' => env('PHOTO_AI_MODEL', 'claude-opus-5-5'),
+        // low | medium | high: how hard Claude thinks before answering.
+        'effort' => env('PHOTO_AI_EFFORT', 'medium'),
+        // Longest edge of the copy sent to Claude (it works at ~1568px; bigger only costs more).
+        'max_edge' => 1568,
+    ],
+
 ];

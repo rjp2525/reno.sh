@@ -130,6 +130,16 @@ Nothing newer than **7 days** gets installed:
    object-only token it prints the JSON policy to paste into each bucket's **Settings → CORS policy**.
    `storage:check` reports `CORS … allowed` for both buckets once it's in place.
 
+### AI photo details
+
+After you upload a photo in the admin, Claude (via `laravel/ai`, `App\Ai\Agents\PhotoDetailsAgent`) looks at
+a 1568px copy plus the EXIF and suggests a title (the slug follows), description, category from your
+existing ones, and tags, reusing tags you already have. It only fills fields that are still empty; the
+**✨ Suggest** button on the Details section regenerates and overwrites. Set `ANTHROPIC_API_KEY` (an API key
+from console.anthropic.com; Claude subscription logins can't be used by apps) and it switches on. Model and
+effort: `PHOTO_AI_MODEL` (default `claude-opus-5-5`, roughly 3–4¢ a photo) and `PHOTO_AI_EFFORT`. If Claude
+is unavailable or declines, the form just stays empty and shows a notice; uploads never fail because of it.
+
 ### Photo versions
 
 Uploads are processed by `ProcessPhotoJob` using Laravel's native `Image` API (`config/images.php`,

@@ -20,7 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withSchedule(function (Schedule $schedule) {
-        $schedule->command('blog:publish-scheduled')->everyMinute();
+        $schedule->command('blog:publish-scheduled')->everyMinute()->withoutOverlapping()->onOneServer();
         $schedule->command('social:dispatch-due')->everyMinute()->withoutOverlapping()->onOneServer();
         $schedule->command('social:refresh-tokens')->dailyAt('03:15')->withoutOverlapping()->onOneServer();
     })

@@ -9,6 +9,7 @@
         "filament/spatie-laravel-tags-plugin": "^5.11",
         "inertiajs/inertia-laravel": "^3.7",
         "intervention/image": "^4.4",
+        "laravel/ai": "1.4.0",
         "laravel/framework": "^13.40",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.1",

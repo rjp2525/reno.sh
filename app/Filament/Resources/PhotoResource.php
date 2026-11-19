@@ -15,6 +15,7 @@ use App\Models\PhotoCategory;
 use App\Models\PrintProduct;
 use App\Models\SocialAccount;
 use App\Services\Photo\ExifExtractorService;
+use App\Services\Photo\PhotoDetailsSuggester;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -29,9 +30,11 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
@@ -40,6 +43,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -78,48 +82,25 @@ class PhotoResource extends Resource
                                     ->maxSize(100 * 1024)
                                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/tiff'])
                                     ->live()
-                                    ->afterStateUpdated(function (Set $set, $state) {
-                                        if (! $state) {
+                                    ->afterStateUpdated(function (Set $set, Get $get, $state) {
+                                        $filePath = self::localPath($state);
+
+                                        if (! $filePath) {
                                             return;
                                         }
 
-                                        $filePath = null;
+                                        $exif = (new ExifExtractorService)->extract($filePath);
 
-                                        if ($state instanceof TemporaryUploadedFile) {
-                                            $filePath = $state->getRealPath();
-                                        } elseif (is_string($state)) {
-                                            $disk = Storage::disk(config('photography.storage.originals_disk', 'photos_originals'));
-
-                                            if (config('filesystems.disks.'.config('photography.storage.originals_disk', 'photos_originals').'.driver') === 'local') {
-                                                $filePath = $disk->path($state);
-                                            } elseif ($stream = rescue(fn () => $disk->readStream($state), null, false)) {
-                                                // Remote disk (S3/R2): EXIF needs a local file.
-                                                $filePath = tempnam(sys_get_temp_dir(), 'exif');
-                                                file_put_contents($filePath, $stream);
-                                                register_shutdown_function(fn () => @unlink($filePath));
-                                            }
+                                        foreach (['iso', 'aperture', 'shutter_speed', 'focal_length', 'camera_body', 'lens', 'gps_latitude', 'gps_longitude', 'taken_at', 'width', 'height'] as $field) {
+                                            $set($field, $exif[$field]);
                                         }
-
-                                        if (! $filePath || ! file_exists($filePath)) {
-                                            return;
-                                        }
-
-                                        $extractor = new ExifExtractorService;
-                                        $exif = $extractor->extract($filePath);
-
-                                        $set('iso', $exif['iso']);
-                                        $set('aperture', $exif['aperture']);
-                                        $set('shutter_speed', $exif['shutter_speed']);
-                                        $set('focal_length', $exif['focal_length']);
-                                        $set('camera_body', $exif['camera_body']);
-                                        $set('lens', $exif['lens']);
-                                        $set('gps_latitude', $exif['gps_latitude']);
-                                        $set('gps_longitude', $exif['gps_longitude']);
-                                        $set('taken_at', $exif['taken_at']);
-                                        $set('width', $exif['width']);
-                                        $set('height', $exif['height']);
 
                                         $set('file_size', filesize($filePath));
+
+                                        // Fresh uploads only: draft the details, without touching anything already typed.
+                                        if ($state instanceof TemporaryUploadedFile) {
+                                            self::fillSuggestions($set, $get, $filePath, $state->getClientOriginalName(), $exif, overwrite: false);
+                                        }
                                     })
                                     ->columnSpanFull(),
                             ])
@@ -154,6 +135,29 @@ class PhotoResource extends Resource
                     ]),
 
                 Section::make('Details')
+                    ->headerActions([
+                        Action::make('suggestDetails')
+                            ->label('Suggest')
+                            ->icon('heroicon-m-sparkles')
+                            ->color('gray')
+                            ->size('sm')
+                            ->tooltip('Have Claude suggest the title, description, category and tags from the photo')
+                            ->visible(fn () => app(PhotoDetailsSuggester::class)->enabled())
+                            ->action(function (Set $set, Get $get) {
+                                $path = self::localPath($get('original_path'));
+
+                                if (! $path) {
+                                    Notification::make()->warning()->title('Upload a photo first')->send();
+
+                                    return;
+                                }
+
+                                $exif = collect(['iso', 'aperture', 'shutter_speed', 'focal_length', 'camera_body', 'lens', 'gps_latitude', 'gps_longitude', 'taken_at'])
+                                    ->mapWithKeys(fn ($f) => [$f => $get($f)])->all();
+
+                                self::fillSuggestions($set, $get, $path, null, $exif, overwrite: true);
+                            }),
+                    ])
                     ->schema([
                         Grid::make(2)
                             ->schema([
@@ -382,5 +386,91 @@ class PhotoResource extends Resource
             'view' => Pages\ViewPhoto::route('/{record}'),
             'edit' => Pages\EditPhoto::route('/{record}/edit'),
         ];
+    }
+
+    /**
+     * A local file for the photo in the upload field: the temporary upload, or the stored
+     * original (copied down from R2 when the disk is remote).
+     */
+    public static function localPath(mixed $state): ?string
+    {
+        if (is_array($state)) {
+            $state = Arr::first($state);
+        }
+
+        if ($state instanceof TemporaryUploadedFile) {
+            return $state->getRealPath() ?: null;
+        }
+
+        if (! is_string($state) || $state === '') {
+            return null;
+        }
+
+        $diskName = config('photography.storage.originals_disk', 'photos_originals');
+        $disk = Storage::disk($diskName);
+
+        if (config("filesystems.disks.{$diskName}.driver") === 'local') {
+            return $disk->exists($state) ? $disk->path($state) : null;
+        }
+
+        $stream = rescue(fn () => $disk->readStream($state), null, false);
+        if (! $stream) {
+            return null;
+        }
+
+        $path = tempnam(sys_get_temp_dir(), 'photo');
+        file_put_contents($path, $stream);
+        register_shutdown_function(fn () => @unlink($path));
+
+        return $path;
+    }
+
+    /** Ask Claude for the details and put them in the form. */
+    public static function fillSuggestions(Set $set, Get $get, string $path, ?string $filename, array $exif, bool $overwrite): void
+    {
+        $suggester = app(PhotoDetailsSuggester::class);
+
+        if (! $suggester->enabled()) {
+            return;
+        }
+
+        $details = $suggester->suggest($path, $filename, $exif);
+
+        if (! $details) {
+            Notification::make()->warning()->title('Couldn\'t suggest details for this photo')->body('Fill them in yourself, or try ✨ Suggest again.')->send();
+
+            return;
+        }
+
+        $fill = fn (string $field) => $overwrite || self::isBlank($get($field));
+
+        if ($fill('title')) {
+            // Calls the title's hooks too, so the slug follows.
+            $set('title', $details['title'], shouldCallUpdatedHooks: true);
+        }
+
+        if ($fill('description')) {
+            $set('description', $details['description']);
+        }
+
+        if ($details['photo_category_id'] && $fill('photo_category_id')) {
+            $set('photo_category_id', $details['photo_category_id']);
+        }
+
+        if ($details['tags'] !== [] && $fill('tags')) {
+            $set('tags', $details['tags']);
+        }
+
+        Notification::make()->success()->title('Details suggested')->body('Check them over before saving.')->send();
+    }
+
+    /** Empty, including a rich-text editor holding only empty paragraphs (HTML or JSON document). */
+    private static function isBlank(mixed $value): bool
+    {
+        if (is_array($value)) {
+            return $value === [] || (isset($value['type']) && ! str_contains((string) json_encode($value), '"text"'));
+        }
+
+        return blank(trim(html_entity_decode(strip_tags((string) $value))));
     }
 }
