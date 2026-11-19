@@ -70,7 +70,7 @@ final class ProjectPage extends Page
             Text::wrap($this->ansi->style($p->title, 'white', 'bold'), $width)
                 .($p->summary ? "\n".Text::wrap($this->ansi->style($p->summary, 'slate', 'italic'), $width) : ''),
             $details,
-            $this->richOrPlain($p->description, $width),
+            filled($p->content) ? $this->blocks->render($p->content, $width) : $this->richOrPlain($p->description, $width),
             $gallery !== '' ? $this->layout->section('gallery', $width)."\n\n".$gallery : '',
             $tags !== '' ? Text::wrap($this->ansi->slate($tags), $width) : '',
             $this->group('related', $related, $width),

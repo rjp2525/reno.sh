@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\ProjectType;
+use App\Observers\ProjectObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Tags\HasTags;
 
+#[ObservedBy(ProjectObserver::class)]
 class Project extends Model
 {
     use HasFactory;
@@ -22,6 +25,7 @@ class Project extends Model
         'slug',
         'summary',
         'description',
+        'content',
         'type',
         'status',
         'featured_image',
@@ -43,6 +47,7 @@ class Project extends Model
 
     protected $casts = [
         'type' => ProjectType::class,
+        'content' => 'array',
         'gallery' => 'array',
         'meta_keywords' => 'array',
         'start_date' => 'date',

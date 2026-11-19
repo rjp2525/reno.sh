@@ -4,6 +4,7 @@ use App\Enums\SocialProvider;
 use App\Models\Post;
 use App\Models\PrintOrder;
 use App\Models\PrintProduct;
+use App\Models\Project;
 use App\Models\SocialAccount;
 use App\Models\SocialPost;
 use App\Models\User;
@@ -28,6 +29,8 @@ it('renders every admin page', function (string $path) {
     '/admin',
     '/admin/posts',
     '/admin/posts/create',
+    '/admin/projects',
+    '/admin/projects/create',
     '/admin/photos',
     '/admin/photos/create',
     '/admin/social-posts',
@@ -44,6 +47,9 @@ it('renders edit pages for existing records', function () {
 
     $this->actingAs($this->admin)->get("/admin/posts/{$post->slug}/edit")->assertOk()->assertSee('Hello');
     $this->actingAs($this->admin)->get("/admin/social-posts/{$social->id}/edit")->assertOk();
+
+    $project = Project::factory()->create(['title' => 'laravel-queue-go', 'content' => [['type' => 'markdown', 'data' => ['markdown' => "## Install\n\n```bash\ngo get x\n```"]]]]);
+    $this->actingAs($this->admin)->get("/admin/projects/{$project->getRouteKey()}/edit")->assertOk()->assertSee('laravel-queue-go');
 });
 
 it('renders a print order', function () {

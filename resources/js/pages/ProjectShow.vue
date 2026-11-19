@@ -6,6 +6,7 @@ import { GuestLayout } from '@/layouts';
 import { projects as projectsRoute } from '@/routes';
 import { show as projectShow } from '@/routes/projects';
 import { SeoHead } from '@/components';
+import BlockRenderer from '@/pages/about/partials/BlockRenderer.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed, inject, ref } from 'vue';
 
@@ -253,21 +254,16 @@ const otherTechnologies = props.project.technologies.filter(
                         <div class="w-full">
                             <div class="grid gap-8 lg:grid-cols-3">
                                 <div class="space-y-8 lg:col-span-2">
-                                    <div v-if="project.description">
+                                    <div v-if="project.content?.length">
                                         <h2
                                             class="mb-4 text-2xl font-bold text-gray-900 dark:text-white"
                                         >
                                             About this project
                                         </h2>
-                                        <div
-                                            class="prose prose-gray dark:prose-invert max-w-none"
-                                        >
-                                            <p
-                                                class="leading-relaxed whitespace-pre-wrap text-gray-600 dark:text-gray-400"
-                                            >
-                                                {{ project.description }}
-                                            </p>
-                                        </div>
+                                        <BlockRenderer
+                                            :content="project.content"
+                                            :scrollable="false"
+                                        />
                                     </div>
 
                                     <div

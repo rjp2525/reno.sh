@@ -105,7 +105,7 @@ Query: `category` (slug), `series` (slug), `tag`, `q` (search), `page`, `per_pag
 Query: `type`. `{ "data": [{ "id", "title", "slug", "summary", "type", "status", "url", "github_url", "demo_url", "featured_image_url", "start_date", "end_date", "is_ongoing", "is_featured", "technologies": [{ "name", "slug", "color" }], "web_url" }] }`
 
 ### `GET /projects/{slug}`
-Project + `{ "description_html", "text", "markdown", "gallery": [url] }`
+Project + `{ "description_html", "text", "markdown", "blocks": [Block], "gallery": [url] }`. The description is block content, same shapes as posts (see "Rich content"); `description_html`/`text`/`markdown` are renderings of it.
 
 ### `GET /photos`
 Query: `category` (slug), `favorites` (bool), `printable` (bool), `page`, `per_page`.
