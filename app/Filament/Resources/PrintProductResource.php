@@ -52,7 +52,7 @@ class PrintProductResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make()->columns(['default' => 1, 'md' => 2])->schema([
+            Section::make()->columns(['default' => 1, 'md' => 2])->columnSpanFull()->schema([
                 TextInput::make('name')->required()->placeholder('Fine Art Print'),
                 Select::make('type')->options(PrintProductType::class)->required(),
                 TextInput::make('sku')

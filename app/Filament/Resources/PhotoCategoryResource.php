@@ -48,6 +48,7 @@ class PhotoCategoryResource extends Resource
         return $form
             ->components([
                 Section::make('Category Details')
+                    ->columnSpanFull()
                     ->schema([
                         Grid::make(2)
                             ->schema([
