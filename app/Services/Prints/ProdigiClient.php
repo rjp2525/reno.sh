@@ -84,6 +84,47 @@ class ProdigiClient
         }
     }
 
+    /**
+     * What Prodigi charges you for one copy of each SKU shipped to a country.
+     *
+     * @param  list<array{sku: string, attributes?: array<string, string>|null}>  $items
+     * @return array{items: float, shipping: float, currency: string, method: string}|null null when Prodigi can't ship it there
+     */
+    public function quote(array $items, string $country, ?string $currency = null, ?string $method = null): ?array
+    {
+        $method ??= config('prints.prodigi.shipping_method');
+
+        $response = $this->request()->post('/quotes', [
+            'shippingMethod' => $method,
+            'destinationCountryCode' => strtoupper($country),
+            'currencyCode' => strtoupper($currency ?? config('prints.currency')),
+            'items' => array_map(fn (array $item) => array_filter([
+                'sku' => $item['sku'],
+                'copies' => 1,
+                'attributes' => $item['attributes'] ?? null,
+                'assets' => [['printArea' => 'default']],
+            ]), $items),
+        ]);
+
+        if ($response->clientError()) {
+            return null;
+        }
+
+        $quote = collect($response->throw()->json('quotes', []))
+            ->first(fn (array $q) => strcasecmp($q['shipmentMethod'] ?? '', $method) === 0);
+
+        if (! $quote) {
+            return null;
+        }
+
+        return [
+            'items' => (float) data_get($quote, 'costSummary.items.amount', 0),
+            'shipping' => (float) data_get($quote, 'costSummary.shipping.amount', 0),
+            'currency' => (string) data_get($quote, 'costSummary.items.currency', $currency ?? config('prints.currency')),
+            'method' => (string) $quote['shipmentMethod'],
+        ];
+    }
+
     protected function request(): PendingRequest
     {
         if (! $this->isConfigured()) {

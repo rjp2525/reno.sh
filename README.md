@@ -95,6 +95,13 @@ Nothing newer than **7 days** gets installed:
 7. Webhooks: Stripe → `https://reno.sh/webhooks/stripe` (`checkout.session.completed`,
    `checkout.session.expired`, `checkout.session.async_payment_succeeded`, `…_failed`) and put the signing
    secret in `STRIPE_WEBHOOK_SECRET`; Prodigi callbacks are set per order automatically.
+   Then set up the print catalogue: `php artisan prints:setup` creates the starter products if there are
+   none, checks each SKU against Prodigi (exists, options valid, ships to your first
+   `PRINTS_SHIPPING_COUNTRIES` country), quotes what Prodigi charges you and raises any price below a 40%
+   margin after Stripe fees. It shows a table and asks before saving. Add `--activate` to switch the good
+   ones on, `--reprice --markup=2.5` to set every price from cost, `--only=GLOBAL-CAN` for one line, and
+   `--dry-run` to just look. Run it against the sandbox first; costs come from whichever
+   `PRODIGI_ENVIRONMENT` is set.
 8. Social OAuth redirect URI for every network: `https://reno.sh/admin/social/callback/{provider}`.
 
 ## Storage on Cloudflare R2
