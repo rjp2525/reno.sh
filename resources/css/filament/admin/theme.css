@@ -47,6 +47,9 @@
         visibility: hidden;
     }
 }
+/* Entrance animations use fill-mode `backwards`, not `both`: a transform left applied
+   after the animation makes the element a containing block for position:fixed children,
+   which traps Filament's modals, dropdowns and popovers inside the page. */
 @keyframes reno-rise {
     from {
         opacity: 0;
@@ -60,7 +63,7 @@
 
 .fi-main > *,
 .fi-simple-main {
-    animation: reno-rise 0.35s var(--ease-out-soft) both;
+    animation: reno-rise 0.35s var(--ease-out-soft) backwards;
 }
 
 .fi-section,
@@ -94,7 +97,7 @@
 }
 
 .fi-modal-window {
-    animation: reno-rise 0.25s var(--ease-out-soft) both;
+    animation: reno-rise 0.25s var(--ease-out-soft) backwards;
 }
 
 /* ---------- Sidebar ---------- */
@@ -189,7 +192,7 @@
 }
 .reno-cal__chip {
     @apply flex w-full items-center gap-1.5 truncate rounded-md px-1.5 py-1 text-start text-xs ring-1 ring-gray-950/5 dark:ring-white/10;
-    animation: reno-rise 0.25s var(--ease-out-soft) both;
+    animation: reno-rise 0.25s var(--ease-out-soft) backwards;
 }
 .reno-cal__chip:hover {
     @apply ring-primary-500/60;
