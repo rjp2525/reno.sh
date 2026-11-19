@@ -56,9 +56,16 @@ class PhotoSettings extends Model
         return (int) static::get('web_max_width', 2000);
     }
 
+    /** WebP quality for the watermarked web version. 80 looks like JPEG 90 at roughly half the size. */
     public static function getWebQuality(): int
     {
-        return (int) static::get('web_quality', 85);
+        return (int) static::get('webp_quality', 80);
+    }
+
+    /** WebP quality for gallery thumbnails; small images tolerate more compression. */
+    public static function getThumbnailQuality(): int
+    {
+        return (int) static::get('thumbnail_quality', 72);
     }
 
     public static function getThumbnailWidth(): int

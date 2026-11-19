@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Images\PhotoEffects;
 use App\Models\User;
 use App\Services\Social\SocialManager;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -27,6 +28,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Vite::prefetch(concurrency: 3);
+
+        PhotoEffects::register();
 
         Gate::define('admin', fn (User $user) => $user->isAdmin());
 

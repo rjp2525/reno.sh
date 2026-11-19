@@ -114,7 +114,21 @@ Nothing newer than **7 days** gets installed:
    FILESYSTEM_PUBLIC_URL=https://cdn.reno.sh
    PHOTO_ORIGINALS_BUCKET=<private bucket>
    ```
-4. Deploy (re-caches config and restarts queue workers), then copy existing uploads once:
+4. Deploy (re-caches config and restarts queue workers; saving env in Forge alone does neither), run
+   `php artisan storage:check` to confirm both disks report S3/R2 and pass, then copy existing uploads once:
    `php artisan storage:migrate-local --dry-run`, then without `--dry-run`. Paths are unchanged, so
    nothing in the database needs updating. Old `/img/...` links keep working (proxied from R2).
+5. **CORS** (needed for image previews in the admin, which the browser fetches cross-origin): run
+   `php artisan storage:check --fix-cors`. That needs an *Admin Read & Write* token; with an
+   object-only token it prints the JSON policy to paste into each bucket's **Settings → CORS policy**.
+   `storage:check` reports `CORS … allowed` for both buckets once it's in place.
+
+### Photo versions
+
+Uploads are processed by `ProcessPhotoJob` using Laravel's native `Image` API (`config/images.php`,
+Imagick preferred): a watermarked **WebP** web version (max width and quality in *Photo Settings*),
+a WebP thumbnail and a 1200×630 JPEG social card. Public copies have EXIF/GPS stripped (colour
+profile kept) and are stored with `Cache-Control: public, max-age=31536000, immutable`. Originals are
+never modified. After changing settings, or to convert photos from before the WebP switch:
+`php artisan photos:reprocess` (queued; `--all` for every photo, `--sync` to run inline).
 
