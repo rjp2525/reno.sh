@@ -53,7 +53,8 @@ class PhotoSettingsPage extends Page implements HasForms
             'watermark_scale' => PhotoSettings::getWatermarkScale() * 100,
             'watermark_position' => PhotoSettings::getWatermarkPosition(),
             'web_max_width' => PhotoSettings::getWebMaxWidth(),
-            'web_quality' => PhotoSettings::getWebQuality(),
+            'webp_quality' => PhotoSettings::getWebQuality(),
+            'thumbnail_quality' => PhotoSettings::getThumbnailQuality(),
             'thumbnail_width' => PhotoSettings::getThumbnailWidth(),
             'thumbnail_height' => PhotoSettings::getThumbnailHeight(),
             'og_image_enabled' => PhotoSettings::getOgImageEnabled(),
@@ -117,7 +118,7 @@ class PhotoSettingsPage extends Page implements HasForms
                     ]),
 
                 Section::make('Web Image Settings')
-                    ->description('Settings for the watermarked web-resolution images.')
+                    ->description('The watermarked web version shown on the site. Saved as compressed WebP with location and camera metadata removed.')
                     ->schema([
                         Grid::make(2)
                             ->schema([
@@ -130,14 +131,14 @@ class PhotoSettingsPage extends Page implements HasForms
                                     ->default(2000)
                                     ->helperText('Images wider than this will be resized'),
 
-                                TextInput::make('web_quality')
-                                    ->label('JPEG Quality')
+                                TextInput::make('webp_quality')
+                                    ->label('WebP Quality')
                                     ->numeric()
-                                    ->minValue(50)
+                                    ->minValue(40)
                                     ->maxValue(100)
                                     ->suffix('%')
-                                    ->default(85)
-                                    ->helperText('Higher = better quality, larger file'),
+                                    ->default(80)
+                                    ->helperText('Web versions are WebP. 75–85 is visually lossless; higher = larger files.'),
                             ]),
                     ]),
 
@@ -161,6 +162,14 @@ class PhotoSettingsPage extends Page implements HasForms
                                     ->maxValue(800)
                                     ->suffix('px')
                                     ->default(300),
+
+                                TextInput::make('thumbnail_quality')
+                                    ->label('WebP Quality')
+                                    ->numeric()
+                                    ->minValue(40)
+                                    ->maxValue(100)
+                                    ->suffix('%')
+                                    ->default(72),
                             ]),
                     ]),
 
@@ -217,7 +226,8 @@ class PhotoSettingsPage extends Page implements HasForms
         PhotoSettings::set('watermark_position', $data['watermark_position'] ?? 'bottom-right');
 
         PhotoSettings::set('web_max_width', $data['web_max_width'] ?? 2000);
-        PhotoSettings::set('web_quality', $data['web_quality'] ?? 85);
+        PhotoSettings::set('webp_quality', $data['webp_quality'] ?? 80);
+        PhotoSettings::set('thumbnail_quality', $data['thumbnail_quality'] ?? 72);
 
         PhotoSettings::set('thumbnail_width', $data['thumbnail_width'] ?? 400);
         PhotoSettings::set('thumbnail_height', $data['thumbnail_height'] ?? 300);

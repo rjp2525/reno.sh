@@ -32,6 +32,9 @@ class ProcessPhotoJob implements ShouldQueue
             'processing_status' => PhotoProcessingStatus::PROCESSING,
         ]);
 
+        // Previous versions (e.g. JPEGs from before the WebP switch) are removed once the new ones exist.
+        $previous = [$this->photo->web_path, $this->photo->thumbnail_path, $this->photo->og_image_path];
+
         try {
             $webPath = $processor->generateWebVersion($this->photo->original_path);
 
@@ -57,6 +60,11 @@ class ProcessPhotoJob implements ShouldQueue
                 'og_image_path' => $ogImagePath,
                 'processing_status' => PhotoProcessingStatus::COMPLETED,
             ]);
+
+            $processor->deleteProcessedFiles(...array_map(
+                fn (?string $old) => in_array($old, [$webPath, $thumbnailPath, $ogImagePath], true) ? null : $old,
+                $previous,
+            ));
         } catch (Exception $e) {
             Log::error('Photo processing failed', [
                 'photo_id' => $this->photo->id,

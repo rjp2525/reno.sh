@@ -4,93 +4,53 @@ declare(strict_types=1);
 
 namespace App\Services\Photo;
 
+use App\Images\Transformations\OgOverlay;
+use App\Images\Transformations\StripMetadata;
+use App\Images\Transformations\Watermark;
 use App\Models\PhotoSettings;
-use Exception;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Image\Image as PendingImage;
+use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Imagick;
-use ImagickDraw;
-use ImagickPixel;
-use Intervention\Image\Colors\Rgb\Colorspace as RgbColorspace;
-use Intervention\Image\Drivers\Gd\Driver as GdDriver;
-use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
-use Intervention\Image\Encoders\JpegEncoder;
-use Intervention\Image\Encoders\PngEncoder;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Interfaces\ImageInterface;
 
+/**
+ * Builds the public versions of an uploaded photo with Laravel's native Image API:
+ *
+ *   web        watermarked, scaled to the max width, WebP
+ *   thumbnail  cropped to the thumbnail size, WebP
+ *   og         1200×630 social card, JPEG (WebP previews aren't supported everywhere)
+ *
+ * Public copies have EXIF/GPS stripped (colour profile kept) and are stored with a
+ * one-year immutable Cache-Control, since every version gets a fresh random name.
+ */
 class ImageProcessorService
 {
-    private ImageManager $manager;
-
-    private bool $hasImagick;
-
-    public function __construct()
-    {
-        $this->hasImagick = extension_loaded('imagick');
-
-        $driver = $this->hasImagick ? new ImagickDriver : new GdDriver;
-        $this->manager = new ImageManager($driver);
-    }
+    /** Cache headers for generated files; names are random so they never change. */
+    public const CACHE_CONTROL = 'public, max-age=31536000, immutable';
 
     public function generateWebVersion(string $originalPath): ?string
     {
-        $originalsDisk = config('photography.storage.originals_disk', 'photos_originals');
-        $publicDisk = config('photography.storage.public_disk', 'public');
-
-        if (! Storage::disk($originalsDisk)->exists($originalPath)) {
-            return null;
-        }
-
-        $image = $this->manager->decode(
-            Storage::disk($originalsDisk)->get($originalPath)
+        return $this->store(
+            $this->original($originalPath)
+                ?->scale(width: PhotoSettings::getWebMaxWidth())
+                ->transform(new Watermark)
+                ->transform(new StripMetadata)
+                ->optimize('webp', PhotoSettings::getWebQuality()),
+            'photos/web',
+            'webp',
         );
-
-        $maxWidth = PhotoSettings::getWebMaxWidth();
-        if ($image->width() > $maxWidth) {
-            $image->scaleDown(width: $maxWidth);
-        }
-
-        $this->applyWatermark($image);
-
-        $filename = Str::random(40).'.jpg';
-        $webPath = 'photos/web/'.$filename;
-
-        $quality = PhotoSettings::getWebQuality();
-        $encoded = $image->encode(new JpegEncoder(quality: $quality));
-
-        Storage::disk($publicDisk)->put($webPath, (string) $encoded);
-
-        return $webPath;
     }
 
     public function generateThumbnail(string $originalPath): ?string
     {
-        $originalsDisk = config('photography.storage.originals_disk', 'photos_originals');
-        $publicDisk = config('photography.storage.public_disk', 'public');
-
-        if (! Storage::disk($originalsDisk)->exists($originalPath)) {
-            return null;
-        }
-
-        $image = $this->manager->decode(
-            Storage::disk($originalsDisk)->get($originalPath)
+        return $this->store(
+            $this->original($originalPath)
+                ?->cover(PhotoSettings::getThumbnailWidth(), PhotoSettings::getThumbnailHeight())
+                ->transform(new StripMetadata)
+                ->optimize('webp', PhotoSettings::getThumbnailQuality()),
+            'photos/thumbnails',
+            'webp',
         );
-
-        $width = PhotoSettings::getThumbnailWidth();
-        $height = PhotoSettings::getThumbnailHeight();
-
-        $image->cover($width, $height);
-
-        $filename = Str::random(40).'.jpg';
-        $thumbnailPath = 'photos/thumbnails/'.$filename;
-
-        $encoded = $image->encode(new JpegEncoder(quality: 80));
-
-        Storage::disk($publicDisk)->put($thumbnailPath, (string) $encoded);
-
-        return $thumbnailPath;
     }
 
     public function generateOgImage(string $originalPath, ?string $title = null, ?string $exifSummary = null): ?string
@@ -99,421 +59,51 @@ class ImageProcessorService
             return null;
         }
 
-        $originalsDisk = config('photography.storage.originals_disk', 'photos_originals');
-        $publicDisk = config('photography.storage.public_disk', 'public');
-
-        if (! Storage::disk($originalsDisk)->exists($originalPath)) {
-            return null;
-        }
-
-        $image = $this->manager->decode(
-            Storage::disk($originalsDisk)->get($originalPath)
+        return $this->store(
+            $this->original($originalPath)
+                ?->cover(1200, 630)
+                ->transform(new OgOverlay($title, $exifSummary))
+                ->transform(new StripMetadata)
+                ->optimize('jpg', 82),
+            'photos/og',
+            'jpg',
         );
-
-        $ogWidth = 1200;
-        $ogHeight = 630;
-
-        $image->cover($ogWidth, $ogHeight);
-
-        $showTitle = PhotoSettings::getOgImageShowTitle() && $title;
-        $showExif = PhotoSettings::getOgImageShowExif() && $exifSummary;
-
-        if ($showTitle || $showExif) {
-            $this->applyOgOverlay($image, $title, $exifSummary, $showTitle, $showExif);
-        }
-
-        $filename = Str::random(40).'.jpg';
-        $ogPath = 'photos/og/'.$filename;
-
-        $encoded = $image->encode(new JpegEncoder(quality: 90));
-
-        Storage::disk($publicDisk)->put($ogPath, (string) $encoded);
-
-        return $ogPath;
-    }
-
-    private function applyOgOverlay(ImageInterface $image, ?string $title, ?string $exifSummary, bool $showTitle, bool $showExif): void
-    {
-        $overlayOpacity = PhotoSettings::getOgImageOverlayOpacity();
-
-        if ($this->hasImagick) {
-            $this->applyGradientOverlayImagick($image, $overlayOpacity);
-        } else {
-            $this->applyGradientOverlayGd($image, $overlayOpacity);
-        }
-
-        if ($this->hasImagick) {
-            $this->addOgText($image, $title, $exifSummary, $showTitle, $showExif);
-        }
-    }
-
-    private function applyGradientOverlayImagick(ImageInterface $image, int $opacity): void
-    {
-        try {
-            $width = $image->width();
-            $height = $image->height();
-            $gradientHeight = (int) ($height * 0.4);
-
-            $gradient = new Imagick;
-            $gradient->newPseudoImage($width, $gradientHeight, "gradient:transparent-rgba(0,0,0,{$opacity}%)");
-            $gradient->setImageFormat('png');
-
-            $gradientImage = $this->manager->decode($gradient->getImageBlob());
-            $image->insert($gradientImage, 0, 0, 'bottom-left');
-
-            $gradient->clear();
-            $gradient->destroy();
-        } catch (Exception $e) {
-            Log::warning('Failed to apply OG gradient overlay', ['error' => $e->getMessage()]);
-        }
-    }
-
-    private function applyGradientOverlayGd(ImageInterface $image, int $opacity): void
-    {
-        try {
-            $width = $image->width();
-            $height = $image->height();
-            $overlayHeight = (int) ($height * 0.25);
-
-            $overlay = $this->manager->createImage($width, $overlayHeight);
-            $overlay->fill("rgba(0, 0, 0, {$opacity}%)");
-
-            $image->insert($overlay, 0, 0, 'bottom-left');
-        } catch (Exception $e) {
-            Log::warning('Failed to apply OG overlay', ['error' => $e->getMessage()]);
-        }
-    }
-
-    private function addOgText(ImageInterface $image, ?string $title, ?string $exifSummary, bool $showTitle, bool $showExif): void
-    {
-        try {
-            $draw = new ImagickDraw;
-            $draw->setFillColor(new ImagickPixel('white'));
-            $draw->setTextAlignment(Imagick::ALIGN_LEFT);
-
-            $imagick = new Imagick;
-            $imagick->readImageBlob((string) $image->encode(new JpegEncoder(quality: 100)));
-
-            $padding = 40;
-            $bottomY = $image->height() - $padding;
-
-            if ($showExif && $exifSummary) {
-                $draw->setFontSize(24);
-                $draw->setFontWeight(400);
-                $bottomY -= 30;
-                $imagick->annotateImage($draw, $padding, $bottomY, 0, $exifSummary);
-                $bottomY -= 20;
-            }
-
-            if ($showTitle && $title) {
-                $draw->setFontSize(42);
-                $draw->setFontWeight(700);
-                $bottomY -= 10;
-                $imagick->annotateImage($draw, $padding, $bottomY, 0, $title);
-            }
-
-            $image->fill('transparent');
-            $modifiedBlob = $imagick->getImageBlob();
-
-            $imagick->clear();
-            $imagick->destroy();
-
-            $modified = $this->manager->decode($modifiedBlob);
-            $image->insert($modified);
-
-        } catch (Exception $e) {
-            Log::warning('Failed to add OG text', ['error' => $e->getMessage()]);
-        }
-    }
-
-    private function applyWatermark(ImageInterface $image): void
-    {
-        $logoPath = PhotoSettings::getWatermarkPath();
-
-        if (! $logoPath) {
-            return;
-        }
-
-        if (! Storage::disk('local')->exists($logoPath)) {
-            Log::warning('Watermark file not found', ['path' => $logoPath]);
-
-            return;
-        }
-
-        $logoFullPath = Storage::disk('local')->path($logoPath);
-        $extension = strtolower(pathinfo($logoFullPath, PATHINFO_EXTENSION));
-
-        try {
-            $scale = PhotoSettings::getWatermarkScale();
-            $targetWidth = (int) ($image->width() * $scale);
-            if ($targetWidth < 20) {
-                $targetWidth = 20;
-            }
-
-            $position = PhotoSettings::getWatermarkPosition();
-            $padding = 20;
-
-            $estimatedHeight = (int) ($targetWidth * 0.5);
-
-            $x = match ($position) {
-                'bottom-left', 'top-left' => $padding,
-                'bottom-center', 'top-center', 'center' => (int) (($image->width() - $targetWidth) / 2),
-                default => $image->width() - $targetWidth - $padding,
-            };
-
-            $y = match ($position) {
-                'top-left', 'top-right', 'top-center' => $padding,
-                'center' => (int) (($image->height() - $estimatedHeight) / 2),
-                default => $image->height() - $estimatedHeight - $padding,
-            };
-
-            $shouldInvert = $this->shouldInvertWatermark($image, $x, $y, $targetWidth, $estimatedHeight);
-
-            if ($extension === 'svg') {
-                $watermark = $this->loadSvgWatermark($logoFullPath, $image->width(), $shouldInvert);
-                if (! $watermark) {
-                    return;
-                }
-            } else {
-                $watermark = $this->manager->decode($logoFullPath);
-                if ($shouldInvert) {
-                    $watermark = $this->invertWatermark($watermark);
-                }
-            }
-
-            if ($watermark->width() > $targetWidth) {
-                $watermark->scaleDown(width: $targetWidth);
-            } elseif ($watermark->width() < $targetWidth && $extension !== 'svg') {
-                $watermark->scale(width: $targetWidth);
-            }
-
-            $y = match ($position) {
-                'top-left', 'top-right', 'top-center' => $padding,
-                'center' => (int) (($image->height() - $watermark->height()) / 2),
-                default => $image->height() - $watermark->height() - $padding,
-            };
-
-            $opacity = PhotoSettings::getWatermarkOpacity();
-
-            $image->insert($watermark, $x, $y, 'top-left', $opacity / 100);
-
-        } catch (Exception $e) {
-            Log::warning('Failed to apply watermark', [
-                'path' => $logoPath,
-                'error' => $e->getMessage(),
-            ]);
-        }
-    }
-
-    private function shouldInvertWatermark(ImageInterface $image, int $x, int $y, int $width, int $height): bool
-    {
-        try {
-            $x = max(0, min($x, $image->width() - 1));
-            $y = max(0, min($y, $image->height() - 1));
-            $width = min($width, $image->width() - $x);
-            $height = min($height, $image->height() - $y);
-
-            if ($width <= 0 || $height <= 0) {
-                return false;
-            }
-
-            $region = clone $image;
-            $region->crop($width, $height, $x, $y);
-
-            $totalLuminance = 0;
-            $sampleCount = 0;
-            $sampleStep = max(1, (int) ($width / 10));
-
-            for ($sx = 0; $sx < $width; $sx += $sampleStep) {
-                for ($sy = 0; $sy < $height; $sy += $sampleStep) {
-                    $color = $region->colorAt($sx, $sy)->toColorspace(RgbColorspace::class);
-                    $r = $color->red()->value();
-                    $g = $color->green()->value();
-                    $b = $color->blue()->value();
-                    $luminance = (0.299 * $r + 0.587 * $g + 0.114 * $b);
-                    $totalLuminance += $luminance;
-                    $sampleCount++;
-                }
-            }
-
-            if ($sampleCount === 0) {
-                return false;
-            }
-
-            $avgLuminance = $totalLuminance / $sampleCount;
-
-            return $avgLuminance < 128;
-
-        } catch (Exception $e) {
-            Log::warning('Failed to calculate region luminance', ['error' => $e->getMessage()]);
-
-            return false;
-        }
-    }
-
-    private function invertWatermark(ImageInterface $watermark): ImageInterface
-    {
-        try {
-            if ($this->hasImagick) {
-                $imagick = new Imagick;
-                $imagick->readImageBlob((string) $watermark->encode(new PngEncoder));
-                $imagick->negateImage(false, Imagick::CHANNEL_ALL & ~Imagick::CHANNEL_ALPHA);
-                $result = $this->manager->decode($imagick->getImageBlob());
-                $imagick->clear();
-                $imagick->destroy();
-
-                return $result;
-            } else {
-                $watermark->invert();
-
-                return $watermark;
-            }
-        } catch (Exception $e) {
-            Log::warning('Failed to invert watermark', ['error' => $e->getMessage()]);
-
-            return $watermark;
-        }
-    }
-
-    private function loadSvgWatermark(string $svgPath, int $imageWidth, bool $invert = false): ?ImageInterface
-    {
-        if (! $this->hasImagick) {
-            Log::warning('SVG watermark requires Imagick extension. Please use PNG instead or install Imagick.');
-
-            return null;
-        }
-
-        try {
-            $scale = PhotoSettings::getWatermarkScale();
-            $targetWidth = (int) ($imageWidth * $scale);
-
-            if ($targetWidth < 20) {
-                $targetWidth = 20;
-            }
-
-            $svgContent = file_get_contents($svgPath);
-
-            if ($invert) {
-                $svgContent = $this->invertSvgColors($svgContent);
-            }
-
-            $imagick = new Imagick;
-
-            $imagick->setResolution(300, 300);
-
-            $imagick->setBackgroundColor(new ImagickPixel('transparent'));
-
-            $imagick->readImageBlob($svgContent);
-
-            $origWidth = $imagick->getImageWidth();
-            $origHeight = $imagick->getImageHeight();
-
-            $scaledHeight = (int) ($origHeight * ($targetWidth / $origWidth));
-
-            $canvas = new Imagick;
-            $canvas->newImage($targetWidth, $scaledHeight, new ImagickPixel('transparent'));
-            $canvas->setImageFormat('png32');
-
-            $imagick->thumbnailImage($targetWidth, 0);
-
-            $canvas->compositeImage($imagick, Imagick::COMPOSITE_OVER, 0, 0);
-
-            $imagick->clear();
-            $imagick->destroy();
-
-            $imagick = $canvas;
-
-            $pngBlob = $imagick->getImageBlob();
-
-            $imagick->clear();
-            $imagick->destroy();
-
-            return $this->manager->decode($pngBlob);
-
-        } catch (Exception $e) {
-            Log::warning('Failed to load SVG watermark', [
-                'path' => $svgPath,
-                'error' => $e->getMessage(),
-            ]);
-
-            return null;
-        }
-    }
-
-    private function invertSvgColors(string $svgContent): string
-    {
-        $svgContent = preg_replace(
-            '/<svg\s/',
-            '<svg fill="white" ',
-            $svgContent,
-            1
-        );
-
-        $darkColors = [
-            '#000000' => '#FFFFFF',
-            '#000' => '#FFF',
-            'black' => 'white',
-            '#111111' => '#FFFFFF',
-            '#111' => '#FFF',
-            '#222222' => '#FFFFFF',
-            '#222' => '#FFF',
-            '#333333' => '#FFFFFF',
-            '#333' => '#FFF',
-            'rgb(0,0,0)' => 'rgb(255,255,255)',
-            'rgb(0, 0, 0)' => 'rgb(255, 255, 255)',
-        ];
-
-        foreach ($darkColors as $dark => $light) {
-            $svgContent = preg_replace(
-                '/fill\s*[=:]\s*["\']?'.preg_quote($dark, '/').'["\']?/i',
-                'fill="'.$light.'"',
-                $svgContent
-            );
-            $svgContent = preg_replace(
-                '/stroke\s*[=:]\s*["\']?'.preg_quote($dark, '/').'["\']?/i',
-                'stroke="'.$light.'"',
-                $svgContent
-            );
-            $svgContent = preg_replace(
-                '/fill\s*:\s*'.preg_quote($dark, '/').'/i',
-                'fill:'.$light,
-                $svgContent
-            );
-            $svgContent = preg_replace(
-                '/stroke\s*:\s*'.preg_quote($dark, '/').'/i',
-                'stroke:'.$light,
-                $svgContent
-            );
-        }
-
-        $svgContent = preg_replace(
-            '/fill\s*[=:]\s*["\']?currentColor["\']?/i',
-            'fill="white"',
-            $svgContent
-        );
-        $svgContent = preg_replace(
-            '/stroke\s*[=:]\s*["\']?currentColor["\']?/i',
-            'stroke="white"',
-            $svgContent
-        );
-
-        return $svgContent;
     }
 
     public function deleteProcessedFiles(?string $webPath = null, ?string $thumbnailPath = null, ?string $ogImagePath = null): void
     {
-        $publicDisk = config('photography.storage.public_disk', 'public');
+        $disk = Storage::disk($this->publicDisk());
 
-        if ($webPath && Storage::disk($publicDisk)->exists($webPath)) {
-            Storage::disk($publicDisk)->delete($webPath);
+        foreach (array_filter([$webPath, $thumbnailPath, $ogImagePath]) as $path) {
+            if ($disk->exists($path)) {
+                $disk->delete($path);
+            }
+        }
+    }
+
+    private function original(string $path): ?PendingImage
+    {
+        $disk = config('photography.storage.originals_disk', 'photos_originals');
+
+        return Storage::disk($disk)->exists($path) ? Image::fromStorage($path, $disk) : null;
+    }
+
+    private function store(?PendingImage $image, string $directory, string $extension): ?string
+    {
+        if (! $image) {
+            return null;
         }
 
-        if ($thumbnailPath && Storage::disk($publicDisk)->exists($thumbnailPath)) {
-            Storage::disk($publicDisk)->delete($thumbnailPath);
-        }
+        $path = $image->storeAs($directory, Str::random(40).'.'.$extension, $this->publicDisk(), [
+            'CacheControl' => self::CACHE_CONTROL,
+            'ContentType' => $extension === 'webp' ? 'image/webp' : 'image/jpeg',
+        ]);
 
-        if ($ogImagePath && Storage::disk($publicDisk)->exists($ogImagePath)) {
-            Storage::disk($publicDisk)->delete($ogImagePath);
-        }
+        return $path ?: null;
+    }
+
+    private function publicDisk(): string
+    {
+        return config('photography.storage.public_disk', 'public');
     }
 }
