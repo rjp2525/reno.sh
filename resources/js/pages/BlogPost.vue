@@ -271,16 +271,18 @@ const jsonLd = computed(() => {
                 <article aria-labelledby="post-title">
                 <div v-if="post.featured_image" class="relative">
                     <div class="relative min-h-[200px] overflow-hidden sm:max-h-[350px]">
-                        <img
-                            :src="imageUrl(post.featured_image)"
-                            :alt="post.title"
-                            class="absolute inset-0 h-full w-full object-cover object-center"
-                        />
+                        <div class="relative aspect-[1.91/1] w-full sm:absolute sm:inset-0 sm:aspect-auto">
+                            <img
+                                :src="imageUrl(post.featured_image)"
+                                :alt="post.title"
+                                class="absolute inset-0 h-full w-full object-cover object-center"
+                            />
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-[#011627] via-transparent to-transparent sm:via-[#011627]/70"
+                            />
+                        </div>
                         <div
-                            class="absolute inset-0 bg-gradient-to-t from-[#011627] via-[#011627]/70 to-transparent"
-                        />
-                        <div
-                            class="relative p-4 pt-16 sm:absolute sm:inset-x-0 sm:bottom-0 sm:p-6"
+                            class="relative px-4 pt-3 pb-4 sm:absolute sm:inset-x-0 sm:bottom-0 sm:p-6"
                         >
                             <div class="mx-auto w-full max-w-5xl">
                                 <div v-if="post.category" class="mb-1 sm:mb-2">
@@ -304,7 +306,7 @@ const jsonLd = computed(() => {
 
                                 <h1
                                     id="post-title"
-                                    class="mb-2 text-lg font-bold text-white sm:mb-3 sm:text-3xl lg:text-4xl"
+                                    class="mb-2 text-xl leading-snug font-bold text-balance break-words text-white sm:mb-3 sm:text-3xl lg:text-4xl"
                                 >
                                     {{ post.title }}
                                 </h1>
@@ -378,7 +380,7 @@ const jsonLd = computed(() => {
 
                         <h1
                             id="post-title"
-                            class="mb-4 text-3xl font-bold text-white lg:text-4xl"
+                            class="mb-4 text-2xl leading-snug font-bold text-balance break-words text-white sm:text-3xl lg:text-4xl"
                         >
                             {{ post.title }}
                         </h1>
