@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\HexColor;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,7 @@ class BlogCategory extends Model
     ];
 
     protected $casts = [
+        'color' => HexColor::class,
         'is_active' => 'boolean',
     ];
 

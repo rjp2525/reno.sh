@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\HexColor;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -23,6 +24,7 @@ class Technology extends Model
     ];
 
     protected $casts = [
+        'color' => HexColor::class,
         'is_active' => 'boolean',
     ];
 

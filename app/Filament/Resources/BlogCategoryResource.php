@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use App\Casts\HexColor;
 use App\Enums\NavigationGroup;
 use App\Filament\Resources\BlogCategoryResource\Pages;
 use App\Models\BlogCategory;
@@ -64,7 +65,10 @@ class BlogCategoryResource extends Resource
                         TextInput::make('description')
                             ->maxLength(500),
 
-                        ColorPicker::make('color'),
+                        ColorPicker::make('color')
+                            ->hex()
+                            ->regex(HexColor::PATTERN)
+                            ->dehydrateStateUsing(fn (?string $state) => HexColor::normalize($state)),
 
                         TextInput::make('icon')
                             ->maxLength(255)
