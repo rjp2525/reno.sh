@@ -7,6 +7,7 @@ namespace App\Filament\Resources;
 use App\Enums\NavigationGroup;
 use App\Enums\PhotoProcessingStatus;
 use App\Filament\Actions\ShareToSocialAction;
+use App\Filament\Forms\Slug;
 use App\Filament\Resources\PhotoResource\Pages;
 use App\Jobs\ProcessPhotoJob;
 use App\Models\Photo;
@@ -40,7 +41,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class PhotoResource extends Resource
@@ -157,16 +157,11 @@ class PhotoResource extends Resource
                     ->schema([
                         Grid::make(2)
                             ->schema([
-                                TextInput::make('title')
+                                Slug::source(TextInput::make('title')
                                     ->required()
-                                    ->maxLength(255)
-                                    ->live(onBlur: true)
-                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state).'-'.Str::random(6))),
+                                    ->maxLength(255)),
 
-                                TextInput::make('slug')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->unique(ignoreRecord: true),
+                                Slug::field(from: 'title'),
                             ]),
 
                         RichEditor::make('description')

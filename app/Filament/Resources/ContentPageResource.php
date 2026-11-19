@@ -7,6 +7,7 @@ namespace App\Filament\Resources;
 use App\Enums\ContentSection;
 use App\Enums\NavigationGroup;
 use App\Filament\Blocks\ContentBlocks;
+use App\Filament\Forms\Slug;
 use App\Filament\Resources\ContentPageResource\Pages;
 use App\Models\ContentPage;
 use BackedEnum;
@@ -53,15 +54,11 @@ class ContentPageResource extends Resource
             ->components([
                 Section::make('Page Settings')
                     ->schema([
-                        TextInput::make('title')
+                        Slug::source(TextInput::make('title')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)),
 
-                        TextInput::make('slug')
-                            ->required()
-                            ->maxLength(255)
-                            ->alphaDash()
-                            ->unique(ignoreRecord: true),
+                        Slug::field(from: 'title'),
 
                         Select::make('section')
                             ->options(ContentSection::class)

@@ -6,6 +6,7 @@ namespace App\Filament\Resources;
 
 use App\Casts\HexColor;
 use App\Enums\NavigationGroup;
+use App\Filament\Forms\Slug;
 use App\Filament\Resources\BlogCategoryResource\Pages;
 use App\Models\BlogCategory;
 use BackedEnum;
@@ -51,15 +52,11 @@ class BlogCategoryResource extends Resource
             ->components([
                 Section::make('Category Details')
                     ->schema([
-                        TextInput::make('name')
+                        Slug::source(TextInput::make('name')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)),
 
-                        TextInput::make('slug')
-                            ->required()
-                            ->maxLength(255)
-                            ->alphaDash()
-                            ->unique(ignoreRecord: true)
+                        Slug::field(from: 'name')
                             ->notIn(['series', 'feed.xml']),
 
                         TextInput::make('description')

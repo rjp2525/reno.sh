@@ -7,6 +7,7 @@ namespace App\Filament\Resources;
 use App\Enums\NavigationGroup;
 use App\Enums\ProjectType;
 use App\Filament\Blocks\ContentBlocks;
+use App\Filament\Forms\Slug;
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource\RelationManagers\TagsRelationManager;
 use App\Models\Project;
@@ -58,15 +59,12 @@ class ProjectResource extends Resource
                     ->schema([
                         Section::make('Basic Information')
                             ->schema([
-                                TextInput::make('title')
+                                Slug::source(TextInput::make('title')
                                     ->required()
                                     ->maxLength(255)
-                                    ->columnSpanFull(),
+                                    ->columnSpanFull()),
 
-                                TextInput::make('slug')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->unique(ignoreRecord: true)
+                                Slug::field(from: 'title')
                                     ->columnSpanFull(),
 
                                 Textarea::make('summary')

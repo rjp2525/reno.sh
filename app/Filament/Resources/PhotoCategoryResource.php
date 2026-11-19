@@ -6,6 +6,7 @@ namespace App\Filament\Resources;
 
 use App\Casts\HexColor;
 use App\Enums\NavigationGroup;
+use App\Filament\Forms\Slug;
 use App\Filament\Resources\PhotoCategoryResource\Pages;
 use App\Models\PhotoCategory;
 use BackedEnum;
@@ -53,14 +54,11 @@ class PhotoCategoryResource extends Resource
                     ->schema([
                         Grid::make(2)
                             ->schema([
-                                TextInput::make('name')
+                                Slug::source(TextInput::make('name')
                                     ->required()
-                                    ->maxLength(255),
+                                    ->maxLength(255)),
 
-                                TextInput::make('slug')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->unique(ignoreRecord: true),
+                                Slug::field(from: 'name'),
                             ]),
 
                         Textarea::make('description')
