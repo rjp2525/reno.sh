@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources;
 
 use App\Enums\NavigationGroup;
+use App\Filament\Forms\Slug;
 use App\Filament\Resources\BlogSeriesResource\Pages;
 use App\Models\BlogSeries;
 use BackedEnum;
@@ -51,15 +52,11 @@ class BlogSeriesResource extends Resource
             ->components([
                 Section::make('Series Details')
                     ->schema([
-                        TextInput::make('title')
+                        Slug::source(TextInput::make('title')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)),
 
-                        TextInput::make('slug')
-                            ->required()
-                            ->maxLength(255)
-                            ->alphaDash()
-                            ->unique(ignoreRecord: true),
+                        Slug::field(from: 'title'),
 
                         Textarea::make('description')
                             ->rows(3)

@@ -8,6 +8,7 @@ use App\Enums\NavigationGroup;
 use App\Enums\PostStatus;
 use App\Filament\Actions\ShareToSocialAction;
 use App\Filament\Blocks\ContentBlocks;
+use App\Filament\Forms\Slug;
 use App\Filament\Resources\PostResource\Pages;
 use App\Models\BlogCategory;
 use App\Models\Post;
@@ -38,7 +39,6 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\IconColumn;
@@ -104,32 +104,17 @@ class PostResource extends Resource
                 Group::make()
                     ->columnSpan(['lg' => 2])
                     ->schema([
-                        TextInput::make('title')
+                        Slug::source(TextInput::make('title')
                             ->hiddenLabel()
                             ->placeholder('Post title')
                             ->required()
                             ->maxLength(255)
                             ->autofocus()
-                            ->extraInputAttributes(['class' => 'reno-title-input'])
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(function (string $operation, ?string $state, Set $set, Get $get, ?string $old): void {
-                                // Keep the slug in sync until it's been edited by hand.
-                                if ($operation === 'create' || blank($get('slug')) || $get('slug') === Str::slug((string) $old)) {
-                                    $set('slug', Str::slug((string) $state));
-                                }
-                            }),
+                            ->extraInputAttributes(['class' => 'reno-title-input'])),
 
-                        TextInput::make('slug')
+                        Slug::field(from: 'title')
                             ->hiddenLabel()
-                            ->prefix(fn (Get $get) => url('/blog/'.(BlogCategory::find($get('blog_category_id'))?->slug ?? 'post')).'/')
-                            ->required()
-                            ->alphaDash()
-                            ->maxLength(255)
-                            ->unique(ignoreRecord: true)
-                            ->suffixAction(Action::make('regenerateSlug')
-                                ->icon('heroicon-m-arrow-path')
-                                ->tooltip('Regenerate from title')
-                                ->action(fn (Set $set, Get $get) => $set('slug', Str::slug((string) $get('title'))))),
+                            ->prefix(fn (Get $get) => url('/blog/'.(BlogCategory::find($get('blog_category_id'))?->slug ?? 'post')).'/'),
 
                         Textarea::make('excerpt')
                             ->placeholder('A one or two sentence teaser shown in lists, feeds and social cards…')
@@ -207,10 +192,8 @@ class PostResource extends Resource
                                     ->preload()
                                     ->live()
                                     ->createOptionForm([
-                                        TextInput::make('name')->required()
-                                            ->live(onBlur: true)
-                                            ->afterStateUpdated(fn (?string $state, Set $set) => $set('slug', Str::slug((string) $state))),
-                                        TextInput::make('slug')->required()->alphaDash(),
+                                        Slug::source(TextInput::make('name')->required()->maxLength(255)),
+                                        Slug::field(from: 'name')->notIn(['series', 'feed.xml']),
                                     ]),
 
                                 Select::make('blog_series_id')
