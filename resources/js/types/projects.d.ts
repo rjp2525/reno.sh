@@ -3,7 +3,9 @@ interface Project {
     title: string;
     slug: string;
     summary: string;
-    description: string;
+    /** Plain-text mirror of `content`, for excerpts. */
+    description: string | null;
+    content: import('./blocks').ContentBlock[] | null;
     type: 'personal' | 'professional' | 'open_source' | 'other' | 'case_study';
     status: 'active' | 'archived' | 'in_development';
 

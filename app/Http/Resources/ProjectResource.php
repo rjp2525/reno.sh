@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use App\Models\Project;
 use App\Support\Content\Blocks;
-use App\Support\Content\HtmlConverter;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -44,11 +43,11 @@ class ProjectResource extends JsonResource
         ];
 
         if ($this->detailed) {
-            $description = is_array($this->description) ? null : $this->description;
             $data += [
-                'description_html' => $description,
-                'text' => HtmlConverter::toText($description),
-                'markdown' => HtmlConverter::toMarkdown($description),
+                'description_html' => Blocks::toHtml($this->content),
+                'text' => Blocks::toText($this->content),
+                'markdown' => Blocks::toMarkdown($this->content),
+                'blocks' => Blocks::withUrls($this->content),
                 'gallery' => collect($this->gallery ?? [])->map(fn ($p) => Blocks::url(is_array($p) ? ($p['image'] ?? null) : $p))->filter()->values(),
             ];
         }

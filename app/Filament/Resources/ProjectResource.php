@@ -6,6 +6,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\NavigationGroup;
 use App\Enums\ProjectType;
+use App\Filament\Blocks\ContentBlocks;
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource\RelationManagers\TagsRelationManager;
 use App\Models\Project;
@@ -15,6 +16,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
@@ -72,9 +74,19 @@ class ProjectResource extends Resource
                                     ->rows(3)
                                     ->columnSpanFull(),
 
-                                Textarea::make('description')
-                                    ->maxLength(65535)
-                                    ->rows(6)
+                                Builder::make('content')
+                                    ->label('Description')
+                                    ->helperText('Shown on the project page. Same blocks as blog posts: Markdown, code, images, callouts…')
+                                    ->blocks(ContentBlocks::all('projects/images'))
+                                    ->default([['type' => 'markdown', 'data' => ['markdown' => '']]])
+                                    ->blockPickerColumns(['default' => 2, 'md' => 3])
+                                    ->blockPickerWidth('2xl')
+                                    ->addActionLabel('Add block')
+                                    ->addBetweenActionLabel('Insert block')
+                                    ->collapsible()
+                                    ->cloneable()
+                                    ->reorderableWithDragAndDrop()
+                                    ->reorderableWithButtons()
                                     ->columnSpanFull(),
 
                                 Grid::make(2)
