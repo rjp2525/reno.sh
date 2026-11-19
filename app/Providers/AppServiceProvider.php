@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
 
-        PhotoEffects::register();
+        PhotoEffects::register($this->app);
 
         Gate::define('admin', fn (User $user) => $user->isAdmin());
 

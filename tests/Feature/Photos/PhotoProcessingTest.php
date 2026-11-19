@@ -159,3 +159,15 @@ it('describes the bucket CORS policy the admin previews need', function () {
         'MaxAgeSeconds' => 3600,
     ]]);
 });
+
+it('keeps working across queue jobs, which discard the scoped image manager', function () {
+    $service = app(ImageProcessorService::class);
+    expect($service->generateWebVersion('photos/originals/sample.jpg'))->toEndWith('.webp');
+
+    // What the queue worker does between jobs.
+    app()->forgetScopedInstances();
+
+    expect($service->generateWebVersion('photos/originals/sample.jpg'))->toEndWith('.webp')
+        ->and($service->generateThumbnail('photos/originals/sample.jpg'))->toEndWith('.webp')
+        ->and($service->generateOgImage('photos/originals/sample.jpg', 'Golden hour', 'f/8'))->toEndWith('.jpg');
+});
