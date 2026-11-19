@@ -9,7 +9,8 @@ use App\Images\Transformations\StripMetadata;
 use App\Images\Transformations\Watermark;
 use App\Models\PhotoSettings;
 use Exception;
-use Illuminate\Support\Facades\Image;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Image\ImageManager;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Imagick;
@@ -17,7 +18,7 @@ use ImagickDraw;
 use ImagickPixel;
 use Intervention\Image\Colors\Rgb\Colorspace as RgbColorspace;
 use Intervention\Image\Encoders\PngEncoder;
-use Intervention\Image\ImageManager;
+use Intervention\Image\ImageManager as InterventionManager;
 use Intervention\Image\Interfaces\ImageInterface;
 
 /**
@@ -27,19 +28,33 @@ use Intervention\Image\Interfaces\ImageInterface;
  */
 final class PhotoEffects
 {
-    public static function register(): void
+    /**
+     * Attach the handlers every time Laravel builds an image manager. The manager is a
+     * *scoped* binding, so queue workers discard it after each job; handlers registered
+     * once at boot would be gone from the second job on.
+     */
+    public static function register(Application $app): void
     {
-        foreach (['gd', 'imagick'] as $driver) {
-            Image::transformUsing($driver, Watermark::class, fn (ImageInterface $image) => (new self)->watermark($image));
-            Image::transformUsing($driver, OgOverlay::class, fn (ImageInterface $image, OgOverlay $t) => (new self)->ogOverlay($image, $t));
-            Image::transformUsing($driver, StripMetadata::class, fn (ImageInterface $image) => (new self)->stripMetadata($image));
+        $app->afterResolving('image', fn (ImageManager $manager) => self::attach($manager));
+
+        if ($app->resolved('image')) {
+            self::attach($app->make('image'));
         }
     }
 
-    private function manager(ImageInterface $image): ImageManager
+    public static function attach(ImageManager $manager): void
+    {
+        foreach (['gd', 'imagick'] as $driver) {
+            $manager->transformUsing($driver, Watermark::class, fn (ImageInterface $image) => (new self)->watermark($image));
+            $manager->transformUsing($driver, OgOverlay::class, fn (ImageInterface $image, OgOverlay $t) => (new self)->ogOverlay($image, $t));
+            $manager->transformUsing($driver, StripMetadata::class, fn (ImageInterface $image) => (new self)->stripMetadata($image));
+        }
+    }
+
+    private function manager(ImageInterface $image): InterventionManager
     {
         // Decode overlays with the same driver as the image they're composited onto.
-        return ImageManager::usingDriver($image->driver());
+        return InterventionManager::usingDriver($image->driver());
     }
 
     private function isImagick(ImageInterface $image): bool
