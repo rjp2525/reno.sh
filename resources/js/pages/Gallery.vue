@@ -4,7 +4,8 @@ import { MobilePageHeader } from '@/components/page';
 import { SearchInput, SelectInput } from '@/components/ui/form';
 import { GuestLayout } from '@/layouts';
 import { gallery as galleryRoute } from '@/routes';
-import { Link, router, WhenVisible } from '@inertiajs/vue3';
+import LoadMoreSentinel from '@/components/LoadMoreSentinel.vue';
+import { Link, router } from '@inertiajs/vue3';
 import { Camera, Loader2, Star } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 
@@ -107,6 +108,8 @@ const loadMore = () => {
     router.get(baseGalleryUrl, params, {
         preserveState: true,
         preserveScroll: true,
+        // Keep the address as-is: a refresh shouldn't land on ?page=4 alone.
+        preserveUrl: true,
         only: ['photos'],
         onSuccess: (page) => {
             const newPhotos = (
@@ -117,6 +120,10 @@ const loadMore = () => {
             isLoadingMore.value = false;
         },
         onError: () => {
+            isLoadingMore.value = false;
+        },
+        // Also covers cancelled/interrupted visits, so the sentinel never stays stuck.
+        onFinish: () => {
             isLoadingMore.value = false;
         },
     });
@@ -321,10 +328,10 @@ const hasActiveFilters = computed(() => {
                         </p>
                     </div>
 
-                    <WhenVisible
+                    <LoadMoreSentinel
                         v-if="hasMorePages && allPhotos.length > 0"
-                        :once="false"
-                        @appear="loadMore"
+                        :loading="isLoadingMore"
+                        @load="loadMore"
                     >
                         <div class="flex justify-center py-8">
                             <Loader2
@@ -335,7 +342,7 @@ const hasActiveFilters = computed(() => {
                                 Loading more...
                             </span>
                         </div>
-                    </WhenVisible>
+                    </LoadMoreSentinel>
                 </div>
             </div>
         </main>
